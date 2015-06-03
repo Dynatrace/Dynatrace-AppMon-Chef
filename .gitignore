@@ -1,0 +1,6 @@
+Berksfile.lock
+Gemfile.lock
+.bundle
+.coverage
+.kitchen
+.kitchen.local.yml

@@ -1,0 +1,138 @@
+---
+provisioner:
+  name: chef_solo
+
+driver:
+  name: vagrant
+  customize:
+    cpus: 2
+    memory: 3096
+    cpuexecutioncap: 50
+
+platforms:
+  # Opscode vagrant box names taken from http://www.vagrantbox.es/
+  - name: centos-6.5
+#  - name: centos-7.0
+  - name: debian-7.4
+  - name: ubuntu-12.04
+
+suites:
+  - name: apache_wsagent
+    run_list:
+      - recipe[apt]
+      - recipe[apache2]
+      - recipe[java]
+      - recipe[dynatrace::apache_wsagent]
+    attributes:
+      dynatrace:
+        apache_wsagent:
+          apache:
+            do_patch_init_script: true
+        wsagent_package:
+          linux:
+            installer:
+              file_url: 'http://10.0.2.2/dynatrace/dynatrace-wsagent.tar'
+      java:
+        jdk_version: 7
+    includes:
+      - debian-7.4
+      - ubuntu-12.04
+
+  - name: apache_wsagent_redhat
+    run_list:
+      - recipe[apt]
+      - recipe[apache2]
+      - recipe[java]
+      - recipe[dynatrace::apache_wsagent]
+    attributes:
+      dynatrace:
+        apache_wsagent:
+          apache:
+            config_file_path: /etc/httpd/conf/httpd.conf
+            init_script_path: /etc/init.d/httpd
+        wsagent_package:
+          linux:
+            installer:
+              file_url: 'http://10.0.2.2/dynatrace/dynatrace-wsagent.tar'
+      java:
+        jdk_version: 7
+    includes:
+      - centos-6.5
+      - centos-7.0
+
+  - name: agents_package
+    run_list:
+      - recipe[apt]
+      - recipe[java]
+      - recipe[dynatrace::agents_package]
+    attributes:
+      dynatrace:
+        agents_package:
+          linux:
+            installer:
+              file_url: 'http://10.0.2.2/dynatrace/dynatrace-agents.jar'
+      java:
+        jdk_version: 7
+
+  - name: collector
+    run_list:
+      - recipe[apt]
+      - recipe[java]
+      - recipe[dynatrace::collector]
+    attributes:
+      dynatrace:
+        collector:
+          linux:
+            installer:
+              file_url: 'http://10.0.2.2/dynatrace/dynatrace-collector.jar'
+      java:
+        jdk_version: 7
+
+  - name: java_agent
+    run_list:
+      - recipe[apt]
+      - recipe[java]
+      - recipe[dynatrace::agents_package]
+      - recipe[dynatrace::java_agent]
+    attributes:
+      dynatrace:
+        agents_package:
+          linux:
+            installer:
+              file_url: 'http://10.0.2.2/dynatrace/dynatrace-agents.jar'
+        java_agent:
+          env_var:
+            file_name: '/tmp/environment'
+      java:
+        jdk_version: 7
+
+  - name: server
+    run_list:
+      - recipe[apt]
+      - recipe[java]
+      - recipe[dynatrace::server]
+    attributes:
+      dynatrace:
+        server:
+          license:
+            file_url: 'http://10.0.2.2/dynatrace/dynatrace-license.key'
+          linux:
+            installer:
+              file_url: 'http://10.0.2.2/dynatrace/dynatrace.jar'
+      java:
+        jdk_version: 7
+    includes:
+      - centos-6.5
+      - debian-7.4
+      - ubuntu-12.04
+
+  - name: wsagent_package
+    run_list:
+      - recipe[apt]
+      - recipe[dynatrace::wsagent_package]
+    attributes:
+      dynatrace:
+        wsagent_package:
+          linux:
+            installer:
+              file_url: 'http://10.0.2.2/dynatrace/dynatrace-wsagent.tar'

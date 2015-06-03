@@ -1,0 +1,38 @@
+#
+# Cookbook Name:: dynatrace
+# Providers:: configure_init_scripts
+#
+# Copyright 2015, Dynatrace
+#
+
+action :run do
+  if platform_family?('debian')
+    linux_service_start_runlevels = '2 3 4 5'
+    linux_service_stop_runlevels = '0 1 6'
+  else
+    linux_service_start_runlevels = '3 5'
+    linux_service_stop_runlevels = '0 1 2 6'
+  end
+
+  new_resource.scripts.each do |script|
+    template "Configure and copy the #{new_resource.name}'s '#{script}' init script" do
+      source "init.d/#{script}.erb"
+      path   "#{new_resource.installer_prefix_dir}/dynatrace/init.d/#{script}"
+      owner  'dynatrace'
+      group  'dynatrace'
+      mode   '0744'
+      variables({
+        :linux_service_start_runlevels => linux_service_start_runlevels,
+        :linux_service_stop_runlevels => linux_service_stop_runlevels,
+        :installer_prefix_dir => new_resource.installer_prefix_dir
+      }.merge(new_resource.variables))
+      action :create
+    end
+
+    link "Make the '#{script}' init script available in /etc/init.d" do
+      to          "#{new_resource.installer_prefix_dir}/dynatrace/init.d/#{script}"
+      target_file "/etc/init.d/#{script}"
+      action :create
+    end
+  end
+end
