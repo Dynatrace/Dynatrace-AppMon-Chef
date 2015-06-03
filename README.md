@@ -40,7 +40,7 @@ Download the Dynatrace Collector installer from [downloads.dynatrace.com](http:/
 
 Download the Dynatrace Agent package from [downloads.dynatrace.com](http://downloads.dynatrace.com) and place the artifact as `dynatrace-agents.jar` in the cookbook's `files` directory. Alternatively, you can make the installer available as an *HTTP* or *FTP* resource and point the Chef Recipe to the right location via the `node['dynatrace']['agents_package']['linux']['installer']['file_url']` attribute. Please refer to `attributes/java_agent.rb` and `attributes/agents_package.rb` for a list of supported attributes. In order to have the Chef Recipe executed, include `recipe[dynatrace::java_agent]` in a runlist.
 
-**Note:** this recipe makes the Java Agent available to a Java Virtual Machine by injecting an appropriate `-agentpath` option into an environment variable, e.g. `JAVA_OPTS`, inside a file (typically an executable script). It is assumed that this script either executes the Java process directly or is sourced by another script before the Java process gets executed. You will have to restart the application after placing the agent.
+**Note:** this recipe makes the Java Agent available to a Java Virtual Machine by injecting an appropriate [-agentpath](https://community.compuwareapm.com/community/display/DOCDT60/Java+Agent+Configuration) option into an environment variable, e.g. `JAVA_OPTS`, inside a file (typically an executable script). It is assumed that this script either executes the Java process directly or is sourced by another script before the Java process gets executed. You will have to restart the application after placing the agent.
 
 ### server
 
