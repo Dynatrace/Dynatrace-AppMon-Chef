@@ -5,14 +5,16 @@
 # Copyright 2015, Dynatrace
 #
 
-user "Create system user 'dynatrace'" do
-  username 'dynatrace'
-  comment  'Dynatrace user'
+dynatrace_owner = node['dynatrace']['owner']
+dynatrace_group = node['dynatrace']['group']
+
+user "Create system user '#{dynatrace_owner}'" do
+  username dynatrace_owner
   system   true
   action   :create
 end
 
-group "Create group 'dynatrace'" do
-  group_name 'dynatrace'
-  members    ['dynatrace']
+group "Create group '#{dynatrace_group}'" do
+  group_name dynatrace_group
+  members    [dynatrace_owner]
 end

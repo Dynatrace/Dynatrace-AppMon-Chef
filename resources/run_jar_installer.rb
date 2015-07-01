@@ -12,3 +12,5 @@ attribute :name,                 :kind_of => String, :default => nil
 attribute :installer_prefix_dir, :kind_of => String, :default => nil
 attribute :installer_path,       :kind_of => String, :default => nil
 attribute :jar_input_sequence,   :kind_of => String, :default => nil
+attribute :dynatrace_owner,      :kind_of => String, :default => 'dynatrace'
+attribute :dynatrace_group,      :kind_of => String, :default => 'dynatrace'

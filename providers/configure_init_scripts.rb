@@ -18,8 +18,8 @@ action :run do
     template "Configure and copy the #{new_resource.name}'s '#{script}' init script" do
       source "init.d/#{script}.erb"
       path   "#{new_resource.installer_prefix_dir}/dynatrace/init.d/#{script}"
-      owner  'dynatrace'
-      group  'dynatrace'
+      owner  new_resource.dynatrace_owner
+      group  new_resource.dynatrace_group
       mode   '0744'
       variables({
         :linux_service_start_runlevels => linux_service_start_runlevels,

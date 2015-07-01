@@ -14,6 +14,8 @@ installer_bitsize = node['dynatrace']['collector']['installer']['bitsize']
 agent_port      = node['dynatrace']['collector']['agent']['port']
 server_hostname = node['dynatrace']['collector']['server']['hostname']
 server_port     = node['dynatrace']['collector']['server']['port']
+dynatrace_owner = node['dynatrace']['owner']
+dynatrace_group = node['dynatrace']['group']
 
 if platform_family?('debian', 'fedora', 'rhel')
   installer_prefix_dir = node['dynatrace']['collector']['linux']['installer']['prefix_dir']
@@ -30,6 +32,8 @@ dynatrace_copy_or_download_installer "#{name}" do
   installer_prefix_dir installer_prefix_dir
   installer_file_name  installer_file_name
   installer_file_url   installer_file_url  
+  dynatrace_owner      dynatrace_owner
+  dynatrace_group      dynatrace_group
 end
 
 ruby_block "#{name}" do
@@ -47,12 +51,16 @@ dynatrace_run_jar_installer "#{name}" do
   installer_prefix_dir installer_prefix_dir
   installer_path       installer_path
   jar_input_sequence   "#{installer_bitsize}\\nY\\nY\\nY"
+  dynatrace_owner      dynatrace_owner
+  dynatrace_group      dynatrace_group
   only_if { node[:dynatrace][:collector][:installation][:is_required] }
 end
 
 dynatrace_configure_init_scripts "#{name}" do
   installer_prefix_dir installer_prefix_dir
   scripts              init_scripts
+  dynatrace_owner      dynatrace_owner
+  dynatrace_group      dynatrace_group
   variables({ :agent_port => agent_port, :server_hostname => server_hostname, :server_port => server_port })
 end
 

@@ -9,6 +9,9 @@ include_recipe 'dynatrace::dynatrace_user'
 
 name = 'Dynatrace WebServer Agent'
 
+dynatrace_owner = node['dynatrace']['owner']
+dynatrace_group = node['dynatrace']['group']
+
 if platform_family?('debian', 'fedora', 'rhel')
   installer_prefix_dir = node['dynatrace']['wsagent_package']['linux']['installer']['prefix_dir']
   installer_file_name  = node['dynatrace']['wsagent_package']['linux']['installer']['file_name']
@@ -24,6 +27,8 @@ dynatrace_copy_or_download_installer "#{name}" do
   installer_prefix_dir installer_prefix_dir
   installer_file_name  installer_file_name
   installer_file_url   installer_file_url  
+  dynatrace_owner      dynatrace_owner
+  dynatrace_group      dynatrace_group
 end
 
 ruby_block "#{name}" do
@@ -40,14 +45,16 @@ end
 dynatrace_run_tar_installer "#{name}" do
   installer_prefix_dir installer_prefix_dir
   installer_path       installer_path
+  dynatrace_owner      dynatrace_owner
+  dynatrace_group      dynatrace_group
   only_if { node[:dynatrace][:wsagent_package][:installation][:is_required] }
 end
 
 template "Configure and copy the #{name}'s 'dtwsagent.ini' file" do
   source 'wsagent_package/dtwsagent.ini.erb'
   path   "#{installer_prefix_dir}/dynatrace/agent/conf/dtwsagent.ini"
-  owner  'dynatrace'
-  group  'dynatrace'
+  owner  dynatrace_owner
+  group  dynatrace_owner
   mode   '0644'
   variables({
     :agent_name => node['dynatrace']['wsagent_package']['agent_name'],
@@ -60,6 +67,8 @@ end
 dynatrace_configure_init_scripts "#{name}" do
   installer_prefix_dir installer_prefix_dir
   scripts              init_scripts
+  dynatrace_owner      dynatrace_owner
+  dynatrace_group      dynatrace_group
 end
 
 dynatrace_start_services "#{name}" do

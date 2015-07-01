@@ -22,6 +22,8 @@ pwh_connection_dbms     = node['dynatrace']['server']['pwh_connection']['dbms']
 pwh_connection_database = node['dynatrace']['server']['pwh_connection']['database']
 pwh_connection_username = node['dynatrace']['server']['pwh_connection']['username']
 pwh_connection_password = node['dynatrace']['server']['pwh_connection']['password']
+dynatrace_owner = node['dynatrace']['owner']
+dynatrace_group = node['dynatrace']['group']
 
 if platform_family?('debian', 'fedora', 'rhel')
   installer_prefix_dir = node['dynatrace']['server']['linux']['installer']['prefix_dir']
@@ -39,6 +41,8 @@ dynatrace_copy_or_download_installer "#{name}" do
   installer_prefix_dir installer_prefix_dir
   installer_file_name  installer_file_name
   installer_file_url   installer_file_url  
+  dynatrace_owner      dynatrace_owner
+  dynatrace_group      dynatrace_group
 end
 
 ruby_block "#{name}" do
@@ -55,12 +59,16 @@ end
 dynatrace_run_jar_installer "#{name}" do
   installer_prefix_dir installer_prefix_dir
   installer_path       installer_path
+  dynatrace_owner      dynatrace_owner
+  dynatrace_group      dynatrace_group
   only_if { node[:dynatrace][:server][:installation][:is_required] }
 end
 
 dynatrace_configure_init_scripts "#{name}" do
   installer_prefix_dir installer_prefix_dir
   scripts              init_scripts
+  dynatrace_owner      dynatrace_owner
+  dynatrace_group      dynatrace_group
   variables({ :collector_port => collector_port })
 end
 
@@ -69,9 +77,11 @@ dynatrace_start_services "#{name}" do
 end
 
 dynatrace_copy_or_download_file "#{name}" do
-  file_name license_file_name
-  file_url  license_file_url
-  path      "#{installer_prefix_dir}/dynatrace/server/conf/dtlicense.key"
+  file_name       license_file_name
+  file_url        license_file_url
+  path            "#{installer_prefix_dir}/dynatrace/server/conf/dtlicense.key"
+  dynatrace_owner dynatrace_owner
+  dynatrace_group dynatrace_group
 end
 
 dynatrace_wait_until_rest_endpoint_is_ready "#{name}" do

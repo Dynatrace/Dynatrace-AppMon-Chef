@@ -9,6 +9,9 @@ include_recipe 'dynatrace::dynatrace_user'
 
 name = 'Dynatrace Agents Package'
 
+dynatrace_owner = node['dynatrace']['owner']
+dynatrace_group = node['dynatrace']['group']
+
 if platform_family?('debian', 'fedora', 'rhel')
   installer_prefix_dir = node['dynatrace']['agents_package']['linux']['installer']['prefix_dir']
   installer_file_name  = node['dynatrace']['agents_package']['linux']['installer']['file_name']
@@ -21,7 +24,9 @@ end
 dynatrace_copy_or_download_installer "#{name}" do
   installer_prefix_dir installer_prefix_dir
   installer_file_name  installer_file_name
-  installer_file_url   installer_file_url  
+  installer_file_url   installer_file_url
+  dynatrace_owner      dynatrace_owner
+  dynatrace_group      dynatrace_group
 end
 
 ruby_block "#{name}" do
