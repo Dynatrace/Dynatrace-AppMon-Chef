@@ -13,7 +13,7 @@ action :run do
     group  new_resource.dynatrace_group
     mode   '0644'
     action :create_if_missing
-    only_if { !run_context.has_cookbook_file_in_cookbook?(cookbook_name, new_resource.file_name) }
+    only_if { !::File.exist?(new_resource.path) }
   end
 
   cookbook_file "Copy file #{new_resource.file_name} to #{new_resource.path}" do
@@ -24,6 +24,6 @@ action :run do
     mode   '0644'
     ignore_failure true
     action :create_if_missing
-    only_if { run_context.has_cookbook_file_in_cookbook?(cookbook_name, new_resource.file_name) }
+    only_if { !::File.exist?(new_resource.path) }
   end
 end

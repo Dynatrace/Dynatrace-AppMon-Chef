@@ -78,7 +78,7 @@ EOH
     end
 
     def self.requires_installation?(installer_prefix_dir, installer_path, component_path_part = '', type=:jar)
-      install_dir = get_install_dir_from_installer(installer_prefix_dir, type)
+      install_dir = get_install_dir_from_installer(installer_path, type)
       path_to_check = "#{installer_prefix_dir}/#{install_dir}/#{component_path_part}"
       return !(Dir.exist?(path_to_check) || File.exist?(path_to_check))
     end
@@ -103,7 +103,7 @@ EOH
                Errno::ENETUNREACH,
                Timeout::Error,
                OpenURI::HTTPError => e
-          return if e.message =~ /^403/
+          return if e.message =~ /^(401|403)/
 
           sleep(1)
           retry
