@@ -13,9 +13,6 @@ name = 'Dynatrace Server'
 
 collector_port    = node['dynatrace']['server']['collector_port']
 
-license_file_name = node['dynatrace']['server']['license']['file_name']
-license_file_url  = node['dynatrace']['server']['license']['file_url']
-
 do_pwh_connection       = node['dynatrace']['server']['do_pwh_connection']
 pwh_connection_hostname = node['dynatrace']['server']['pwh_connection']['hostname']
 pwh_connection_port     = node['dynatrace']['server']['pwh_connection']['port']
@@ -95,15 +92,13 @@ dynatrace_start_services "#{name}" do
   services services
 end
 
-dynatrace_copy_or_download_file "#{name}" do
-  file_name       license_file_name
-  file_url        license_file_url
-  path            "#{installer_prefix_dir}/dynatrace/server/conf/dtlicense.key"
-  dynatrace_owner dynatrace_owner
-  dynatrace_group dynatrace_group
+[2021, 6698, 6699, 8020, 8021].each do | port |
+  dynatrace_wait_until_port_is_open  "Waiting for port #{port}" do
+    port "#{port}"
+  end
 end
 
-dynatrace_wait_until_rest_endpoint_is_ready "#{name}" do
+dynatrace_wait_until_rest_endpoint_is_ready "Waiting for endpoint '/rest/management/pwhconnection/config'" do
   endpoint 'http://localhost:8020/rest/management/pwhconnection/config'
 end
 
@@ -111,6 +106,7 @@ http_request "Establish the #{name}'s Performance Warehouse connection" do
   url 'http://localhost:8020/rest/management/pwhconnection/config'
   headers({ 'Authorization' => "Basic #{Base64.encode64('admin:admin')}", 'Content-Type' => 'application/json' })
   message({ :host => "#{pwh_connection_hostname}", :port => "#{pwh_connection_port}", :dbms => "#{pwh_connection_dbms}", :dbname => "#{pwh_connection_database}", :user => "#{pwh_connection_username}", :password => "#{pwh_connection_password}", :usessl => false, :useurl => false, :url => nil }.to_json)
+  ignore_failure true
   action :put
   only_if { do_pwh_connection }
 end

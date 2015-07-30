@@ -127,8 +127,6 @@ suites:
       dynatrace:
         server:
           do_pwh_connection: true
-          license:
-            file_url: http://10.0.2.2/dynatrace/dynatrace-license.key
           linux:
             installer:
               file_url: http://10.0.2.2/dynatrace/dynatrace.jar
