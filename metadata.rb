@@ -4,7 +4,7 @@ maintainer_email 'martin.etmajer@dynatrace.com'
 license 'MIT'
 description 'Installs Dynatrace Application Monitoring'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version '0.1.3'
+version '0.1.4'
 source_url 'https://github.com/Dynatrace/Dynatrace-Cookbook'
 issues_url 'https://github.com/Dynatrace/Dynatrace-Cookbook/issues'
 

@@ -10,15 +10,6 @@ connection_info = {
 
 postgresql_version = node['postgresql']['version']
 
-=begin
-directory "/etc/postgresql/#{postgresql_version}/main/" do
-  owner 'postgres'
-  group 'postgres'
-  mode '0755'
-  action :create
-end
-=end
-
 postgresql_database 'dynatrace-pwh' do
   connection connection_info
   action :create

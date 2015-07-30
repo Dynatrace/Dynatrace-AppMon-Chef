@@ -74,7 +74,6 @@ describe port(8021) do
   it { should be_listening }
 end
 
-=begin
 describe 'Dynatrace Server Performance Warehouse Configuration' do
   it 'server should should respond with correct configuration' do
     uri = URI('http://localhost:8020/rest/management/pwhconnection/config')
@@ -96,4 +95,3 @@ describe 'Dynatrace Server Performance Warehouse Configuration' do
     expect(data['pwhconnectionconfiguration']['usessl']).to eq(false)
   end
 end
-=end

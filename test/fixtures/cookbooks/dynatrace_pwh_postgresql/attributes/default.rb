@@ -1,14 +1,1 @@
-default['postgresql']['client']['packages']  = ['postgresql-client-9.2']
-default['postgresql']['config']['data_directory'] = '/var/lib/postgresql/9.2/main'
-default['postgresql']['config']['hba_file'] = '/etc/postgresql/9.2/main/pg_hba.conf'
-default['postgresql']['config']['ident_file'] = '/etc/postgresql/9.2/main/pg_ident.conf'
-default['postgresql']['config']['external_pid_file'] = '/var/run/postgresql/9.2-main.pid'
-default['postgresql']['config']['data_directory'] = '/var/lib/postgresql/9.2/main'
-default['postgresql']['config']['ssl_key_file']  = '/etc/ssl/private/ssl-cert-snakeoil.key'
-default['postgresql']['config']['ssl_cert_file'] = '/etc/ssl/certs/ssl-cert-snakeoil.pem'
-default['postgresql']['contrib']['packages'] = ['postgresql-contrib-9.2']
-default['postgresql']['dir'] = '/etc/postgresql/9.2/main'
-default['postgresql']['enable_pgdg_apt'] = true
 default['postgresql']['password']['postgres'] = 'postgres'
-default['postgresql']['server']['packages']  = ['postgresql-9.2']
-default['postgresql']['version'] = '9.2'
