@@ -81,7 +81,7 @@ bundle install
 kitchen test
 ```
 
-**Note:** testing inside Docker containers has been made available in `.kitchen.docker.yml`with [v0.1.4](https://github.com/dynaTrace/Dynatrace-Chef/releases/tag/v0.1.4). However, this is still experimental as testing the availability of ports with Serverspec does not work when running inside Docker (Issue [\#150](https://github.com/portertech/kitchen-docker/issues/150)).
+By default, we run our tests inside [Docker](https://www.docker.com/) containers as this considerably speeds up testing time (see `.kitchen.yml`. Alternatively, you may as well run these tests in virtual machines based on [VirtualBox](https://www.virtualbox.org/) and [Vagrant](https://www.vagrantup.com/) (see `.kitchen.vagrant.yml`).
 
 ## Questions?
 
