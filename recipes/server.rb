@@ -11,7 +11,7 @@ include_recipe 'dynatrace::dynatrace_user'
 
 name = 'Dynatrace Server'
 
-collector_port    = node['dynatrace']['server']['collector_port']
+collector_port = node['dynatrace']['server']['collector_port']
 
 do_pwh_connection       = node['dynatrace']['server']['do_pwh_connection']
 pwh_connection_hostname = node['dynatrace']['server']['pwh_connection']['hostname']
