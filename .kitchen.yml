@@ -101,6 +101,11 @@ suites:
     attributes:
       dynatrace:
         collector:
+          jvm:
+            xms: 256M
+            xmx: 1024M
+            perm_size: 256m
+            max_perm_size: 384m
           linux:
             installer:
               file_url: http://10.0.2.2/dynatrace/dynatrace-collector.jar

@@ -34,6 +34,8 @@ Download the Dynatrace WebServer Agent installer from [downloads.dynatrace.com](
 
 Download the Dynatrace Collector installer from [downloads.dynatrace.com](http://downloads.dynatrace.com) and place the artifact as `dynatrace-collector.jar` in the cookbook's `files` directory. Alternatively, you can make the installer available as an *HTTP* or *FTP* resource and point the Chef Recipe to the right location via the `node['dynatrace']['collector']['linux']['installer']['file_url']` attribute. Please refer to `attributes/collector.rb` for a list of supported attributes. In order to have the Chef Recipe executed, include `recipe[dynatrace::collector]` in a runlist.
 
+**Note:** make sure that attributes related to the Collector's memory configuration are set in accordance to the [Dynatrace Deployment Guide](https://community.dynatrace.com/community/display/DOCDT62/Deployment+Guide).
+
 ### java_agent
 
 *Installs the Dynatrace Agent Java Agent.*
@@ -79,7 +81,7 @@ bundle install
 kitchen test
 ```
 
-**Note**: testing inside Docker containers has been made available in `.kitchen.docker.yml`with [v0.1.4](https://github.com/dynaTrace/Dynatrace-Chef/releases/tag/v0.1.4). However, this is still experimental as testing the availability of ports with Serverspec does not work when running inside Docker (Issue [\#150](https://github.com/portertech/kitchen-docker/issues/150)).
+**Note:** testing inside Docker containers has been made available in `.kitchen.docker.yml`with [v0.1.4](https://github.com/dynaTrace/Dynatrace-Chef/releases/tag/v0.1.4). However, this is still experimental as testing the availability of ports with Serverspec does not work when running inside Docker (Issue [\#150](https://github.com/portertech/kitchen-docker/issues/150)).
 
 ## Questions?
 

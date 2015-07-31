@@ -11,10 +11,15 @@ name = 'Dynatrace Collector'
 
 installer_bitsize = node['dynatrace']['collector']['installer']['bitsize']
 
-agent_port      = node['dynatrace']['collector']['agent']['port']
+agent_port = node['dynatrace']['collector']['agent']['port']
 
 server_hostname = node['dynatrace']['collector']['server']['hostname']
 server_port     = node['dynatrace']['collector']['server']['port']
+
+collector_jvm_xmx           = node['dynatrace']['collector']['jvm']['xmx']
+collector_jvm_xms           = node['dynatrace']['collector']['jvm']['xms']
+collector_jvm_perm_size     = node['dynatrace']['collector']['jvm']['perm_size']
+collector_jvm_max_perm_size = node['dynatrace']['collector']['jvm']['max_perm_size']
 
 dynatrace_owner = node['dynatrace']['owner']
 dynatrace_group = node['dynatrace']['group']
@@ -80,7 +85,7 @@ dynatrace_configure_init_scripts "#{name}" do
   scripts              init_scripts
   dynatrace_owner      dynatrace_owner
   dynatrace_group      dynatrace_group
-  variables({ :agent_port => agent_port, :server_hostname => server_hostname, :server_port => server_port })
+  variables({ :agent_port => agent_port, :server_hostname => server_hostname, :server_port => server_port, :jvm_xmx => collector_jvm_xmx, :jvm_xms => collector_jvm_xms, :jvm_perm_size => collector_jvm_perm_size, :jvm_max_perm_size => collector_jvm_max_perm_size })
 end
 
 dynatrace_start_services "#{name}" do

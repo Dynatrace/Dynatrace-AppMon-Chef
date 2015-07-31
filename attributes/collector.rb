@@ -25,3 +25,15 @@ default['dynatrace']['collector']['server']['hostname'] = 'localhost'
 
 # The port on the Dynatrace Server the Collector shall connect to. Use either 6698 (non-SSL) or 6699 (SSL).
 default['dynatrace']['collector']['server']['port'] = '6698'
+
+# The Dynatrace Collector's JVM setting: -Xms
+default['dynatrace']['collector']['jvm']['xms'] = nil
+
+# The Dynatrace Collector's JVM setting: -Xmx
+default['dynatrace']['collector']['jvm']['xmx'] = nil
+
+# The Dynatrace Collector's JVM setting: -XX:PermSize
+default['dynatrace']['collector']['jvm']['perm_size'] = nil
+
+# The Dynatrace Collector's JVM setting: -XX:MaxPermSize
+default['dynatrace']['collector']['jvm']['max_perm_size'] = nil
