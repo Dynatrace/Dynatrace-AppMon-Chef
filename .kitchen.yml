@@ -8,7 +8,7 @@ driver:
 platforms:
   - name: centos-6.5
     driver_config:
-      image: metmajer/centos:6
+      image: dynatrace/centos:6
     run_list:
       - recipe[java]
     attributes:
@@ -31,7 +31,7 @@ platforms:
 
   - name: debian-7.4
     driver_config:
-      image: metmajer/debian:7.4
+      image: dynatrace/debian:7.4
     run_list:
       - recipe[apt]
       - recipe[java]
@@ -50,7 +50,7 @@ platforms:
 
   - name: ubuntu-12.04
     driver_config:
-      image: metmajer/ubuntu:12.04
+      image: dynatrace/ubuntu:12.04
     run_list:
       - recipe[apt]
       - recipe[java]
