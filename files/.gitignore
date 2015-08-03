@@ -1,4 +1,5 @@
 dynatrace-agents.jar
+dynatrace-analysisserver.jar
 dynatrace-client.jar
 dynatrace-collector.jar
 dynatrace-fixpack.dtp

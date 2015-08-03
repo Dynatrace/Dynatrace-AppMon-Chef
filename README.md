@@ -44,6 +44,12 @@ Download the Dynatrace Agent package from [downloads.dynatrace.com](http://downl
 
 **Note:** this recipe makes the Java Agent available to a Java Virtual Machine by injecting an appropriate [-agentpath](https://community.compuwareapm.com/community/display/DOCDT60/Java+Agent+Configuration) option into an environment variable, e.g. `JAVA_OPTS`, inside a file (typically an executable script). It is assumed that this script either executes the Java process directly or is sourced by another script before the Java process gets executed. You will have to restart the application after placing the agent.
 
+### memory_analysis_server
+
+Download the Dynatrace Memory Analysis Server installer from [downloads.dynatrace.com](http://downloads.dynatrace.com) and place the artifact as `dynatrace-analysisserver.jar` in the cookbook's `files` directory. Alternatively, you can make the installer available as an *HTTP* or *FTP* resource and point the Chef Recipe to the right location via the `node['dynatrace']['memory_analysis_server']['linux']['installer']['file_url']` attribute. Please refer to `attributes/memory_analysis_server.rb` for a list of supported attributes. In order to have the Chef Recipe executed, include `recipe[dynatrace::memory_analysis_server]` in a runlist.
+
+**Note:** make sure that attributes related to the Analysis Server's memory configuration are set in accordance to the [Memory Configuration](https://community.dynatrace.com/community/display/DOCDT62/Memory+Analysis+Server+Configuration#MemoryAnalysisServerConfiguration-MemoryConfiguration) section of the [Memory Analysis Server Configuration](https://community.dynatrace.com/community/display/DOCDT62/Memory+Analysis+Server+Configuration) documentation.
+
 ### server
 
 *Installs the Dynatrace Server.*
