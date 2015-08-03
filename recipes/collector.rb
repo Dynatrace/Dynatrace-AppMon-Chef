@@ -32,7 +32,7 @@ if platform_family?('debian', 'fedora', 'rhel')
   installer_cache_dir = "#{Chef::Config['file_cache_path']}/dynatrace"
   installer_path      = "#{installer_cache_dir}/#{installer_file_name}"
 
-  init_scripts        = services = ['dynaTraceCollector']
+  init_scripts = services = ['dynaTraceCollector']
 else
   # Unsupported
 end
@@ -92,6 +92,6 @@ dynatrace_start_services "#{name}" do
   services services
 end
 
-dynatrace_wait_until_port_is_open "#{name}" do
-  port '9998'
+dynatrace_wait_until_port_is_open "Waiting for port #{agent_port}" do
+  port "#{agent_port}"
 end

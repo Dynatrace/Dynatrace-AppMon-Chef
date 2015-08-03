@@ -92,7 +92,7 @@ dynatrace_start_services "#{name}" do
   services services
 end
 
-[2021, 6698, 6699, 8020, 8021].each do | port |
+[2021, collector_port, 6699, 8020, 8021].each do | port |
   dynatrace_wait_until_port_is_open  "Waiting for port #{port}" do
     port "#{port}"
   end
