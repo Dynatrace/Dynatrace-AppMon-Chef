@@ -36,6 +36,17 @@ describe file ('/etc/init.d/dynaTraceAnalysis') do
   its(:content) { should match /^.*su - dynatrace -c.*$/ }
 end
 
+describe process('java') do
+  it { should be_running }
+  its(:user) { should eq 'dynatrace' }
+  its(:args) { should match /-name dtanalysisserver/ }
+  its(:args) { should match /-Dcom.dynatrace.diagnostics.listen=:7788/ }
+  its(:args) { should match /-Xms256M/ }
+  its(:args) { should match /-Xmx1024M/ }
+  its(:args) { should match /-XX:PermSize=256m/ }
+  its(:args) { should match /-XX:MaxPermSize=384m/ }
+end
+
 describe service('dynaTraceAnalysis') do
   it { should be_enabled }
   it { should be_running }
