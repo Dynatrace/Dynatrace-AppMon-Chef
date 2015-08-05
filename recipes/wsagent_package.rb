@@ -20,7 +20,8 @@ if platform_family?('debian', 'fedora', 'rhel')
   installer_cache_dir = "#{Chef::Config['file_cache_path']}/dynatrace"
   installer_path      = "#{installer_cache_dir}/#{installer_file_name}"
   
-  init_scripts = services = ['dynaTraceWebServerAgent']
+  service = 'dynaTraceWebServerAgent'
+  init_scripts = services = [service]
 else
 # unsupported
 end
@@ -45,11 +46,6 @@ ruby_block "#{name}" do
   end
 end
 
-dynatrace_stop_services "#{name}" do
-  services services
-  only_if { node[:dynatrace][:wsagent_package][:installation][:is_required] }
-end
-
 directory "Create the installation directory #{installer_prefix_dir}" do
   path      installer_prefix_dir
   owner     dynatrace_owner unless ::File.exist?(installer_prefix_dir)
@@ -67,6 +63,14 @@ dynatrace_run_tar_installer "#{name}" do
   only_if { node[:dynatrace][:wsagent_package][:installation][:is_required] }
 end
 
+dynatrace_configure_init_scripts "#{name}" do
+  installer_prefix_dir installer_prefix_dir
+  scripts              init_scripts
+  dynatrace_owner      dynatrace_owner
+  dynatrace_group      dynatrace_group
+  notifies             :restart, "service[#{name}]", :immediately
+end
+
 template "Configure and copy the #{name}'s 'dtwsagent.ini' file" do
   source 'wsagent_package/dtwsagent.ini.erb'
   path   "#{installer_prefix_dir}/dynatrace/agent/conf/dtwsagent.ini"
@@ -78,16 +82,12 @@ template "Configure and copy the #{name}'s 'dtwsagent.ini' file" do
     :collector_hostname => node['dynatrace']['wsagent_package']['collector_hostname'],
     :collector_port => node['dynatrace']['wsagent_package']['collector_port']
   })
-  action :create
+  action   :create
+  notifies :restart, "service[#{name}]", :immediately
 end
 
-dynatrace_configure_init_scripts "#{name}" do
-  installer_prefix_dir installer_prefix_dir
-  scripts              init_scripts
-  dynatrace_owner      dynatrace_owner
-  dynatrace_group      dynatrace_group
-end
-
-dynatrace_start_services "#{name}" do
-  services services
+service "#{name}" do
+  service_name service
+  supports     :status => true
+  action       [:start, :enable]
 end

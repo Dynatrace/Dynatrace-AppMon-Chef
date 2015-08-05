@@ -29,7 +29,8 @@ if platform_family?('debian', 'fedora', 'rhel')
   installer_cache_dir = "#{Chef::Config['file_cache_path']}/dynatrace"
   installer_path      = "#{installer_cache_dir}/#{installer_file_name}"
 
-  init_scripts = services = ['dynaTraceAnalysis']
+  service = 'dynaTraceAnalysis'
+  init_scripts = [service]
 else
   # Unsupported
 end
@@ -52,11 +53,6 @@ ruby_block "#{name}" do
   block do
     node.set[:dynatrace][:memory_analysis_server][:installation][:is_required] = Dynatrace::Helpers.requires_installation?(installer_prefix_dir, installer_path, 'dtanalysisserver', type=:jar)
   end
-end
-
-dynatrace_stop_services "#{name}" do
-  services services
-  only_if { node[:dynatrace][:memory_analysis_server][:installation][:is_required] }
 end
 
 directory "Create the installation directory #{installer_prefix_dir}" do
@@ -83,10 +79,13 @@ dynatrace_configure_init_scripts "#{name}" do
   dynatrace_owner      dynatrace_owner
   dynatrace_group      dynatrace_group
   variables({ :server_port => server_port, :jvm_xmx => memory_analysis_server_jvm_xmx, :jvm_xms => memory_analysis_server_jvm_xms, :jvm_perm_size => memory_analysis_server_jvm_perm_size, :jvm_max_perm_size => memory_analysis_server_jvm_max_perm_size })
+  notifies             :restart, "service[#{name}]", :immediately
 end
 
-dynatrace_start_services "#{name}" do
-  services services
+service "#{name}" do
+  service_name service
+  supports     :status => true
+  action       [:start, :enable]
 end
 
 dynatrace_wait_until_port_is_open "Waiting for port #{server_port}" do

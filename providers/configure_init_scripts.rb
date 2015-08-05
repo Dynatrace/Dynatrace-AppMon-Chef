@@ -5,6 +5,8 @@
 # Copyright 2015, Dynatrace
 #
 
+use_inline_resources
+
 action :run do
   if platform_family?('debian')
     linux_service_start_runlevels = '2 3 4 5'

@@ -32,8 +32,8 @@ if platform_family?('debian', 'fedora', 'rhel')
   installer_cache_dir = "#{Chef::Config['file_cache_path']}/dynatrace"
   installer_path      = "#{installer_cache_dir}/#{installer_file_name}"
 
-  init_scripts = ['dynaTraceBackendServer', 'dynaTraceFrontendServer', 'dynaTraceServer']
-  services     = ['dynaTraceServer']
+  service     = 'dynaTraceServer'
+  init_scripts = ['dynaTraceBackendServer', 'dynaTraceFrontendServer', service]
 else
   # Unsupported
 end
@@ -56,11 +56,6 @@ ruby_block "#{name}" do
   block do
     node.set[:dynatrace][:server][:installation][:is_required] = Dynatrace::Helpers.requires_installation?(installer_prefix_dir, installer_path, 'server', type=:jar)
   end
-end
-
-dynatrace_stop_services "#{name}" do
-  services services
-  only_if { node[:dynatrace][:server][:installation][:is_required] }
 end
 
 directory "Create the installation directory #{installer_prefix_dir}" do
@@ -86,13 +81,16 @@ dynatrace_configure_init_scripts "#{name}" do
   dynatrace_owner      dynatrace_owner
   dynatrace_group      dynatrace_group
   variables({ :collector_port => collector_port })
+  notifies             :restart, "service[#{name}]", :immediately
 end
 
-dynatrace_start_services "#{name}" do
-  services services
+service "#{name}" do
+  service_name service
+  supports     :status => true
+  action       [:start, :enable]
 end
 
-[2021, collector_port, 6699, 8020, 8021].each do | port |
+[collector_port, 2021, 6699, 8020, 8021].each do | port |
   dynatrace_wait_until_port_is_open  "Waiting for port #{port}" do
     port "#{port}"
   end
