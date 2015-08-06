@@ -6,7 +6,7 @@ driver:
   name: docker
 
 platforms:
-  - name: centos-6.5
+  - name: centos-6
     driver_config:
       image: dynatrace/centos-testing:6
     run_list:
@@ -81,10 +81,6 @@ suites:
           linux:
             installer:
               file_url: http://10.0.2.2/dynatrace/dynatrace-wsagent.tar
-    includes:
-      - centos-6.5
-      - debian-7.4
-      - ubuntu-12.04
 
   - name: agents_package
     run_list:
@@ -151,10 +147,6 @@ suites:
           linux:
             installer:
               file_url: http://10.0.2.2/dynatrace/dynatrace.jar
-    includes:
-      - centos-6.5
-      - debian-7.4
-      - ubuntu-12.04
 
   - name: wsagent_package
     run_list:
