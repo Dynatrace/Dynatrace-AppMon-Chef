@@ -74,21 +74,24 @@ describe port(6699) do
   it { should be_listening }
 end
 
-describe port(8020) do
+describe port(8021) do
   it { should be_listening }
 end
 
-describe port(8021) do
+describe port(9911) do
   it { should be_listening }
 end
 
 describe 'Dynatrace Server Performance Warehouse Configuration' do
   it 'server should should respond with correct configuration' do
-    uri = URI('http://localhost:8020/rest/management/pwhconnection/config')
-    http = Net::HTTP.new(uri.host, uri.port)
+    uri = URI('http://localhost:8021/rest/management/pwhconnection/config')
 
-    request = Net::HTTP::Get.new(uri, {'Accept' => 'application/json'})
-    request.basic_auth 'admin', 'admin'
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+    request = Net::HTTP::Get.new(uri, {'Accept' => 'application/json', 'Content-Type' => 'application/json'})
+    request.basic_auth('admin', 'admin')
     response = http.request(request)
 
     expect(response.code).to eq('200')

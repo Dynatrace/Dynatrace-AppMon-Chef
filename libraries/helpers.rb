@@ -96,7 +96,7 @@ EOH
     def self.wait_until_rest_endpoint_is_ready!(timeout, endpoint)
       Timeout.timeout(timeout, DynatraceTimeout) do
         begin
-          open(endpoint)
+          open(endpoint, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE)
         rescue SocketError,
                Errno::ECONNREFUSED,
                Errno::ECONNRESET,

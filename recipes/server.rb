@@ -6,6 +6,7 @@
 #
 
 require 'json'
+require 'net/https'
 
 include_recipe 'dynatrace::dynatrace_user'
 
@@ -90,21 +91,27 @@ service "#{name}" do
   action       [:start, :enable]
 end
 
-[collector_port, 2021, 6699, 8020, 8021].each do | port |
+[collector_port, 2021, 6699, 8021, 9911].each do | port |
   dynatrace_wait_until_port_is_open  "Waiting for port #{port}" do
     port "#{port}"
   end
 end
 
 dynatrace_wait_until_rest_endpoint_is_ready "Waiting for endpoint '/rest/management/pwhconnection/config'" do
-  endpoint 'http://localhost:8020/rest/management/pwhconnection/config'
+  endpoint 'https://localhost:8021/rest/management/pwhconnection/config'
 end
 
-http_request "Establish the #{name}'s Performance Warehouse connection" do
-  url 'http://localhost:8020/rest/management/pwhconnection/config'
-  headers({ 'Authorization' => "Basic #{Base64.encode64('admin:admin')}", 'Content-Type' => 'application/json' })
-  message({ :host => "#{pwh_connection_hostname}", :port => "#{pwh_connection_port}", :dbms => "#{pwh_connection_dbms}", :dbname => "#{pwh_connection_database}", :user => "#{pwh_connection_username}", :password => "#{pwh_connection_password}", :usessl => false, :useurl => false, :url => nil }.to_json)
-  ignore_failure true
-  action :put
-  only_if { do_pwh_connection }
+ruby_block "Establish the #{name}'s Performance Warehouse connection" do
+  block do
+    uri = URI('http://localhost:8021/rest/management/pwhconnection/config')
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+    request = Net::HTTP::Put.new(uri, {'Accept' => 'application/json', 'Content-Type' => 'application/json'})
+    request.basic_auth('admin', 'admin')
+    request.body = { :host => "#{pwh_connection_hostname}", :port => "#{pwh_connection_port}", :dbms => "#{pwh_connection_dbms}", :dbname => "#{pwh_connection_database}", :user => "#{pwh_connection_username}", :password => "#{pwh_connection_password}", :usessl => false, :useurl => false, :url => nil }.to_json
+
+    http.request(request)
+  end
 end
