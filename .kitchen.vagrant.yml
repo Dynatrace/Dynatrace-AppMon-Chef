@@ -66,6 +66,8 @@ platforms:
         contrib:
           packages: ['postgresql-contrib-9.2']
 
+  - name: windows-2012r2
+
 suites:
   - name: apache_wsagent
     run_list:
@@ -80,10 +82,6 @@ suites:
           linux:
             installer:
               file_url: http://10.0.2.2/dynatrace/dynatrace-wsagent.tar
-    includes:
-      - centos-6.5
-      - debian-7.4
-      - ubuntu-12.04
 
   - name: agents_package
     run_list:
@@ -135,10 +133,6 @@ suites:
           linux:
             installer:
               file_url: http://10.0.2.2/dynatrace/dynatrace.jar
-    includes:
-      - centos-6.5
-      - debian-7.4
-      - ubuntu-12.04
 
   - name: wsagent_package
     run_list:
@@ -149,3 +143,6 @@ suites:
           linux:
             installer:
               file_url: http://10.0.2.2/dynatrace/dynatrace-wsagent.tar
+          windows:
+            installer:
+              file_url: http://10.0.2.2/dynatrace/dynatrace-agents.msi

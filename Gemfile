@@ -6,4 +6,5 @@ group :integration do
   gem 'kitchen-vagrant'
   gem 'serverspec'
   gem 'test-kitchen'
+  gem 'winrm-transport'
 end
