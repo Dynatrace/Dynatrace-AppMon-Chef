@@ -16,7 +16,7 @@ Installs the Dynatrace Server. Please refer to the `server` Chef Recipe below.
 
 *Installs the Dynatrace Agents package.*
 
-Download the Dynatrace Agents package from [downloads.dynatrace.com](http://downloads.dynatrace.com) and place the artifact as `dynatrace-agents.jar` in the cookbook's `files` directory. Alternatively, you can make the installer available as an *HTTP* or *FTP* resource and point the Chef Recipe to the right location via the `node['dynatrace']['agents_package']['linux']['installer']['file_url']` attribute. Please refer to `attributes/agents_package.rb` for a list of supported attributes. In order to have the Chef Recipe executed, include `recipe[dynatrace::agents_package]` in a runlist.
+Download the Dynatrace Agents package from [downloads.dynatrace.com](http://downloads.dynatrace.com) and place the artifact as `dynatrace-agents.jar` (Linux) or in `dynatrace-agents.msi` (Windows) in the cookbook's `files` directory. Alternatively, you can make the installer available as an *HTTP* or *FTP* resource and point the Chef Recipe to the right location via the `node['dynatrace']['agents_package'][...]['installer']['file_url']` attribute. Please refer to `attributes/agents_package.rb` for a list of supported attributes. In order to have the Chef Recipe executed, include `recipe[dynatrace::agents_package]` in a runlist.
 
 **Note:** this recipe merely makes the Dynatrace Agents available, but it does not configure your application to actually load any. See the `java_agent` recipe for an example that does.
 

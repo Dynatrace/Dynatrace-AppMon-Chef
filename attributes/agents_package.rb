@@ -13,3 +13,12 @@ default['dynatrace']['agents_package']['linux']['installer']['file_name'] = 'dyn
 
 # A HTTP, HTTPS or FTP URL to the Dynatrace Agents installer in the form (http|https|ftp)://[user[:pass]]@host.domain[:port]/path.
 default['dynatrace']['agents_package']['linux']['installer']['file_url'] = nil
+
+# The Dynatrace Agents package will be installed into this directory.
+default['dynatrace']['agents_package']['windows']['installer']['install_dir'] = 'C:\Program Files (x86)\Dynatrace'
+
+# The file name of the Dynatrace Agents installer in the cookbook's files directory.
+default['dynatrace']['agents_package']['windows']['installer']['file_name'] = 'dynatrace-agents.msi'
+
+# A HTTP, HTTPS or FTP URL to the Dynatrace Agents installer in the form (http|https|ftp)://[user[:pass]]@host.domain[:port]/path.
+default['dynatrace']['agents_package']['windows']['installer']['file_url'] = nil
