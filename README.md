@@ -66,9 +66,9 @@ Place the Dynatrace Server License as `dynatrace-license.key` in the cookbook's 
 
 *Installs the Dynatrace WebServer Agent package.*
 
-Download the Dynatrace WebServer Agent package from [downloads.dynatrace.com](http://downloads.dynatrace.com) and place the artifact as `dynatrace-wsagent.jar` in the cookbook's `files` directory. Alternatively, you can make the installer available as an *HTTP* or *FTP* resource and point the Chef Recipe to the right location via the `node['dynatrace']['wsagent_package']['linux']['installer']['file_url']` attribute. Please refer to `attributes/wsagent_package.rb` for a list of supported attributes. In order to have the Chef Recipe executed, include `recipe[dynatrace::wsagent_package]` in a runlist.
+Download the Dynatrace WebServer Agent package from [downloads.dynatrace.com](http://downloads.dynatrace.com) and place the artifact as `dynatrace-wsagent.jar` (Linux) or as `dynatrace-wsagent.msi` (Windows) in the cookbook's `files` directory. Alternatively, you can make the installer available as an *HTTP* or *FTP* resource and point the Chef Recipe to the right location via the `node['dynatrace']['wsagent_package'][...]['installer']['file_url']` attribute. Please refer to `attributes/wsagent_package.rb` for a list of supported attributes. In order to have the Chef Recipe executed, include `recipe[dynatrace::wsagent_package]` in a runlist.
 
-**Note:** this recipe merely makes the Dynatrace WebServer Agent available, but it does not configure your web server to actually load it. See the `apache_wsagent` recipe for an example that does.
+**Note:** this recipe merely makes the Dynatrace WebServer Agent available, but it does not configure your web server to actually load it. See the `apache_wsagent` and `iis_agent`recipes for examples.
 
 ## Testing
 
@@ -88,6 +88,18 @@ kitchen test
 ```
 
 By default, we run our tests inside [Docker](https://www.docker.com/) containers as this considerably speeds up testing time (see `.kitchen.yml`, requires Ruby 2.2+). Alternatively, you may as well run these tests in virtual machines based on [VirtualBox](https://www.virtualbox.org/) and [Vagrant](https://www.vagrantup.com/) (see `.kitchen.vagrant.yml`).
+
+## Platforms
+
+### Linux
+
+- CentOS 6.5
+- Debian 7.4
+- Ubuntu 12.04
+
+### Windows
+
+- Windows 2012 R2
 
 ## Questions?
 

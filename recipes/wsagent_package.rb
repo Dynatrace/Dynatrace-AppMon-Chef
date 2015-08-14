@@ -6,7 +6,6 @@
 #
 
 require 'json'
-require 'pathname'
 
 name = 'Dynatrace WebServer Agent'
 
