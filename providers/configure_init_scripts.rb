@@ -22,7 +22,7 @@ action :run do
       path   "#{new_resource.installer_prefix_dir}/dynatrace/init.d/#{script}"
       owner  new_resource.dynatrace_owner
       group  new_resource.dynatrace_group
-      mode   '0744'
+      mode   '0755'
       variables({
         :linux_service_start_runlevels => linux_service_start_runlevels,
         :linux_service_stop_runlevels => linux_service_stop_runlevels,
