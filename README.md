@@ -36,6 +36,12 @@ Download the Dynatrace Collector installer from [downloads.dynatrace.com](http:/
 
 **Note:** make sure that attributes related to the Collector's memory configuration are set in accordance to the [Memory Configuration](https://community.dynatrace.com/community/display/DOCDT60/Collector+Configuration#CollectorConfiguration-MemoryConfiguration) section of the [Collector Configuration](https://community.dynatrace.com/community/display/DOCDT60/Collector+Configuration) documentation.
 
+### dotnet_agent
+
+*Installs the Dynatrace .NET Agent.*
+
+Download the Dynatrace Agents package from [downloads.dynatrace.com](http://downloads.dynatrace.com) and place the artifact as `dynatrace-agents.jar` (Linux) or in `dynatrace-agents.msi` (Windows) in the cookbook's `files` directory. Alternatively, you can make the installer available as an *HTTP* or *FTP* resource and point the Chef Recipe to the right location via the `node['dynatrace']['agents_package'][...]['installer']['file_url']` attribute.  Please refer to `attributes/dotnet_agent.rb` and `attributes/agents_package.rb` for a list of supported attributes. In order to have the Chef Recipe executed, include `recipe[dynatrace::dotnet_agent]` in a runlist.
+
 ### iis_wsagent
 
 *Installs the Dynatrace WebServer Agent for the Microsoft IIS Server.*

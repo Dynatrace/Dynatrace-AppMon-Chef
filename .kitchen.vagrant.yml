@@ -82,6 +82,10 @@ suites:
           linux:
             installer:
               file_url: http://10.0.2.2/dynatrace/dynatrace-wsagent.tar
+    includes:
+      - centos-6.5
+      - debian-7.4
+      - ubuntu-12.04
 
   - name: agents_package
     run_list:
@@ -92,6 +96,9 @@ suites:
           linux:
             installer:
               file_url: http://10.0.2.2/dynatrace/dynatrace-agents.jar
+          windows:
+            installer:
+              file_url: http://10.0.2.2/dynatrace/dynatrace-agents.msi
 
   - name: collector
     run_list:
@@ -107,6 +114,24 @@ suites:
           linux:
             installer:
               file_url: http://10.0.2.2/dynatrace/dynatrace-collector.jar
+    includes:
+      - centos-6.5
+      - debian-7.4
+      - ubuntu-12.04
+
+  - name: dotnet_agent
+    run_list:
+      - recipe[dynatrace::dotnet_agent]
+    attributes:
+      dynatrace:
+        agents_package:
+          windows:
+            installer:
+              file_url: http://10.0.2.2/dynatrace/dynatrace-agents.msi
+        dotnet_agent:
+          process_list: [w3wp.exe -ap myApp]
+    includes:
+      - windows-2012r2
 
   - name: java_agent
     run_list:
@@ -121,6 +146,10 @@ suites:
         java_agent:
           env_var:
             file_name: /tmp/environment
+    includes:
+      - centos-6.5
+      - debian-7.4
+      - ubuntu-12.04
 
   - name: server
     run_list:
@@ -133,6 +162,10 @@ suites:
           linux:
             installer:
               file_url: http://10.0.2.2/dynatrace/dynatrace.jar
+    includes:
+      - centos-6.5
+      - debian-7.4
+      - ubuntu-12.04
 
   - name: wsagent_package
     run_list:
