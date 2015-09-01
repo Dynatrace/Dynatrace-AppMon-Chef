@@ -23,17 +23,3 @@ dynatrace_file_append_line "Inject the #{name} into Apache HTTPD's config file" 
   path apache_config_file_path
   line "LoadModule dtagent_module \"#{agent_path}\""
 end
-
-dynatrace_file_replace_line "Patch the Apache HTTPD's init script so that it is started after the #{name}" do
-  path    apache_init_script_path
-  regex   /^(# Required-Start:)(.*?)( dynaTraceWebServeragent)?$/
-  replace "\\1\\2 dynaTraceWebServeragent"
-  only_if { apache_do_patch_init_script }
-end
-
-dynatrace_file_replace_line "Patch the Apache HTTPD's init script so that it is stopped before the #{name}" do
-  path    apache_init_script_path
-  regex   /^(# Required-Stop:)(.*?)( dynaTraceWebServeragent)?$/
-  replace "\\1\\2 dynaTraceWebServeragent"
-  only_if { apache_do_patch_init_script }
-end

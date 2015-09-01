@@ -16,7 +16,7 @@ Installs the Dynatrace Server. Please refer to the `server` Chef Recipe below.
 
 *Installs the Dynatrace Agents package.*
 
-Download the Dynatrace Agents package from [downloads.dynatrace.com](http://downloads.dynatrace.com) and place the artifact as `dynatrace-agents.jar` (Linux) or in `dynatrace-agents.msi` (Windows) in the cookbook's `files` directory. Alternatively, you can make the installer available as an *HTTP* or *FTP* resource and point the Chef Recipe to the right location via the `node['dynatrace']['agents_package'][...]['installer']['file_url']` attribute. Please refer to `attributes/agents_package.rb` for a list of supported attributes. In order to have the Chef Recipe executed, include `recipe[dynatrace::agents_package]` in a runlist.
+Download the Dynatrace Agents package from [downloads.dynatrace.com](http://downloads.dynatrace.com) and place the artifact as `dynatrace-agents.jar` (Linux) or as `dynatrace-agents.msi` (Windows) in the cookbook's `files` directory. Alternatively, you can make the installer available as an *HTTP* or *FTP* resource and point the Chef Recipe to the right location via the `node['dynatrace']['agents_package'][...]['installer']['file_url']` attribute. Please refer to `attributes/agents_package.rb` for a list of supported attributes. In order to have the Chef Recipe executed, include `recipe[dynatrace::agents_package]` in a runlist.
 
 **Note:** this recipe merely makes the Dynatrace Agents available, but it does not configure your application to actually load any. See the `java_agent` recipe for an example that does.
 
@@ -26,7 +26,7 @@ Download the Dynatrace Agents package from [downloads.dynatrace.com](http://down
 
 Download the Dynatrace WebServer Agent installer from [downloads.dynatrace.com](http://downloads.dynatrace.com) and place the artifact as `dynatrace-wsagent.tar` in the cookbook's `files` directory. Alternatively, you can make the installer available as an *HTTP* or *FTP* resource and point the Chef Recipe to the right location via the `node['dynatrace']['wsagent_package']['linux']['installer']['file_url']` attribute. Please refer to `attributes/apache_wsagent.rb` and `attributes/wsagent_package.rb` for a list of supported attributes. In order to have the Chef Recipe executed, include `recipe[dynatrace::apache_wsagent]` in a runlist.
 
-**Note:** you will have to restart the web server after placing the agent. You should also make sure that the Apache HTTP service is started only after the Dynatrace WebServer Agent service to maintain a correct startup order whenever the machine under management gets rebooted. Currently, this can be automated for systems that start the Apache HTTP server via an [LSB init script](http://refspecs.linuxbase.org/LSB_3.0.0/LSB-generic/LSB-generic/iniscrptact.html) in `/etc/init.d` via the `node['dynatrace']['apache_wsagent']['apache']['do_patch_init_script']` and related attributes in `attributes/apache_wsagent.rb`.
+**Note:** you will have to restart the web server after placing the agent.
 
 ### collector
 
