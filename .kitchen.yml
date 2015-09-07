@@ -19,15 +19,6 @@ platforms:
             init_script_path: /etc/init.d/httpd
       java:
         jdk_version: 7
-      postgresql:
-        enable_pgdg_yum: true
-        version: '9.2'
-        client:
-          packages: ['postgresql92-devel']
-        server:
-          packages: ['postgresql92-server']
-        contrib:
-          packages: ['postgresql92-contrib']
 
   - name: debian-7.4
     driver_config:
@@ -38,15 +29,6 @@ platforms:
     attributes:
       java:
         jdk_version: 7
-      postgresql:
-        enable_pgdg_apt: true
-        version: '9.2'
-        server:
-          packages: ['postgresql-9.2']
-        client:
-          packages: ['postgresql-client-9.2', 'libpq-dev']
-        contrib:
-          packages: ['postgresql-contrib-9.2']
 
   - name: ubuntu-12.04
     driver_config:
@@ -57,15 +39,6 @@ platforms:
     attributes:
       java:
         jdk_version: 7
-      postgresql:
-        enable_pgdg_apt: true
-        version: '9.2'
-        server:
-          packages: ['postgresql-9.2']
-        client:
-          packages: ['postgresql-client-9.2', 'libpq-dev']
-        contrib:
-          packages: ['postgresql-contrib-9.2']
 
 suites:
   - name: apache_wsagent
@@ -138,7 +111,6 @@ suites:
 
   - name: server
     run_list:
-      - recipe[dynatrace_pwh_postgresql]
       - recipe[dynatrace::server]
     attributes:
       dynatrace:
