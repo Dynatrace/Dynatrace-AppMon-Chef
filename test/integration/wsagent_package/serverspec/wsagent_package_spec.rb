@@ -46,7 +46,6 @@ if ['debian', 'redhat', 'ubuntu'].include? os[:family]
 
   describe service('dynaTraceWebServerAgent') do
     it { should be_enabled }
-    it { should be_running }
 
     if os[:family] == 'debian' || os[:family] == 'ubuntu'
         it { should be_enabled.with_level(3) }
