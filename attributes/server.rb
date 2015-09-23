@@ -18,7 +18,7 @@ default['dynatrace']['server']['linux']['installer']['file_url'] = nil
 default['dynatrace']['server']['license']['file_name'] = 'dynatrace-license.key'
 
 # A HTTP, HTTPS or FTP URL to the Dynatrace License in the form (http|https|ftp)://[user[:pass]]@host.domain[:port]/path.
-default['dynatrace']['server']['license']['file_url'] = nil
+default['dynatrace']['server']['license']['file_url'] = 'http://downloads.dynatracesaas.com/6.2/dynatrace-linux-x64.jar'
 
 # The port where the Dynatrace Server shall listen for Collectors. Use either 6698 (non-SSL) or 6699 (SSL).
 default['dynatrace']['server']['collector_port'] = '6698'
