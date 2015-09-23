@@ -12,6 +12,8 @@ include_recipe 'dynatrace::dynatrace_user'
 
 name = 'Dynatrace Server'
 
+sizing = node['dynatrace']['server']['sizing']
+
 collector_port = node['dynatrace']['server']['collector_port']
 
 do_pwh_connection       = node['dynatrace']['server']['do_pwh_connection']
@@ -33,7 +35,8 @@ if platform_family?('debian', 'fedora', 'rhel')
   installer_cache_dir = "#{Chef::Config['file_cache_path']}/dynatrace"
   installer_path      = "#{installer_cache_dir}/#{installer_file_name}"
 
-  service     = 'dynaTraceServer'
+  service      = 'dynaTraceServer'
+  ini_files    = ['dtserver.ini', 'dtfrontendserver.ini']
   init_scripts = ['dynaTraceBackendServer', 'dynaTraceFrontendServer', service]
 else
   # Unsupported
@@ -74,6 +77,14 @@ dynatrace_run_jar_installer "#{name}" do
   dynatrace_owner      dynatrace_owner
   dynatrace_group      dynatrace_group
   only_if { node[:dynatrace][:server][:installation][:is_required] }
+end
+
+dynatrace_configure_ini_files "#{name}" do
+  installer_prefix_dir installer_prefix_dir
+  ini_files            ini_files
+  dynatrace_owner      dynatrace_owner
+  dynatrace_group      dynatrace_group
+  variables({ :memory => sizing })
 end
 
 dynatrace_configure_init_scripts "#{name}" do

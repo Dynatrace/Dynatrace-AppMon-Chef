@@ -134,6 +134,7 @@ suites:
           linux:
             installer:
               file_url: http://10.0.2.2/dynatrace/dynatrace.jar
+          sizing: small
     includes:
       - centos-6.5
       - debian-7.4

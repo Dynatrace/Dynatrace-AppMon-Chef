@@ -119,6 +119,7 @@ suites:
           linux:
             installer:
               file_url: http://10.0.2.2/dynatrace/dynatrace.jar
+          sizing: small
 
   - name: wsagent_package
     run_list:

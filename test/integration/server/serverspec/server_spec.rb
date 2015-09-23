@@ -21,6 +21,14 @@ describe file('/opt/dynatrace/server') do
   it { should be_grouped_into 'dynatrace' }
 end
 
+describe file ('/opt/dynatrace/dtserver.ini') do
+  its(:content) { should match /-memory\nsmall/ }
+end
+
+describe file ('/opt/dynatrace/dtfrontendserver.ini') do
+  its(:content) { should match /-memory\nsmall/ }
+end
+
 describe file ('/etc/init.d/dynaTraceServer') do
   it { should be_owned_by 'root' }
   it { should be_grouped_into 'root' }
