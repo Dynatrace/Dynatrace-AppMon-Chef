@@ -8,7 +8,7 @@ version '0.1.7'
 source_url 'https://github.com/Dynatrace/Dynatrace-Cookbook'
 issues_url 'https://github.com/Dynatrace/Dynatrace-Cookbook/issues'
 
-%w( debian ubuntu redhat centos fedora scientific amazon windows smartos oracle ).each do |os|
+%w( debian ubuntu redhat centos fedora amazon windows ).each do |os|
   supports os
 end
 
