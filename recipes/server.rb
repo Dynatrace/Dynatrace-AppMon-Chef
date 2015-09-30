@@ -110,6 +110,7 @@ end
 
 dynatrace_wait_until_rest_endpoint_is_ready "Waiting for endpoint '/rest/management/pwhconnection/config'" do
   endpoint 'https://localhost:8021/rest/management/pwhconnection/config'
+  only_if { do_pwh_connection }
 end
 
 ruby_block "Establish the #{name}'s Performance Warehouse connection" do
@@ -125,4 +126,5 @@ ruby_block "Establish the #{name}'s Performance Warehouse connection" do
 
     http.request(request)
   end
+  only_if { do_pwh_connection }
 end
