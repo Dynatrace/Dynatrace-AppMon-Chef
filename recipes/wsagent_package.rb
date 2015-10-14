@@ -54,7 +54,8 @@ end
 if platform_family?('debian', 'fedora', 'rhel')
   ruby_block "#{name}" do
     block do
-      node.set[:dynatrace][:wsagent_package][:installation][:is_required] = Dynatrace::Helpers.requires_installation?(installer_prefix_dir, installer_path, 'agent', type=:tar)
+      kernel = node['kernel']['machine'].include?('64') ? '64' : ''
+      node.set[:dynatrace][:wsagent_package][:installation][:is_required] = Dynatrace::Helpers.requires_installation?(installer_prefix_dir, installer_path, "agent/lib#{kernel}/dtwsagent", type=:tar)
     end
   end
 
