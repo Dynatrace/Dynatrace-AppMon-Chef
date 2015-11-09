@@ -63,7 +63,7 @@ suites:
         agents_package:
           linux:
             installer:
-              file_url: http://10.0.2.2/dynatrace/dynatrace-agents.jar
+              file_url: http://10.0.2.2/dynatrace/dynatrace-agent.jar
 
   - name: collector
     run_list:
@@ -89,7 +89,7 @@ suites:
         agents_package:
           linux:
             installer:
-              file_url: http://10.0.2.2/dynatrace/dynatrace-agents.jar
+              file_url: http://10.0.2.2/dynatrace/dynatrace-agent.jar
         java_agent:
           env_var:
             file_name: /tmp/environment
