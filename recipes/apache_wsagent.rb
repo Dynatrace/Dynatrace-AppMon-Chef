@@ -19,7 +19,8 @@ else
   # Unsupported
 end
 
-dynatrace_file_append_line "Inject the #{name} into Apache HTTPD's config file" do
-  path apache_config_file_path
-  line "LoadModule dtagent_module \"#{agent_path}\""
+ruby_block "Inject the #{name} into Apache HTTPD's config file" do
+  block do
+    Dynatrace::Helpers.file_append_line(apache_config_file_path, "LoadModule dtagent_module \"#{agent_path}\"")
+  end
 end

@@ -5,6 +5,7 @@
 # Copyright 2015, Dynatrace
 #
 
+require 'fileutils'
 require 'net/http'
 require 'open-uri'
 require 'socket'
@@ -21,6 +22,20 @@ The Dynatrace Server at `#{endpoint}' did not become ready within #{timeout} sec
 Possibly, Dynatrace has failed to start. Please check your Dynatrace Server log files.
 EOH
       end
+    end
+
+    def self.file_append_line(path, line)
+      FileUtils.touch(path) if !::File.exist?(path)
+      file = Chef::Util::FileEdit.new(path)
+      file.insert_line_if_no_match(/#{line}/, line)
+      file.write_file
+    end
+
+    def self.file_replace_line(path, regex, replace)
+      FileUtils.touch(path) if !::File.exist?(path)
+      file = Chef::Util::FileEdit.new(path)
+      file.search_file_replace(/#{regex}/, replace)
+      file.write_file
     end
 
     def self.get_install_dir_from_installer(installer_path, type=:jar)

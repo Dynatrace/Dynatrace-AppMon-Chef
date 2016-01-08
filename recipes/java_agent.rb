@@ -19,7 +19,9 @@ else
   # Unsupported
 end
 
-dynatrace_file_append_line "Inject Dynatrace Java Agent into #{env_var_file_name}" do
-  path env_var_file_name unless env_var_file_name.nil?
-  line "export #{env_var_name}=\"$#{env_var_name} -agentpath:#{agent_path}=name=#{agent_name},collector=#{collector_hostname}:#{collector_port}\""
+ruby_block "Inject Dynatrace Java Agent into #{env_var_file_name}" do
+  block do
+    Dynatrace::Helpers.file_append_line(env_var_file_name, "export #{env_var_name}=\"$#{env_var_name} -agentpath:#{agent_path}=name=#{agent_name},collector=#{collector_hostname}:#{collector_port}\"")
+  end
+  not_if env_var_file_name.nil?
 end
