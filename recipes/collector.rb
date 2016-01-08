@@ -91,6 +91,8 @@ service "#{name}" do
   action       [:start, :enable]
 end
 
-dynatrace_wait_until_port_is_open "Waiting for port #{agent_port}" do
-  port "#{agent_port}"
+ruby_block "Waiting for port #{agent_port} to become available" do
+  block do
+    Dynatrace::Helpers.wait_until_port_is_open(agent_port)
+  end
 end

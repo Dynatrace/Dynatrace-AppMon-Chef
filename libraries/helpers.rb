@@ -83,7 +83,7 @@ EOH
       return !(Dir.exist?(path_to_check) || File.exist?(path_to_check))
     end
 
-    def self.wait_until_port_is_open(timeout, ip, port)
+    def self.wait_until_port_is_open(port, timeout = 120, ip = '127.0.0.1')
       Timeout.timeout(timeout, DynatraceTimeout) do
         while !self.port_is_open?(ip, port) do
           sleep(1)
@@ -93,7 +93,7 @@ EOH
       raise DynatraceNotReady.new("#{ip}:#{port}", timeout)
     end
 
-    def self.wait_until_rest_endpoint_is_ready!(timeout, endpoint)
+    def self.wait_until_rest_endpoint_is_ready!(endpoint, timeout = 120)
       Timeout.timeout(timeout, DynatraceTimeout) do
         begin
           open(endpoint, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE)

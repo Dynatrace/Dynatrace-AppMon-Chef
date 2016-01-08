@@ -103,13 +103,17 @@ service "#{name}" do
 end
 
 [collector_port, 2021, 6699, 8021, 9911].each do | port |
-  dynatrace_wait_until_port_is_open  "Waiting for port #{port}" do
-    port "#{port}"
+  ruby_block "Waiting for port #{port} to become available" do
+    block do
+      Dynatrace::Helpers.wait_until_port_is_open(port)
+    end
   end
 end
 
-dynatrace_wait_until_rest_endpoint_is_ready "Waiting for endpoint '/rest/management/pwhconnection/config'" do
-  endpoint 'https://localhost:8021/rest/management/pwhconnection/config'
+ruby_block "Waiting for endpoint '/rest/management/pwhconnection/config'" do
+  block do
+    Dynatrace::Helpers.wait_until_rest_endpoint_is_ready!('https://localhost:8021/rest/management/pwhconnection/config')
+  end
   only_if { do_pwh_connection }
 end
 
