@@ -2,7 +2,6 @@ dynatrace-agents.jar
 dynatrace-analysisserver.jar
 dynatrace-client.jar
 dynatrace-collector.jar
-dynatrace-fixpack.dtp
 dynatrace-license.key
+dynatrace-server.jar
 dynatrace-wsagent.tar
-dynatrace.jar

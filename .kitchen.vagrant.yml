@@ -54,7 +54,7 @@ suites:
         wsagent_package:
           linux:
             installer:
-              file_url: http://10.0.2.2/dynatrace/dynatrace-wsagent.tar
+              file_url: http://10.0.2.2/dynatrace/6.3/dynatrace-wsagent.tar
     includes:
       - centos-6.5
       - debian-7.4
@@ -68,10 +68,10 @@ suites:
         agents_package:
           linux:
             installer:
-              file_url: http://10.0.2.2/dynatrace/dynatrace-agent.jar
+              file_url: http://10.0.2.2/dynatrace/6.3/dynatrace-agent.jar
           windows:
             installer:
-              file_url: http://10.0.2.2/dynatrace/dynatrace-agents.msi
+              file_url: http://10.0.2.2/dynatrace/6.3/dynatrace-agents.msi
 
   - name: collector
     run_list:
@@ -86,7 +86,7 @@ suites:
             max_perm_size: 384m
           linux:
             installer:
-              file_url: http://10.0.2.2/dynatrace/dynatrace-collector.jar
+              file_url: http://10.0.2.2/dynatrace/6.3/dynatrace-collector.jar
     includes:
       - centos-6.5
       - debian-7.4
@@ -100,7 +100,7 @@ suites:
         agents_package:
           windows:
             installer:
-              file_url: http://10.0.2.2/dynatrace/dynatrace-agents.msi
+              file_url: http://10.0.2.2/dynatrace/6.3/dynatrace-agents.msi
         dotnet_agent:
           process_list: [w3wp.exe -ap myApp]
     includes:
@@ -115,7 +115,7 @@ suites:
         agents_package:
           linux:
             installer:
-              file_url: http://10.0.2.2/dynatrace/dynatrace-agent.jar
+              file_url: http://10.0.2.2/dynatrace/6.3/dynatrace-agent.jar
         java_agent:
           env_var:
             file_name: /tmp/environment
@@ -133,7 +133,7 @@ suites:
           do_pwh_connection: true
           linux:
             installer:
-              file_url: http://10.0.2.2/dynatrace/dynatrace.jar
+              file_url: http://10.0.2.2/dynatrace/6.3/dynatrace-server.jar
           sizing: small
     includes:
       - centos-6.5
@@ -148,7 +148,7 @@ suites:
         wsagent_package:
           linux:
             installer:
-              file_url: http://10.0.2.2/dynatrace/dynatrace-wsagent.tar
+              file_url: http://10.0.2.2/dynatrace/6.3/dynatrace-wsagent.tar
           windows:
             installer:
-              file_url: http://10.0.2.2/dynatrace/dynatrace-agents.msi
+              file_url: http://10.0.2.2/dynatrace/6.3/dynatrace-agents.msi

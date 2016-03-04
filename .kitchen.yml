@@ -8,7 +8,9 @@ driver:
 platforms:
   - name: centos-6
     driver_config:
-      image: dynatrace/centos-testing:6
+      provision_command:
+        - yum update -y
+        - yum install -y net-tools tar
     run_list:
       - recipe[java]
     attributes:
@@ -22,7 +24,9 @@ platforms:
 
   - name: debian-7.8
     driver_config:
-      image: dynatrace/debian-testing:7.8
+      provision_command:
+        - apt-get update
+        - apt-get install -y net-tools tar
     run_list:
       - recipe[apt]
       - recipe[java]
@@ -32,7 +36,9 @@ platforms:
 
   - name: ubuntu-12.04
     driver_config:
-      image: dynatrace/ubuntu-testing:12.04
+      provision_command:
+        - apt-get update
+        - apt-get install -y net-tools tar
     run_list:
       - recipe[apt]
       - recipe[java]
@@ -53,7 +59,7 @@ suites:
         wsagent_package:
           linux:
             installer:
-              file_url: http://10.0.2.2/dynatrace/dynatrace-wsagent.tar
+              file_url: http://10.0.2.2/dynatrace/6.3/dynatrace-wsagent.tar
 
   - name: agents_package
     run_list:
@@ -63,7 +69,7 @@ suites:
         agents_package:
           linux:
             installer:
-              file_url: http://10.0.2.2/dynatrace/dynatrace-agent.jar
+              file_url: http://10.0.2.2/dynatrace/6.3/dynatrace-agent.jar
 
   - name: collector
     run_list:
@@ -78,7 +84,7 @@ suites:
             max_perm_size: 384m
           linux:
             installer:
-              file_url: http://10.0.2.2/dynatrace/dynatrace-collector.jar
+              file_url: http://10.0.2.2/dynatrace/6.3/dynatrace-collector.jar
 
   - name: java_agent
     run_list:
@@ -89,7 +95,7 @@ suites:
         agents_package:
           linux:
             installer:
-              file_url: http://10.0.2.2/dynatrace/dynatrace-agent.jar
+              file_url: http://10.0.2.2/dynatrace/6.3/dynatrace-agent.jar
         java_agent:
           env_var:
             file_name: /tmp/environment
@@ -107,7 +113,7 @@ suites:
             max_perm_size: 384m
           linux:
             installer:
-              file_url: http://10.0.2.2/dynatrace/dynatrace-analysisserver.jar
+              file_url: http://10.0.2.2/dynatrace/6.3/dynatrace-analysisserver.jar
 
   - name: server
     run_list:
@@ -118,7 +124,7 @@ suites:
           do_pwh_connection: true
           linux:
             installer:
-              file_url: http://10.0.2.2/dynatrace/dynatrace.jar
+              file_url: http://10.0.2.2/dynatrace/6.3/dynatrace-server.jar
           sizing: small
 
   - name: wsagent_package
@@ -129,4 +135,4 @@ suites:
         wsagent_package:
           linux:
             installer:
-              file_url: http://10.0.2.2/dynatrace/dynatrace-wsagent.tar
+              file_url: http://10.0.2.2/dynatrace/6.3/dynatrace-wsagent.tar

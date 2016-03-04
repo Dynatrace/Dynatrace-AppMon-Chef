@@ -12,6 +12,8 @@ include_recipe 'dynatrace::dynatrace_user'
 
 name = 'Dynatrace Server'
 
+installer_bitsize = node['dynatrace']['server']['installer']['bitsize']
+
 sizing = node['dynatrace']['server']['sizing']
 
 collector_port = node['dynatrace']['server']['collector_port']
@@ -74,6 +76,7 @@ end
 dynatrace_run_jar_installer "#{name}" do
   installer_path       installer_path
   installer_prefix_dir installer_prefix_dir
+  jar_input_sequence   "#{installer_bitsize}\\nY\\nY\\nY"
   dynatrace_owner      dynatrace_owner
   dynatrace_group      dynatrace_group
   only_if { node[:dynatrace][:server][:installation][:is_required] }

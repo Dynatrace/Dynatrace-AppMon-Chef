@@ -108,7 +108,7 @@ EOH
       raise DynatraceNotReady.new("#{ip}:#{port}", timeout)
     end
 
-    def self.wait_until_rest_endpoint_is_ready!(endpoint, timeout = 120)
+    def self.wait_until_rest_endpoint_is_ready!(endpoint, timeout = 180)
       Timeout.timeout(timeout, DynatraceTimeout) do
         begin
           open(endpoint, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE)

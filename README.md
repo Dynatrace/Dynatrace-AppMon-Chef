@@ -66,7 +66,7 @@ This recipe downloads and installs the most recent version of the Dynatrace Memo
 
 *Installs the Dynatrace Server.*
 
-This recipe downloads and installs the most recent version of the Dynatrace Server from [http://downloads.dynatracesaas.com](http://downloads.dynatracesaas.com). The default download link can be overridden via the `node['dynatrace']['server']['linux']['installer']['file_url']` attribute. Alternatively, you can place the installer artifact as `dynatrace.jar` in the cookbook's `files` directory from where it will be picked up during the installation. Please refer to `attributes/server.rb` for a list of supported attributes. In order to have the Chef Recipe executed, include `recipe[dynatrace::server]` in a runlist and override attributes as required.
+This recipe downloads and installs the most recent version of the Dynatrace Server from [http://downloads.dynatracesaas.com](http://downloads.dynatracesaas.com). The default download link can be overridden via the `node['dynatrace']['server']['linux']['installer']['file_url']` attribute. Alternatively, you can place the installer artifact as `dynatrace-server.jar` in the cookbook's `files` directory from where it will be picked up during the installation. Please refer to `attributes/server.rb` for a list of supported attributes. In order to have the Chef Recipe executed, include `recipe[dynatrace::server]` in a runlist and override attributes as required.
 
 ### server_license
 

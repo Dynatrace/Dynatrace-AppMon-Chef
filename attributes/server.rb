@@ -5,14 +5,17 @@
 # Copyright 2015, Dynatrace
 #
 
+# 32 or 64
+default['dynatrace']['server']['installer']['bitsize'] = '64'
+
 # The Dynatrace Server will be installed into the directory node['dynatrace']['server']['linux']['installer']['prefix_dir']/dynatrace-$major-$minor-$rev, where $major, $minor and $rev are given by the installer. A symbolic link to the actual installation directory will be created in node['dynatrace']['server']['linux']['installer']['prefix_dir']/dynatrace.
 default['dynatrace']['server']['linux']['installer']['prefix_dir'] = '/opt'
 
 # The file name of the Dynatrace installer in the cookbook's files directory.
-default['dynatrace']['server']['linux']['installer']['file_name'] = 'dynatrace.jar'
+default['dynatrace']['server']['linux']['installer']['file_name'] = 'dynatrace-server.jar'
 
 # A HTTP, HTTPS or FTP URL to the Dynatrace installer in the form (http|https|ftp)://[user[:pass]]@host.domain[:port]/path.
-default['dynatrace']['server']['linux']['installer']['file_url'] = 'http://downloads.dynatracesaas.com/6.2/dynatrace-linux-x64.jar'
+default['dynatrace']['server']['linux']['installer']['file_url'] = 'http://downloads.dynatracesaas.com/6.3/dynatrace-server-linux-x86.jar'
 
 # The file name of the Dynatrace License in the cookbook's files directory.
 default['dynatrace']['server']['license']['file_name'] = 'dynatrace-license.key'

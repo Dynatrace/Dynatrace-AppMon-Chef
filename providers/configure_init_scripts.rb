@@ -26,7 +26,8 @@ action :run do
       variables({
         :linux_service_start_runlevels => linux_service_start_runlevels,
         :linux_service_stop_runlevels => linux_service_stop_runlevels,
-        :installer_prefix_dir => new_resource.installer_prefix_dir
+        :installer_prefix_dir => new_resource.installer_prefix_dir,
+        :user => new_resource.dynatrace_owner
       }.merge(new_resource.variables))
       action :create
     end
