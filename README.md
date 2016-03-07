@@ -105,13 +105,14 @@ By default, we run our tests inside [Docker](https://www.docker.com/) containers
 
 ### Linux
 
-- CentOS 6.5
-- Debian 7.4
-- Ubuntu 12.04
+- CentOS
+- Debian
+- Red Hat Enterprise Linux
+- Ubuntu
 
 ### Windows
 
-- Windows 2012 R2
+- Windows 2012
 
 ## Questions?
 
