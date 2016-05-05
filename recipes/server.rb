@@ -8,6 +8,7 @@
 require 'json'
 require 'net/https'
 
+include_recipe 'java'
 include_recipe 'dynatrace::dynatrace_user'
 
 name = 'Dynatrace Server'

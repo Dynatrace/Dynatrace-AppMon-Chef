@@ -12,6 +12,10 @@ issues_url 'https://github.com/Dynatrace/Dynatrace-Chef/issues'
   supports os
 end
 
+depends 'java'
+depends 'apache2'
+
+
 recipe 'dynatrace', 'Installs the Dynatrace Server and Agents package.'
 recipe 'dynatrace:agents_package', 'Installs the Dynatrace Agents package.'
 recipe 'dynatrace:apache_wsagent', 'Installs the Dynatrace WebServer Agent for the Apache HTTP Server.'
