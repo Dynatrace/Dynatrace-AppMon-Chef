@@ -5,6 +5,7 @@
 # Copyright 2015, Dynatrace
 #
 
+include_recipe 'java'
 include_recipe 'dynatrace::dynatrace_user'
 
 name = 'Dynatrace Collector'
