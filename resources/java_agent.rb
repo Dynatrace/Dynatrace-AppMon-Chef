@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: dynatrace
-# Resources:: java_agent
+# Resource:: java_agent
 #
 # Author:: Piotr Ozieblo
 # Copyright:: Copyright 2016, Dynatrace
@@ -8,7 +8,6 @@
 
 actions :inject 
 default_action :inject
-#TODO :remove action
 
 property :agent_name, String, name_property: true
 property :env_var_file_name, String
