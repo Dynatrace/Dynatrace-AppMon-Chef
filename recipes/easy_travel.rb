@@ -80,4 +80,17 @@ if could_be_installed == true then
 	  dynatrace_group      dynatrace_group
 	  only_if { node[:easy_travel][:installation][:is_required] }
 	end
+  
+  ruby_block "Inject Web Server agents into #{name}" do
+    block do 
+      #TODO! does not work yet
+      #Dynatrace::Helpers.file_replace_line("#{installer_prefix_dir}/easytravel/resources/easyTravelConfig.properties", "(config.frontendJavaopts=.*)", "\1 TEST")
+      #Dynatrace::Helpers.file_replace_line("#{installer_prefix_dir}/easytravel/resources/easyTravelConfig.properties", "(config.backendJavaopts=.*)", "\1 TEST")
+    end
+  end
+  
+  execute "Start installed program #{name}" do
+    command "#{installer_prefix_dir}/easytravel/weblauncher/weblauncher.sh&"
+  end
+  
 end

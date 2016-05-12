@@ -52,17 +52,6 @@ action :run do
     to nil
   end
 
-  
-  if new_resource.name == "Easy Travel"
-	  ruby_block "Start installed program #{new_resource.name}" do
-		block do
-		  cmd_to_start = "#{new_resource.installer_prefix_dir}/#{installation_last_path_part}/weblauncher/weblauncher.sh&"
-		  execute "#{cmd_to_start}" do
-			command cmd_to_start
-		  end
-		end
-	  end
-  end
 end
 
 def get_chown_recursively_cmd(dir, owner, group)
