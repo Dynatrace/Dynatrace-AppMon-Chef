@@ -9,6 +9,8 @@ include_recipe 'dynatrace::dynatrace_user'
 
 name = 'Dynatrace Memory Analysis Server'
 
+installer_bitsize = node['dynatrace']['memory_analysis_server']['installer']['bitsize']
+
 server_port = node['dynatrace']['memory_analysis_server']['server']['port']
 
 memory_analysis_server_jvm_xmx           = node['dynatrace']['memory_analysis_server']['jvm']['xmx']
@@ -65,6 +67,7 @@ end
 dynatrace_run_jar_installer "#{name}" do
   installer_path       installer_path
   installer_prefix_dir installer_prefix_dir
+  jar_input_sequence   "#{installer_bitsize}\\nY\\nY\\nY"
   dynatrace_owner      dynatrace_owner
   dynatrace_group      dynatrace_group
   only_if { node[:dynatrace][:memory_analysis_server][:installation][:is_required] }
