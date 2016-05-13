@@ -8,6 +8,7 @@ require 'json'
 require 'net/https'
 include_recipe 'java'
 include_recipe 'dynatrace::dynatrace_user'
+include_recipe "dynatrace::agents_package"
 name = 'Easy Travel'
 
 installer_bitsize = node['easy_travel']['installer']['bitsize']
@@ -81,11 +82,34 @@ if could_be_installed == true then
 	  only_if { node[:easy_travel][:installation][:is_required] }
 	end
   
-  ruby_block "Inject Web Server agents into #{name}" do
+  config_path = "#{installer_prefix_dir}/easytravel/resources/easyTravelConfig.properties"
+  config_path_training = "#{installer_prefix_dir}/easytravel/resources/easyTravelTrainingConfig.properties"
+  
+  #switch to training mode
+  remote_file  'Switch to training mode' do
+    path config_path
+    source "file://#{config_path_training}"
+  end
+  
+  agent_path = node['dynatrace']['java_agent']['linux']['agent_path']
+  
+  dynatrace_java_agent 'backendJavaAgent' do
+    agent_path agent_path
+  end
+
+  dynatrace_java_agent 'frontendJavaAgent' do
+    agent_path agent_path
+  end
+  
+  ruby_block "Inject Java agents into #{name}" do
     block do 
-      #TODO! does not work yet
-      #Dynatrace::Helpers.file_replace_line("#{installer_prefix_dir}/easytravel/resources/easyTravelConfig.properties", "(config.frontendJavaopts=.*)", "\1 TEST")
-      #Dynatrace::Helpers.file_replace_line("#{installer_prefix_dir}/easytravel/resources/easyTravelConfig.properties", "(config.backendJavaopts=.*)", "\1 TEST")
+      commonOpts = node['easy_travel']['common_javaopts']
+      backendAgentOpts = node['dynatrace']['java_agent']['javaopts']['backendJavaAgent'].gsub(/,/, ",,")
+      frontendAgentOpts = node['dynatrace']['java_agent']['javaopts']['frontendJavaAgent'].gsub(/,/, ",,")
+      backendJavaOpts = "#{commonOpts},#{backendAgentOpts}"
+      frontendJavaOpts = "#{commonOpts},#{frontendAgentOpts}"
+      Dynatrace::Helpers.file_replace_line(config_path, "(config.backendJavaopts=.*)", "config.backendJavaopts=#{backendJavaOpts}")
+      Dynatrace::Helpers.file_replace_line(config_path, "(config.frontendJavaopts=.*)", "config.frontendJavaopts=#{frontendJavaOpts}")
     end
   end
   

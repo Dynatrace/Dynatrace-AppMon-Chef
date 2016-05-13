@@ -8,9 +8,6 @@
 # The name of the environment variable to be used for Dynatrace Agent injection.
 default['dynatrace']['java_agent']['env_var']['name'] = 'JAVA_OPTS'
 
-# The name of the file to be modified.
-default['dynatrace']['java_agent']['env_var']['file_name'] = nil
-
 # The name of the Dynatrace Agent as it appears in the Dynatrace Server.
 default['dynatrace']['java_agent']['name'] = 'java-agent'
 
@@ -21,4 +18,5 @@ default['dynatrace']['java_agent']['collector']['hostname'] = 'localhost'
 default['dynatrace']['java_agent']['collector']['port'] = '9998'
 
 # The path to the Dynatrace Agent libary.
-default['dynatrace']['java_agent']['linux']['agent_path'] = '/opt/dynatrace/agent/lib64/libdtagent.so'
+#TODO! 32 or 64 bit?
+default['dynatrace']['java_agent']['linux']['agent_path'] = '/opt/dynatrace/agent/lib/libdtagent.so'

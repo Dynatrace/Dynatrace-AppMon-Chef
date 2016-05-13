@@ -23,3 +23,8 @@ default['easy_travel']['license']['file_name'] = 'dynatrace-license.key'
 # A HTTP, HTTPS or FTP URL to the Dynatrace License in the form (http|https|ftp)://[user[:pass]]@host.domain[:port]/path.
 default['easy_travel']['license']['file_url'] = nil
 
+# Common JVM options for frontend and backend applications
+default['easy_travel']['common_javaopts'] = '-Xmx64m,-DentityExpansionLimit=500000'
+
+
+
