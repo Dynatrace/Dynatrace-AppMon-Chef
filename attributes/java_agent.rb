@@ -18,5 +18,5 @@ default['dynatrace']['java_agent']['collector']['hostname'] = 'localhost'
 default['dynatrace']['java_agent']['collector']['port'] = '9998'
 
 # The path to the Dynatrace Agent libary.
-#TODO! 32 or 64 bit?
-default['dynatrace']['java_agent']['linux']['agent_path'] = '/opt/dynatrace/agent/lib/libdtagent.so'
+default['dynatrace']['java_agent']['linux']['x86']['agent_path'] = '/opt/dynatrace/agent/lib/libdtagent.so'
+default['dynatrace']['java_agent']['linux']['x86_64']['agent_path'] = '/opt/dynatrace/agent/lib/libdtagent.so'

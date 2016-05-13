@@ -89,7 +89,7 @@ if could_be_installed == true then
     source "file://#{config_path_training}"
   end
   
-  agent_path = node['dynatrace']['java_agent']['linux']['agent_path']
+  agent_path = node['dynatrace']['java_agent']['linux']['x86']['agent_path']
   
   dynatrace_java_agent 'backendJavaAgent' do
     agent_path agent_path
