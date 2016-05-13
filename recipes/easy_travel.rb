@@ -8,7 +8,7 @@ require 'json'
 require 'net/https'
 include_recipe 'java'
 include_recipe 'dynatrace::dynatrace_user'
-include_recipe "dynatrace::agents_package"
+include_recipe 'dynatrace::agents_package'
 name = 'Easy Travel'
 
 installer_bitsize = node['easy_travel']['installer']['bitsize']
