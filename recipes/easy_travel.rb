@@ -11,7 +11,6 @@ include_recipe 'dynatrace::dynatrace_user'
 include_recipe 'dynatrace::agents_package'
 name = 'Easy Travel'
 
-installer_bitsize = node['easy_travel']['installer']['bitsize']
 dynatrace_owner = node['dynatrace']['owner']
 dynatrace_group = node['dynatrace']['group']
 
@@ -76,7 +75,6 @@ if could_be_installed == true then
 	dynatrace_run_jar_installer "#{name}" do
 	  installer_path       installer_path
 	  installer_prefix_dir installer_prefix_dir
-	  jar_input_sequence   "#{installer_bitsize}\\nY\\nY\\nY"
 	  dynatrace_owner      dynatrace_owner
 	  dynatrace_group      dynatrace_group
 	  only_if { node[:easy_travel][:installation][:is_required] }
