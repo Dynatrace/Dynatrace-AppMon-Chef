@@ -5,6 +5,9 @@
 # Copyright 2015, Dynatrace
 #
 
+# x86 or x86_64
+default['dynatrace']['java_agent']['arch'] = 'x86_64'
+
 # The name of the environment variable to be used for Dynatrace Agent injection.
 default['dynatrace']['java_agent']['env_var']['name'] = 'JAVA_OPTS'
 
@@ -19,4 +22,4 @@ default['dynatrace']['java_agent']['collector']['port'] = '9998'
 
 # The path to the Dynatrace Agent libary.
 default['dynatrace']['java_agent']['linux']['x86']['agent_path'] = '/opt/dynatrace/agent/lib/libdtagent.so'
-default['dynatrace']['java_agent']['linux']['x86_64']['agent_path'] = '/opt/dynatrace/agent/lib/libdtagent.so'
+default['dynatrace']['java_agent']['linux']['x86_64']['agent_path'] = '/opt/dynatrace/agent/lib64/libdtagent.so'

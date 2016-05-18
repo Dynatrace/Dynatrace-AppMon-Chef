@@ -61,5 +61,5 @@ def get_chown_recursively_cmd(dir, owner, group)
 end
 
 def get_mv_install_dir_cmd(src, dest)
-  return "mv #{src} #{dest}"
+  "rsync -a #{src} #{dest} && rm -rf #{src}"
 end

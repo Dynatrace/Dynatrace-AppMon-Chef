@@ -9,7 +9,8 @@ include_recipe "dynatrace::agents_package"
 
 dynatrace_java_agent node['dynatrace']['java_agent']['name'] do
   if platform_family?('debian', 'fedora', 'rhel')
-    agent_path node['dynatrace']['java_agent']['linux']['x86_64']['agent_path']
+    arch = node['dynatrace']['java_agent']['arch']
+    agent_path node['dynatrace']['java_agent']['linux'][arch]['agent_path']
   else
     # Unsupported
   end

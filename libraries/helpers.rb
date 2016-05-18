@@ -24,10 +24,12 @@ EOH
       end
     end
 
-    def self.file_append_line(path, line)
+    def self.file_append_or_replace_line(path, regex, line)
       FileUtils.touch(path) if !::File.exist?(path)
       file = Chef::Util::FileEdit.new(path)
-      file.insert_line_if_no_match(/#{line}/, line)
+      if not file.insert_line_if_no_match(/#{regex}/, line)
+        file.search_file_replace_line(/#{regex}/, line)
+      end
       file.write_file
     end
 

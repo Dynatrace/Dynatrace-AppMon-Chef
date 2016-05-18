@@ -6,7 +6,8 @@
 #
 
 # 32 or 64
-default['easy_travel']['installer']['bitsize'] = '64'
+#TODO! not used
+default['easy_travel']['installer']['bitsize'] = '32'
 
 # The Easy Travel will be installed into the directory node['easy_travel']['linux']['installer']['prefix_dir']/easytravel-$major-$minor-$rev, where $major, $minor and $rev are given by the installer. A symbolic link to the actual installation directory will be created in node['easy_travel']['linux']['installer']['prefix_dir']/easy_travel.
 default['easy_travel']['linux']['installer']['prefix_dir'] = '/opt/EasyTravel'
@@ -23,8 +24,14 @@ default['easy_travel']['license']['file_name'] = 'dynatrace-license.key'
 # A HTTP, HTTPS or FTP URL to the Dynatrace License in the form (http|https|ftp)://[user[:pass]]@host.domain[:port]/path.
 default['easy_travel']['license']['file_url'] = nil
 
+#TODO! not needed
 # Common JVM options for frontend and backend applications
 default['easy_travel']['common_javaopts'] = '-Xmx64m,-DentityExpansionLimit=500000'
+
+# Do not restart the apache server, we will do it manually - the server is not started as a normal service.
+# Note: when setting an attribute value to nil the overriding mechanism does not work
+override['dynatrace']['apache_wsagent']['linux']['apache_daemon'] = ""
+
 
 
 

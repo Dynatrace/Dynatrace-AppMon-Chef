@@ -15,7 +15,8 @@ action :run do
   end
 	  
   if new_resource.name == "Easy Travel"
-	# for EasyTravel
+	# for EasyTravel 
+  #TODO! easytravel version hardcoded here
 	installation_path_part = "easytravel-2.0.0"
 	installation_last_path_part = "easytravel"
   else
@@ -59,7 +60,7 @@ def get_chown_recursively_cmd(dir, owner, group)
 end
 
 def get_mv_install_dir_cmd(src, dest)
-  return "mv #{src} #{dest}"
+  return "rsync -a #{src} #{dest} && rm -rf #{src}"
 end
 
 def get_rm_install_dir_cmd(dir)
