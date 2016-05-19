@@ -12,7 +12,6 @@ action :run do
     if not new_resource.variables[:memory].nil?
       ruby_block "Add the #{new_resource.name}'s -memory setting into '#{new_resource.installer_prefix_dir}/dynatrace/#{ini_file}'" do
         block do
-        #TODO!
           Dynatrace::Helpers.file_append_or_replace_line("#{new_resource.installer_prefix_dir}/dynatrace/#{ini_file}", "-memory\n.*?\n", "-memory\n#{new_resource.variables[:memory]}")
         end
       end

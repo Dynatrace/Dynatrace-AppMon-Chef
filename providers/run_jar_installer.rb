@@ -14,28 +14,21 @@ action :run do
     cwd  ::File.dirname(new_resource.installer_path)
   end
 	  
-  if new_resource.name == "Easy Travel"
-	# for EasyTravel 
-  #TODO! easytravel version hardcoded here
-	installation_path_part = "easytravel-2.0.0"
-	installation_last_path_part = "easytravel"
-  else
-	# for Dynatrace
-	installation_path_part = Dynatrace::Helpers.get_install_dir_from_installer(new_resource.installer_path, :jar)
-	installation_last_path_part = "dynatrace"
+  if new_resource.target_dir.nil?
+    new_resource.target_dir = Dynatrace::Helpers.get_install_dir_from_installer(new_resource.installer_path, :jar)
   end
   
   ruby_block "Determine the #{new_resource.name}'s installation directory" do
     block do
-	  installation_path = "#{new_resource.installer_prefix_dir}/#{installation_path_part}"
+	  installation_path = "#{new_resource.installer_prefix_dir}/#{new_resource.target_dir}"
 
       res = resources("execute[Move the installation directory to #{new_resource.installer_prefix_dir}]")
-      res.command get_mv_install_dir_cmd(::File.dirname(new_resource.installer_path) << "/#{installation_path_part}", new_resource.installer_prefix_dir)
+      res.command get_mv_install_dir_cmd(::File.dirname(new_resource.installer_path) << "/#{new_resource.target_dir}", new_resource.installer_prefix_dir)
 
       res = resources("execute[Change ownership of the installation directory]")
       res.command get_chown_recursively_cmd(installation_path, new_resource.dynatrace_owner, new_resource.dynatrace_group)
 
-      res = resources("link[Create a symlink of the #{new_resource.name} installation to #{new_resource.installer_prefix_dir}/#{installation_last_path_part}]")
+      res = resources("link[Create a symlink of the #{new_resource.name} installation to #{new_resource.installer_prefix_dir}/#{new_resource.target_symlink}]")
       res.to installation_path
     end
   end
@@ -48,8 +41,8 @@ action :run do
     command nil
   end
 
-  link "Create a symlink of the #{new_resource.name} installation to #{new_resource.installer_prefix_dir}/#{installation_last_path_part}" do
-    target_file "#{new_resource.installer_prefix_dir}/#{installation_last_path_part}"
+  link "Create a symlink of the #{new_resource.name} installation to #{new_resource.installer_prefix_dir}/#{new_resource.target_symlink}" do
+    target_file "#{new_resource.installer_prefix_dir}/#{new_resource.target_symlink}"
     to nil
   end
 

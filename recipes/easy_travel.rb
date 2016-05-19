@@ -6,6 +6,7 @@
 #
 require 'json'
 require 'net/https'
+
 include_recipe 'java'
 include_recipe 'dynatrace::dynatrace_user'
 include_recipe 'dynatrace::agents_package'
@@ -71,20 +72,24 @@ if could_be_installed == true then
 	  action    :create
 	  only_if { node[:easy_travel][:installation][:is_required] }
 	end
+  
+  symlink = 'easytravel'
+  version = node['easy_travel']['linux']['installer']['version']
 
 	#perform installation of Easy Travel
 	dynatrace_run_jar_installer "#{name}" do
 	  installer_path       installer_path
 	  installer_prefix_dir installer_prefix_dir
+    target_dir           "easytravel-#{version}"
+    target_symlink       symlink
 	  jar_input_sequence   "#{installer_bitsize}\\nY\\nY\\nY"
 	  dynatrace_owner      dynatrace_owner
 	  dynatrace_group      dynatrace_group
 	  only_if { node[:easy_travel][:installation][:is_required] }
 	end
   
-  #TODO! version based path
-  config_path = "#{installer_prefix_dir}/easytravel/resources/easyTravelConfig.properties"
-  config_path_training = "#{installer_prefix_dir}/easytravel/resources/easyTravelTrainingConfig.properties"
+  config_path = "#{installer_prefix_dir}/#{symlink}/resources/easyTravelConfig.properties"
+  config_path_training = "#{installer_prefix_dir}/#{symlink}/resources/easyTravelTrainingConfig.properties"
   
   #switch to training mode - we want to inject agents ourselves
   remote_file  'Switch to training mode' do
@@ -93,8 +98,7 @@ if could_be_installed == true then
   end
   
   # Inject Apache WebServer agent
-  #TODO! hardcoded path
-  httpconf_tmp_path = "#{installer_prefix_dir}/easytravel/resources/custom_httpd.conf"
+  httpconf_tmp_path = "#{installer_prefix_dir}/#{symlink}/resources/custom_httpd.conf"
   template httpconf_tmp_path do
     source 'easy_travel/httpd.conf.erb'
     owner  dynatrace_owner
@@ -102,8 +106,7 @@ if could_be_installed == true then
     mode   '0644'
     variables({
       :easy_travel_install_prefix => installer_prefix_dir,
-      #TODO! hardcoded version
-      :version => '2.0.0'})
+      :version => version})
     action :create
   end
   
@@ -114,7 +117,7 @@ if could_be_installed == true then
   ruby_block "Inject Apache Web server agent into #{name}" do
     block do 
       agent_path = node['dynatrace']['apache_wsagent']['agent_path']
-      # Setting agent path is only needed for displaying correct status by weblauncher
+      # Setting agent path here is needed only to display the correct status by web console
       Dynatrace::Helpers.file_append_or_replace_line(config_path, "config.apacheWebServerAgent=", "config.apacheWebServerAgent=#{agent_path}")
       Dynatrace::Helpers.file_append_or_replace_line(config_path, "config.apacheWebServerUsesGeneratedHttpdConfig=", "config.apacheWebServerUsesGeneratedHttpdConfig=false")
       Dynatrace::Helpers.file_append_or_replace_line(config_path, "config.apacheWebServerHttpdConfig=", "config.apacheWebServerHttpdConfig=#{httpconf_tmp_path}")
@@ -131,21 +134,40 @@ if could_be_installed == true then
   dynatrace_java_agent 'frontendJavaAgent' do
     agent_path agent_path
   end
-  
+
   ruby_block "Inject Java agents into #{name}" do
     block do 
-      commonOpts = node['easy_travel']['common_javaopts']
+      backendOptsKey = 'config\.backendJavaopts='
+      frontendOptsKey = 'config\.frontendJavaopts='
+      defaultOptsBackend = ''
+      defaultOptsFrontend = ''
+      # Read the default javaopts from the template config file
+      File.new(config_path_training).each_line do |line|
+        if defaultOptsBackend.empty?
+          m = /#{backendOptsKey}\S*/.match(line)
+          defaultOptsBackend = m[0] if m
+        end
+        if defaultOptsFrontend.empty?
+          m = /#{frontendOptsKey}\S*/.match(line)
+          defaultOptsFrontend = m[0] if m
+        end
+        if !defaultOptsBackend.empty? && !defaultOptsFrontend.empty?
+          break
+        end
+      end
+      # Comma character requires escaping
       backendAgentOpts = node['dynatrace']['java_agent']['javaopts']['backendJavaAgent'].gsub(/,/, ",,")
       frontendAgentOpts = node['dynatrace']['java_agent']['javaopts']['frontendJavaAgent'].gsub(/,/, ",,")
-      backendJavaOpts = "#{commonOpts},#{backendAgentOpts}"
-      frontendJavaOpts = "#{commonOpts},#{frontendAgentOpts}"
-      Dynatrace::Helpers.file_replace_line(config_path, "config.backendJavaopts=", "config.backendJavaopts=#{backendJavaOpts}")
-      Dynatrace::Helpers.file_replace_line(config_path, "config.frontendJavaopts=", "config.frontendJavaopts=#{frontendJavaOpts}")
+      # Append Java agent related options to javaopts
+      backendJavaOpts = "#{defaultOptsBackend},#{backendAgentOpts}"
+      frontendJavaOpts = "#{defaultOptsFrontend},#{frontendAgentOpts}"
+      Dynatrace::Helpers.file_replace_line(config_path, backendOptsKey, "#{backendJavaOpts}")
+      Dynatrace::Helpers.file_replace_line(config_path, frontendOptsKey, "#{frontendJavaOpts}")
     end
   end
   
   execute "Start installed program #{name}" do
-    command "#{installer_prefix_dir}/easytravel/weblauncher/weblauncher.sh&"
+    command "#{installer_prefix_dir}/#{symlink}/weblauncher/weblauncher.sh&"
   end
-  
+
 end
