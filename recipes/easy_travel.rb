@@ -62,6 +62,9 @@ if could_be_installed == true then
 		node.set[:easy_travel][:installation][:is_required] = Dynatrace::Helpers.requires_installation?(installer_prefix_dir, installer_path, '', type=:jar)
 	  end
 	end
+  
+  # See http://stackoverflow.com/questions/8328250/centos-64-bit-bad-elf-interpreter
+  package 'glibc.i686'
 
 	#creating installation directory
 	directory "Create the installation directory #{installer_prefix_dir}" do
