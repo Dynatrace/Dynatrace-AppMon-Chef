@@ -9,7 +9,7 @@
 default['easy_travel']['installer']['bitsize'] = '32'
 
 # The Easy Travel will be installed into the directory node['easy_travel']['linux']['installer']['prefix_dir']/easytravel-$major-$minor-$rev, where $major, $minor and $rev are given by the installer. A symbolic link to the actual installation directory will be created in node['easy_travel']['linux']['installer']['prefix_dir']/easy_travel.
-default['easy_travel']['linux']['installer']['prefix_dir'] = '/opt/easytravel'
+default['easy_travel']['linux']['installer']['prefix_dir'] = '/opt'
 
 # The version
 default['easy_travel']['linux']['installer']['version'] = '2.0.0'
