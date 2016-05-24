@@ -63,8 +63,10 @@ if could_be_installed == true then
 	  end
 	end
   
-  # See http://stackoverflow.com/questions/8328250/centos-64-bit-bad-elf-interpreter
-  package 'glibc.i686'
+	# See http://stackoverflow.com/questions/8328250/centos-64-bit-bad-elf-interpreter
+	package 'glibc.i686' do
+		action :install
+	end
 
 	#creating installation directory
 	directory "Create the installation directory #{installer_prefix_dir}" do

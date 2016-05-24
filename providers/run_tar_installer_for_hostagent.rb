@@ -34,13 +34,21 @@ action :run do
 	end
   end
 
-  execute "execute: chkconfig add dynaTraceHostagent" do
-    command "chkconfig --add /etc/init.d/dynaTraceHostagent"
+#  execute "execute: chkconfig add dynaTraceHostagent" do
+#    command "chkconfig --add /etc/init.d/dynaTraceHostagent"
+#  end
+
+  service 'dynaTraceHostagent' do
+    supports :status => true, :restart => true, :reload => true
+    action [ :enable, :start ]
   end
 
+  #manualy start service (I wasn't able start it different way)
   execute "start dynaTraceHostagent" do
     command "/etc/init.d/dynaTraceHostagent start"
   end
+    
+ 
 end
 
 def get_chown_recursively_cmd(dir, owner, group)
