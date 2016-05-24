@@ -26,8 +26,10 @@ if platform_family?('debian', 'fedora', 'rhel')
 
   installer_cache_dir = "#{Chef::Config['file_cache_path']}/easy_travel"
   installer_path      = "#{installer_cache_dir}/#{installer_file_name}"
+  symlink = node['easy_travel']['linux']['installer']['link']
 
-  dir2delete = installer_prefix_dir + "/easytravel"
+  
+  dir2delete = installer_prefix_dir + '/' + symlink
   log 'Test if destination directory: ' + dir2delete + ' is empty.'
   if Dir.exist?(dir2delete) && !(Dir.entries(dir2delete) - %w{ . .. }).empty? 
     # cannot install Easy Travel because of destination directory already exists
@@ -78,7 +80,6 @@ if could_be_installed == true then
 	  only_if { node[:easy_travel][:installation][:is_required] }
 	end
   
-  symlink = 'easytravel'
   version = node['easy_travel']['linux']['installer']['version']
 
 	#perform installation of Easy Travel
