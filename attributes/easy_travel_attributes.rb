@@ -26,6 +26,9 @@ default['easy_travel']['license']['file_name'] = 'dynatrace-license.key'
 # A HTTP, HTTPS or FTP URL to the Dynatrace License in the form (http|https|ftp)://[user[:pass]]@host.domain[:port]/path.
 default['easy_travel']['license']['file_url'] = nil
 
+# The process pattern to search when the app needs to be stopped
+default['easy_travel']['proc_pattern'] = 'java.*com.dynatrace.easytravel.weblauncher.jar'
+
 # Do not restart the apache server. We will do it manually - in Easy Travel app the server is not started as a normal service.
 # Note: when setting an attribute value to nil the overriding mechanism does not work so we use empty value instead.
 override['dynatrace']['apache_wsagent']['linux']['apache_daemon'] = ""

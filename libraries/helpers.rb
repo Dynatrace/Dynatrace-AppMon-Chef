@@ -13,7 +13,7 @@ require 'timeout'
 
 module Dynatrace
   module Helpers
-	class DynatraceTimeout < Timeout::Error; end
+    class DynatraceTimeout < Timeout::Error; end
 
     class DynatraceNotReady < StandardError
       def initialize(endpoint, timeout)
@@ -96,7 +96,9 @@ EOH
 
     def self.requires_installation?(installer_prefix_dir, installer_path, component_path_part = '', type=:jar)
       install_dir = get_install_dir_from_installer(installer_path, type)
+      #puts "install_dir is #{install_dir}"
       path_to_check = "#{installer_prefix_dir}/#{install_dir}/#{component_path_part}"
+      #puts "path_to_check is #{path_to_check}"
       return !(Dir.exist?(path_to_check) || File.exist?(path_to_check))
     end
 
@@ -128,6 +130,47 @@ EOH
       end
     rescue DynatraceTimeout
       raise DynatraceNotReady.new(endpoint, timeout)
+    end
+    
+    def self.stop_processes(proc_pattern, platform_family, timeout = 15)
+      pids = self.find_pids(proc_pattern, platform_family)        
+      killed = false
+      if pids.size > 0
+        Process.kill 'TERM', *pids
+        begin
+          Timeout.timeout(timeout, DynatraceTimeout) do
+            while (true)
+              pids = self.find_pids(proc_pattern, platform_family)
+              if pids.size == 0
+                #puts("Process(es) #{pids} terminated")
+                killed = true
+                break
+              end
+              #puts("Waiting for process(es) #{pids} to finish")
+              sleep 1
+            end            
+          end
+        rescue DynatraceTimeout
+          raise "Process(es) #{pids} did not stop"
+        end
+      end
+      return killed      
+    end
+    
+    private
+    def self.find_pids(pattern, platform_family)
+      if ['debian', 'fedora', 'rhel'].include? platform_family
+        pids = []
+        search_processes_cmd = "pgrep -f \"#{pattern}\""
+        %x[#{search_processes_cmd}].each_line do |pidStr|
+        if !pidStr.empty?
+          pids << pidStr.to_i
+        end
+        return pids
+      end
+      else
+          raise "Unsupported platform"
+      end
     end
   end
 end

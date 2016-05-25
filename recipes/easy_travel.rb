@@ -13,28 +13,22 @@ include_recipe 'dynatrace::agents_package'
 name = 'Easy Travel'
 
 installer_bitsize = node['easy_travel']['installer']['bitsize']
-dynatrace_owner = node['dynatrace']['owner']
-dynatrace_group = node['dynatrace']['group']
+dynatrace_owner = node['current_user']# node['dynatrace']['owner']
+dynatrace_group = node['current_user']# node['dynatrace']['group']
 
 # assume that we can install Easy Travel, it will be verified now
 could_be_installed = true
 
 if platform_family?('debian', 'fedora', 'rhel')
+   # See http://stackoverflow.com/questions/8328250/centos-64-bit-bad-elf-interpreter
+  package 'glibc.i686'
+
   installer_prefix_dir = node['easy_travel']['linux']['installer']['prefix_dir']
   installer_file_name  = node['easy_travel']['linux']['installer']['file_name']
   installer_file_url   = node['easy_travel']['linux']['installer']['file_url']
 
   installer_cache_dir = "#{Chef::Config['file_cache_path']}/easy_travel"
   installer_path      = "#{installer_cache_dir}/#{installer_file_name}"
-
-  dir2delete = installer_prefix_dir + "/easytravel"
-  log 'Test if destination directory: ' + dir2delete + ' is empty.'
-  if Dir.exist?(dir2delete) && !(Dir.entries(dir2delete) - %w{ . .. }).empty? 
-    # cannot install Easy Travel because of destination directory already exists
-	log 'Destination directory:' + dir2delete + ' exists and is NOT empty. Easy Travel will not be installed. Run easy_travel_uninstall recipe first. Be careful - you will lost your configuration.'
-	could_be_installed = false
-  end
-  
 else
 	# Unsupported platform
 	could_be_installed = false
@@ -62,9 +56,6 @@ if could_be_installed == true then
 		node.set[:easy_travel][:installation][:is_required] = Dynatrace::Helpers.requires_installation?(installer_prefix_dir, installer_path, '', type=:jar)
 	  end
 	end
-  
-  # See http://stackoverflow.com/questions/8328250/centos-64-bit-bad-elf-interpreter
-  package 'glibc.i686'
 
 	#creating installation directory
 	directory "Create the installation directory #{installer_prefix_dir}" do
@@ -166,6 +157,12 @@ if could_be_installed == true then
       frontendJavaOpts = "#{defaultOptsFrontend},#{frontendAgentOpts}"
       Dynatrace::Helpers.file_replace_line(config_path, backendOptsKey, "#{backendJavaOpts}")
       Dynatrace::Helpers.file_replace_line(config_path, frontendOptsKey, "#{frontendJavaOpts}")
+    end
+  end
+  
+  ruby_block "Stop any running instance of #{name}" do
+    block do
+      Dynatrace::Helpers.stop_processes(node['easy_travel']['proc_pattern'], node['platform_family'])
     end
   end
   

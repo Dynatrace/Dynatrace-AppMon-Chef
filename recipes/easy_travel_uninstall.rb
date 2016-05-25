@@ -13,16 +13,11 @@ name = 'Easy Travel'
 
 if platform_family?('debian', 'fedora', 'rhel')
 
-	# kill EasyTravel processes
-	log 'EasyTravel processes will be killed'
-	%x[ps -ax|grep easytravel].each_line do |proc, i|
-		next if i == 0
-		pid = proc.split[0].to_i
-		#cmd = proc.split[4]
-		#log 'process to kill pid: ' + pid.to_s + '  cmd: ' + cmd.to_s
-		cmd2exec = "kill -9 #{pid}"
-		%x[ #{cmd2exec} ]
-	end
+  ruby_block "Stop any running instance of #{name}" do
+    block do
+      Dynatrace::Helpers.stop_processes(node['easy_travel']['proc_pattern'], node['platform_family'])
+    end
+  end
 
 	installer_prefix_dir = node['easy_travel']['linux']['installer']['prefix_dir']
 	installer_file_name  = node['easy_travel']['linux']['installer']['file_name']
