@@ -5,7 +5,8 @@
 # Copyright 2016, Dynatrace
 #
 name = 'Host Agent'
-															#for AWS it can be:
+
+														#for AWS it can be:
 node_platform = node['platform']							#	"amazon"
 node_platform_version = node['platform_version']			#	"2016.03"
 node_os = node['os']										#	"linux"
@@ -19,7 +20,7 @@ could_be_installed = false
 tar_file = node['dynatrace']['host_agent']['installer']['file_name']
 if platform_family?('rhel') and node_kernel_machine == 'x86_64'
 	tar_file += "linux-x86-"
-	
+
 	if node['host_agent']['installer']['bitsize'] == '64'
 		#the only platform for which we are able to test this recipe
 		could_be_installed = true
@@ -91,6 +92,11 @@ if could_be_installed
 end
 
 if could_be_installed
+
+	execute "Update system" do
+		command "yum update -y"
+	end
+
 	log 'Initializing directories'
 	#creating tmp installer directory
 	directory "Create temporrary installer cache directory: #{installer_cache_dir}" do

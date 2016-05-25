@@ -21,7 +21,9 @@ could_be_installed = true
 
 if platform_family?('debian', 'fedora', 'rhel')
    # See http://stackoverflow.com/questions/8328250/centos-64-bit-bad-elf-interpreter
-  package 'glibc.i686'
+  package 'glibc.i686' do
+		action :install
+	end
 
   installer_prefix_dir = node['easy_travel']['linux']['installer']['prefix_dir']
   installer_file_name  = node['easy_travel']['linux']['installer']['file_name']
@@ -29,6 +31,7 @@ if platform_family?('debian', 'fedora', 'rhel')
 
   installer_cache_dir = "#{Chef::Config['file_cache_path']}/easy_travel"
   installer_path      = "#{installer_cache_dir}/#{installer_file_name}"
+  symlink = node['easy_travel']['linux']['installer']['link']
 else
 	# Unsupported platform
 	could_be_installed = false
@@ -67,7 +70,6 @@ if could_be_installed == true then
 	  only_if { node[:easy_travel][:installation][:is_required] }
 	end
   
-  symlink = 'easytravel'
   version = node['easy_travel']['linux']['installer']['version']
 
 	#perform installation of Easy Travel
