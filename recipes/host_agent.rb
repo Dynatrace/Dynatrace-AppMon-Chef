@@ -4,6 +4,9 @@
 #
 # Copyright 2016, Dynatrace
 #
+
+include_recipe 'dynatrace::upgrade_system'
+
 name = 'Host Agent'
 
 														#for AWS it can be:
@@ -92,10 +95,6 @@ if could_be_installed
 end
 
 if could_be_installed
-
-	execute "Update system" do
-		command "yum update -y"
-	end
 
 	log 'Initializing directories'
 	#creating tmp installer directory
