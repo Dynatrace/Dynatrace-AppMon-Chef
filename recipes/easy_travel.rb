@@ -174,6 +174,18 @@ if platform_family?('debian', 'fedora', 'rhel')
     end
   end
   
+  autostartScenarioGroup = node['easy_travel']['autostartScenarioGroup']
+  autostartScenario = node['easy_travel']['autostartScenario']
+  
+  if not autostartScenario.nil? and not autostartScenarioGroup.nil?
+    ruby_block "Setting autostart scenario to #{autostartScenarioGroup}:#{autostartScenario}" do
+      block do
+        Dynatrace::Helpers.file_replace_line(config_path, 'config\.autostartGroup=', "config.autostartGroup=#{autostartScenarioGroup}")
+        Dynatrace::Helpers.file_replace_line(config_path, 'config\.autostart=', "config.autostart=#{autostartScenario}")
+      end
+    end
+  end
+  
   ruby_block "Stop any running instance of #{name}" do
     block do
       Dynatrace::Helpers.stop_processes(node['easy_travel']['proc_pattern'], node['platform_family'], 30)

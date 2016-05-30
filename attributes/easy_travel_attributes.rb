@@ -40,6 +40,10 @@ default['easy_travel']['group'] = 'easytravel'
 # Note: when setting an attribute value to nil the overriding mechanism does not work so we use empty value instead.
 override['dynatrace']['apache_wsagent']['linux']['apache_daemon'] = ""
 
+# The default group and scenario to start after launching the app e.g. 'Standard' scenario in 'UEM' group
+default['easy_travel']['autostartScenarioGroup'] = 'UEM'
+default['easy_travel']['autostartScenario'] = 'Standard'
+
 
 
 
