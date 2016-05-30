@@ -32,6 +32,10 @@ default['easy_travel']['license']['file_url'] = nil
 # The process pattern to search when the app needs to be stopped
 default['easy_travel']['proc_pattern'] = 'java.*com.dynatrace.easytravel.weblauncher.jar'
 
+# User owning the app. It will be created if it does not exist yet.
+default['easy_travel']['owner'] = 'easytravel'
+default['easy_travel']['group'] = 'easytravel'
+
 # Do not restart the apache server. We will do it manually - in Easy Travel app the server is not started as a normal service.
 # Note: when setting an attribute value to nil the overriding mechanism does not work so we use empty value instead.
 override['dynatrace']['apache_wsagent']['linux']['apache_daemon'] = ""

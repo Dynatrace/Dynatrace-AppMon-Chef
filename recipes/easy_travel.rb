@@ -12,19 +12,13 @@ include_recipe 'dynatrace::dynatrace_user'
 include_recipe 'dynatrace::agents_package'
 name = 'Easy Travel'
 
-installer_bitsize = node['easy_travel']['installer']['bitsize']
-dynatrace_owner = node['current_user']# node['dynatrace']['owner']
-dynatrace_group = node['current_user']# node['dynatrace']['group']
-
-# assume that we can install Easy Travel, it will be verified now
-could_be_installed = true
-
 if platform_family?('debian', 'fedora', 'rhel')
    # See http://stackoverflow.com/questions/8328250/centos-64-bit-bad-elf-interpreter
   package 'glibc.i686' do
 		action :install
 	end
 
+  installer_bitsize = node['easy_travel']['installer']['bitsize']
   installer_prefix_dir = node['easy_travel']['linux']['installer']['prefix_dir']
   installer_file_name  = node['easy_travel']['linux']['installer']['file_name']
   installer_file_url   = node['easy_travel']['linux']['installer']['file_url']
@@ -32,13 +26,27 @@ if platform_family?('debian', 'fedora', 'rhel')
   installer_cache_dir = "#{Chef::Config['file_cache_path']}/easy_travel"
   installer_path      = "#{installer_cache_dir}/#{installer_file_name}"
   symlink = node['easy_travel']['linux']['installer']['link']
-else
-	# Unsupported platform
-	could_be_installed = false
-	log 'Unsuppored platform. Only Red Hat Enterprise Linux, Debian and Fedora are supported. Easy Travel will not be installed.'
-end
 
-if could_be_installed == true then
+  easytravel_owner = node['easy_travel']['owner']
+  easytravel_group = node['easy_travel']['group']
+
+  user "Create user '#{easytravel_owner}'" do
+    username   easytravel_owner
+    supports :manage_home=>true
+    action   :create
+  end
+
+  group "Create group '#{easytravel_group}'" do
+    group_name easytravel_group
+    members    [ easytravel_owner]
+  end
+  
+  # Collect info after adding the new user. We will need info about home directory of the new user
+  ohai 'Reload information about users' do
+    action :reload
+    plugin 'etc'
+  end
+  
 	#creating tmp installer directory
 	directory "Create the installer cache directory: #{installer_cache_dir}" do
 	  path   installer_cache_dir
@@ -50,8 +58,8 @@ if could_be_installed == true then
 	  file_name       installer_file_name
 	  file_url        installer_file_url  
 	  path            installer_path
-	  dynatrace_owner dynatrace_owner
-	  dynatrace_group dynatrace_group
+    dynatrace_owner easytravel_owner
+	  dynatrace_group easytravel_group
 	end
 
 	ruby_block "#{name}" do
@@ -63,8 +71,8 @@ if could_be_installed == true then
 	#creating installation directory
 	directory "Create the installation directory #{installer_prefix_dir}" do
 	  path      installer_prefix_dir
-	  owner     dynatrace_owner unless ::File.exist?(installer_prefix_dir)
-	  group     dynatrace_group unless ::File.exist?(installer_prefix_dir)
+	  owner     easytravel_owner unless ::File.exist?(installer_prefix_dir)
+	  group     easytravel_group unless ::File.exist?(installer_prefix_dir)
 	  recursive true
 	  action    :create
 	  only_if { node[:easy_travel][:installation][:is_required] }
@@ -79,8 +87,8 @@ if could_be_installed == true then
     target_dir           "easytravel-#{version}"
     target_symlink       symlink
 	  jar_input_sequence   "#{installer_bitsize}\\nY\\nY\\nY"
-	  dynatrace_owner      dynatrace_owner
-	  dynatrace_group      dynatrace_group
+    dynatrace_owner      easytravel_owner
+	  dynatrace_group      easytravel_group
 	  only_if { node[:easy_travel][:installation][:is_required] }
 	end
   
@@ -97,12 +105,16 @@ if could_be_installed == true then
   httpconf_tmp_path = "#{installer_prefix_dir}/#{symlink}/resources/custom_httpd.conf"
   template httpconf_tmp_path do
     source 'easy_travel/httpd.conf.erb'
-    owner  dynatrace_owner
-    group  dynatrace_owner
+    owner  easytravel_owner
+    group  easytravel_group
     mode   '0644'
-    variables({
-      :easy_travel_install_prefix => installer_prefix_dir,
-      :version => version})
+    variables(lazy {
+      {
+        :easy_travel_install_prefix => installer_prefix_dir,
+        :version => version,
+        :home_dir => node['etc']['passwd'][easytravel_owner]['dir']
+      }
+    })
     action :create
   end
   
@@ -164,12 +176,17 @@ if could_be_installed == true then
   
   ruby_block "Stop any running instance of #{name}" do
     block do
-      Dynatrace::Helpers.stop_processes(node['easy_travel']['proc_pattern'], node['platform_family'])
+      Dynatrace::Helpers.stop_processes(node['easy_travel']['proc_pattern'], node['platform_family'], 30)
     end
   end
   
   execute "Start installed program #{name}" do
     command "#{installer_prefix_dir}/#{symlink}/weblauncher/weblauncher.sh&"
+    user easytravel_owner
   end
 
+else
+	# Unsupported platform
+	could_be_installed = false
+	log 'Unsuppored platform. Only Red Hat Enterprise Linux, Debian and Fedora are supported. Easy Travel will not be installed.'
 end
