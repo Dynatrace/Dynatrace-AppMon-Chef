@@ -32,5 +32,5 @@
             raise "Unsupported platform family."
         end
     else
-        raise 'System will not be upgraded - default settings has been overwritten.'
+        log 'System will not be upgraded - default settings has been overridden.'
     end

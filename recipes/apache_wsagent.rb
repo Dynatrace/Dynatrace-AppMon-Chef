@@ -5,6 +5,7 @@
 # Copyright 2016, Dynatrace
 #
 
+include_recipe 'dynatrace::upgrade_system'
 include_recipe 'dynatrace::wsagent_package'
 
 name = "Dynatrace Apache WebServer Agent"

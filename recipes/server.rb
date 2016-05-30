@@ -8,6 +8,7 @@
 require 'json'
 require 'net/https'
 
+include_recipe 'dynatrace::upgrade_system'
 include_recipe 'java'
 include_recipe 'dynatrace::dynatrace_user'
 
