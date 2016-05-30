@@ -7,6 +7,8 @@
 
 require 'json'
 
+include_recipe 'dynatrace::upgrade_system'
+
 name = 'Dynatrace WebServer Agent'
 
 dynatrace_owner = node['dynatrace']['owner']

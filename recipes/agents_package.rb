@@ -5,6 +5,8 @@
 # Copyright 2015, Dynatrace
 #
 
+include_recipe 'dynatrace::upgrade_system'
+
 name = 'Dynatrace Agents Package'
 
 dynatrace_owner = node['dynatrace']['owner']

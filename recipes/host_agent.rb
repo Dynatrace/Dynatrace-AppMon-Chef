@@ -4,8 +4,10 @@
 #
 # Copyright 2016, Dynatrace
 #
-name = 'Host Agent'
 
+include_recipe 'dynatrace::upgrade_system'
+
+name = 'Host Agent'
 														#for AWS it can be:
 node_platform = node['platform']							#	"amazon"
 node_platform_version = node['platform_version']			#	"2016.03"
@@ -19,7 +21,8 @@ could_be_installed = false
 #determine source tar file to execute
 tar_file = node['dynatrace']['host_agent']['installer']['file_name']
 if platform_family?('rhel') and node_kernel_machine == 'x86_64'
-	tar_file += "linux-x86-"
+
+  tar_file += "linux-x86-"
 
 	if node['host_agent']['installer']['bitsize'] == '64'
 		#the only platform for which we are able to test this recipe
@@ -92,10 +95,6 @@ if could_be_installed
 end
 
 if could_be_installed
-
-	execute "Update system" do
-		command "yum update -y"
-	end
 
 	log 'Initializing directories'
 	#creating tmp installer directory
