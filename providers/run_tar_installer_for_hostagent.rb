@@ -43,11 +43,12 @@ action :run do
     action [ :enable, :start ]
   end
 
-  #manualy start service (I wasn't able start it different way)
+  # Workaround: Manualy start the service as it won't be started 
+  # automatically due to a bug in the dynaTraceHostagent script
   execute "start dynaTraceHostagent" do
     command "/etc/init.d/dynaTraceHostagent start"
+    user new_resource.dynatrace_owner
   end
-    
  
 end
 
