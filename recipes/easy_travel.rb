@@ -101,6 +101,7 @@ if platform_family?('debian', 'fedora', 'rhel')
     source "file://#{config_path_training}"
   end
   
+  #####################################################################################################
   # Inject Apache WebServer agent
   httpconf_tmp_path = "#{installer_prefix_dir}/#{symlink}/resources/custom_httpd.conf"
   template httpconf_tmp_path do
@@ -132,6 +133,7 @@ if platform_family?('debian', 'fedora', 'rhel')
     end
   end
   
+  #####################################################################################################
   # Inject Java agents
   agent_path = node['dynatrace']['java_agent']['linux']['x86']['agent_path']
   
@@ -174,6 +176,7 @@ if platform_family?('debian', 'fedora', 'rhel')
     end
   end
   
+  #####################################################################################################
   autostartScenarioGroup = node['easy_travel']['autostartScenarioGroup']
   autostartScenario = node['easy_travel']['autostartScenario']
   
