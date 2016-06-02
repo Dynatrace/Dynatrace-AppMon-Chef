@@ -22,10 +22,15 @@ action :run do
   ruby_block "Make the installation" do
     block do
 		installation_path_part = get_folder_name(install_dir)
-		modify_ini_file("#{install_dir}/#{installation_path_part}/agent/conf/dthostagent.ini")
+		
+#		log '##### modyfy dthostagent.ini  host_agent_name=' + new_resource.host_agent_name + '  collector=' + new_resource.host_agent_collector + " #####"
+		modify_ini_file("#{install_dir}/#{installation_path_part}/agent/conf/dthostagent.ini", new_resource.host_agent_name, new_resource.host_agent_collector)
 		exec_cmd("cp #{install_dir}/#{installation_path_part}/init.d/dynaTraceHostagent /etc/init.d/")
-		installation_path = "#{new_resource.installer_prefix_dir}/#{installation_path_part}"
-		exec_cmd(mv_install_dir_cmd(::File.dirname(new_resource.installer_path) << "/#{installation_path_part}", new_resource.installer_prefix_dir))
+		# remove init.d from tmp folder
+    exec_cmd("rm -rf #{install_dir}/#{installation_path_part}//init.d")
+
+    installation_path = "#{new_resource.installer_prefix_dir}/#{installation_path_part}"
+		exec_cmd(cp_install_dir_cmd(::File.dirname(new_resource.installer_path) << "/#{installation_path_part}", new_resource.installer_prefix_dir))
  		exec_cmd(get_chown_recursively_cmd(installation_path, new_resource.dynatrace_owner, new_resource.dynatrace_group))
 		link "Create a symlink of the #{new_resource.name} installation to #{new_resource.installer_prefix_dir}/dynatrace" do
 			target_file "#{new_resource.installer_prefix_dir}/dynatrace"
@@ -56,8 +61,8 @@ def get_chown_recursively_cmd(dir, owner, group)
   return "chown -R #{owner}:#{group} #{dir}"
 end
 
-def mv_install_dir_cmd(src, dest)
-  return "mv #{src} #{dest}"
+def cp_install_dir_cmd(src, dest)
+  return "cp -R #{src} #{dest}"
 end
 
 def get_folder_name(dir)
@@ -71,21 +76,26 @@ def exec_cmd(cmd2exec)
 	%x[ #{cmd2exec} ]
 end
 
-def modify_ini_file(ini_file)
-	fileArray = []
-	open(ini_file).each { |x| 
-		line = x.gsub("\n",'')
-		if line == 'Name host' 
-			line = 'Name ' + new_resource.host_agent_name
-		elsif line == 'Server localhost' 
-			line = 'Server ' + new_resource.host_agent_collector
-		end
-		line = line + "\n"
-		fileArray << line
-	}
-
-	open(ini_file, "w") do |f| 
-		#fileArray.each { |element| f.puts(element) }
-		f.puts(fileArray)
-	end
+def modify_ini_file(ini_file, lhost_agent_name, lhost_agent_collector)
+    
+#	fileArray = []
+#	open(ini_file).each { |x| 
+#		line = x.gsub("\n",'')
+#		if line == 'Name host' 
+#			line = 'Name ' + lhost_agent_name
+#		elsif line == 'Server localhost' 
+#			line = 'Server ' + lhost_agent_collector
+#		end
+#		line = line + "\n"
+#		fileArray << line
+#	}
+#
+#	open(ini_file, "w") do |f| 
+#		#fileArray.each { |element| f.puts(element) }
+#		f.puts(fileArray)
+#	end
+	
+  Dynatrace::Helpers.file_append_or_replace_line(ini_file, "Name host", 'Name ' + lhost_agent_name)
+  Dynatrace::Helpers.file_append_or_replace_line(ini_file, "Server localhost", 'Server ' + lhost_agent_collector)
+	
 end

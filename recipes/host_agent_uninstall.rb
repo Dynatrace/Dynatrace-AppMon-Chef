@@ -50,18 +50,17 @@ if platform_family?('rhel')
 		%x[ #{cmd2exec} ]
 	end
   
-	cmd2exec = "rm -r -f /etc/init.d/dynaTraceHostagent"
-	%x[ #{cmd2exec} ]
-
-	#remove directory using symlink
-	cmd2exec = "rm -rf \"$(readlink /opt/dynatrace)\""
+	#remove selected files
+	cmd2exec = "rm -rf /opt/dynatrace/agent/conf/dthostagent.ini"
 	log cmd2exec
 	%x[ #{cmd2exec} ]
-
-	#remove symlink
-	cmd2exec = "rm -rf /opt/dynatrace"
-	log cmd2exec
-	%x[ #{cmd2exec} ]
+	
+  cmd2exec = "rm -rf /opt/dynatrace/agent/conf/dthostagent.ini.old"
+  log cmd2exec
+  %x[ #{cmd2exec} ]
+  
+  #TODO maybe it is possible remove more - note about conflicts with dynatrace server and different agents
+	
 else
 	# Unsupported platform
 	log 'Unsuppored platform. Host Agent will not be uninstalled.'
