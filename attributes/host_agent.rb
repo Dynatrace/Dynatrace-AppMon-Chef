@@ -6,7 +6,7 @@
 #
 
 # The name of the host agent (used for agent mapping on the dynaTrace Server). Default: Name host
-default['dynatrace']['host_agent']['host_agent_name'] = 'host'
+default['dynatrace']['host_agent']['host_agent_name'] = 'hostagent'
 
 # The address of the dynaTrace Collector this agent should connect to. The address is of the form host:port, e.g. exampleserver:9998. Default: Server localhost
 default['dynatrace']['host_agent']['collector'] = 'localhost'
