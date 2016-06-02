@@ -24,6 +24,6 @@ action :run do
     group  new_resource.dynatrace_group
     mode   '0644'
     action :create_if_missing
-    only_if { !::File.exist?(new_resource.path) }
+    only_if { !::File.exist?(new_resource.path) && new_resource.file_url != nil}
   end
 end
