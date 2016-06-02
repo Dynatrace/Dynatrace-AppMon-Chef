@@ -23,7 +23,7 @@ action :run do
     block do
 		installation_path_part = get_folder_name(install_dir)
 		
-#		log '##### modyfy dthostagent.ini  host_agent_name=' + new_resource.host_agent_name + '  collector=' + new_resource.host_agent_collector + " #####"
+		log '#####: modyfy #{install_dir}/#{installation_path_part}/agent/conf/dthostagent.ini  host_agent_name=' + new_resource.host_agent_name + '  collector=' + new_resource.host_agent_collector + " :#####"
 		modify_ini_file("#{install_dir}/#{installation_path_part}/agent/conf/dthostagent.ini", new_resource.host_agent_name, new_resource.host_agent_collector)
 		exec_cmd("cp #{install_dir}/#{installation_path_part}/init.d/dynaTraceHostagent /etc/init.d/")
 		# remove init.d from tmp folder
@@ -77,6 +77,8 @@ def exec_cmd(cmd2exec)
 end
 
 def modify_ini_file(ini_file, lhost_agent_name, lhost_agent_collector)
+  
+  ruby_block "modify_ini_file #{ini_file}" do
     
 #	fileArray = []
 #	open(ini_file).each { |x| 
@@ -94,8 +96,11 @@ def modify_ini_file(ini_file, lhost_agent_name, lhost_agent_collector)
 #		#fileArray.each { |element| f.puts(element) }
 #		f.puts(fileArray)
 #	end
-	
-  Dynatrace::Helpers.file_append_or_replace_line(ini_file, "Name host", 'Name ' + lhost_agent_name)
-  Dynatrace::Helpers.file_append_or_replace_line(ini_file, "Server localhost", 'Server ' + lhost_agent_collector)
-	
+
+    block do 
+      Dynatrace::Helpers.file_append_or_replace_line(ini_file, "Name host", 'Name ' + lhost_agent_name)
+      Dynatrace::Helpers.file_append_or_replace_line(ini_file, "Server localhost", 'Server ' + lhost_agent_collector)
+    end
+  end
+  
 end
