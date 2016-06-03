@@ -21,24 +21,25 @@ action :run do
   
   ruby_block "Make the installation" do
     block do
-		installation_path_part = get_folder_name(install_dir)
-		
-		puts '#####: modify ' + install_dir + '/' + installation_path_part + '/agent/conf/dthostagent.ini  host_agent_name=' + new_resource.host_agent_name + '  collector=' + new_resource.host_agent_collector + " :#####"
-		modify_ini_file("#{install_dir}/#{installation_path_part}/agent/conf/dthostagent.ini", new_resource.host_agent_name, new_resource.host_agent_collector)
-		
-		exec_cmd("cp #{install_dir}/#{installation_path_part}/init.d/dynaTraceHostagent /etc/init.d/")
-		# remove init.d from tmp folder
-    exec_cmd("rm -rf #{install_dir}/#{installation_path_part}/init.d")
-
-    installation_path = "#{new_resource.installer_prefix_dir}/#{installation_path_part}"
-		exec_cmd(cp_install_dir_cmd(::File.dirname(new_resource.installer_path) << "/#{installation_path_part}", new_resource.installer_prefix_dir))
-
- 		exec_cmd(get_chown_recursively_cmd(installation_path, new_resource.dynatrace_owner, new_resource.dynatrace_group))
-		link "Create a symlink of the #{installation_path} installation to #{new_resource.installer_prefix_dir}/dynatrace" do
-			target_file "#{new_resource.installer_prefix_dir}/dynatrace"
-			to "#{installation_path}"
-		end
-	end
+  		installation_path_part = get_folder_name(install_dir)
+  		
+  		puts '#####: modify ' + install_dir + '/' + installation_path_part + '/agent/conf/dthostagent.ini  host_agent_name=' + new_resource.host_agent_name + '  collector=' + new_resource.host_agent_collector + " :#####"
+  		modify_ini_file("#{install_dir}/#{installation_path_part}/agent/conf/dthostagent.ini", new_resource.host_agent_name, new_resource.host_agent_collector)
+  		
+  		exec_cmd("cp #{install_dir}/#{installation_path_part}/init.d/dynaTraceHostagent /etc/init.d/")
+  		# remove init.d from tmp folder
+      exec_cmd("rm -rf #{install_dir}/#{installation_path_part}/init.d")
+  
+      installation_path = "#{new_resource.installer_prefix_dir}/#{installation_path_part}"
+  		exec_cmd(cp_install_dir_cmd(::File.dirname(new_resource.installer_path) << "/#{installation_path_part}", new_resource.installer_prefix_dir))
+  
+   		exec_cmd(get_chown_recursively_cmd(installation_path, new_resource.dynatrace_owner, new_resource.dynatrace_group))
+  		link "Create a symlink of the #{installation_path} installation to #{new_resource.installer_prefix_dir}/dynatrace" do
+  			target_file "#{new_resource.installer_prefix_dir}/dynatrace"
+  			to "#{installation_path}"
+  		end
+      exec_cmd(get_chown_link_cmd(new_resource.installer_prefix_dir + "/dynatrace", new_resource.dynatrace_owner, new_resource.dynatrace_group))
+	  end
   end
 
 #  execute "execute: chkconfig add dynaTraceHostagent" do
@@ -57,6 +58,11 @@ action :run do
     user new_resource.dynatrace_owner
   end
  
+end
+
+
+def get_chown_link_cmd(dir, owner, group)
+  return "chown -h #{owner}:#{group} #{dir}"
 end
 
 def get_chown_recursively_cmd(dir, owner, group)
