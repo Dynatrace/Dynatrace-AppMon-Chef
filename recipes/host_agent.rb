@@ -6,6 +6,7 @@
 #
 
 include_recipe 'dynatrace::upgrade_system'
+include_recipe 'dynatrace::dynatrace_user'
 
 name = 'Host Agent'
 														#for AWS it can be:
