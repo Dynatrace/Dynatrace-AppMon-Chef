@@ -36,6 +36,8 @@ if platform_family?('debian', 'fedora', 'rhel')
 
   service = 'dynaTraceCollector'
   init_scripts = [service]
+
+  package 'rsync'
 else
   # Unsupported
 end

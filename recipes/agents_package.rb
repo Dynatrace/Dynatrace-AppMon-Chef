@@ -33,6 +33,7 @@ end
 
 if platform_family?('debian', 'fedora', 'rhel')
   include_recipe 'dynatrace::dynatrace_user'
+  package 'rsync'
 end
 
 directory "Create the installer cache directory" do

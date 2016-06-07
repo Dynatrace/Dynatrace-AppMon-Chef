@@ -16,7 +16,9 @@ if platform_family?('debian', 'fedora', 'rhel')
    # See http://stackoverflow.com/questions/8328250/centos-64-bit-bad-elf-interpreter
   package 'glibc.i686' do
 		action :install
-	end
+  end
+
+  package 'rsync'
 
   installer_bitsize = node['easy_travel']['installer']['bitsize']
   installer_prefix_dir = node['easy_travel']['linux']['installer']['prefix_dir']
