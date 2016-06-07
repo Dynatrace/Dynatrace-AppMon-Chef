@@ -12,7 +12,7 @@ default['dynatrace']['agents_package']['linux']['installer']['prefix_dir'] = '/o
 default['dynatrace']['agents_package']['linux']['installer']['file_name'] = 'dynatrace-agent.jar'
 
 # A HTTP, HTTPS or FTP URL to the Dynatrace Agents installer in the form (http|https|ftp)://[user[:pass]]@host.domain[:port]/path.
-default['dynatrace']['agents_package']['linux']['installer']['file_url'] = 'http://downloads.dynatracesaas.com/6.3/dynatrace-agent-unix.jar'
+default['dynatrace']['agents_package']['linux']['installer']['file_url'] = 'http://192.168.0.1:8000/dynatrace_cache/dynatrace-agent-unix.jar'
 
 # The Dynatrace Agents package will be installed into this directory.
 default['dynatrace']['agents_package']['windows']['installer']['install_dir'] = 'C:\Program Files (x86)\Dynatrace'

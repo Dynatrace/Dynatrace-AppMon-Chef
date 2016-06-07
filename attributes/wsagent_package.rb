@@ -21,7 +21,7 @@ default['dynatrace']['wsagent_package']['linux']['installer']['prefix_dir'] = '/
 default['dynatrace']['wsagent_package']['linux']['installer']['file_name'] = 'dynatrace-wsagent.tar'
 
 # A HTTP, HTTPS or FTP URL to the Dynatrace Web Server Agent installer in the form (http|https|ftp)://[user[:pass]]@host.domain[:port]/path.
-default['dynatrace']['wsagent_package']['linux']['installer']['file_url'] = 'http://downloads.dynatracesaas.com/6.3/dynatrace-wsagent-linux-x64.tar'
+default['dynatrace']['wsagent_package']['linux']['installer']['file_url'] = 'http://192.168.0.1:8000/dynatrace_cache/dynatrace-wsagent-linux-x64.tar'
 
 # The Dynatrace WebServer Agent will be installed into this directory.
 default['dynatrace']['wsagent_package']['windows']['installer']['install_dir'] = 'C:\Program Files (x86)\Dynatrace'
