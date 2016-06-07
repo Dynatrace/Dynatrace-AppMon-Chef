@@ -8,6 +8,7 @@ require 'json'
 require 'net/https'
 
 include_recipe 'java'
+include_recipe 'dynatrace::helpers'
 include_recipe 'dynatrace::dynatrace_user'
 include_recipe 'dynatrace::agents_package'
 name = 'Easy Travel'
@@ -17,8 +18,6 @@ if platform_family?('debian', 'fedora', 'rhel')
   package 'glibc.i686' do
 		action :install
   end
-
-  package 'rsync'
 
   installer_bitsize = node['easy_travel']['installer']['bitsize']
   installer_prefix_dir = node['easy_travel']['linux']['installer']['prefix_dir']

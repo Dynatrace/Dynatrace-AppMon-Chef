@@ -7,6 +7,7 @@
 
 require 'json'
 
+include_recipe 'dynatrace::helpers'
 include_recipe 'dynatrace::upgrade_system'
 
 name = 'Dynatrace WebServer Agent'
@@ -24,8 +25,6 @@ if platform_family?('debian', 'fedora', 'rhel')
 
   service = 'dynaTraceWebServerAgent'
   init_scripts = services = [service]
-
-  package 'rsync'
 elsif platform_family?('windows')
   installer_install_dir = node['dynatrace']['wsagent_package']['windows']['installer']['install_dir']
   installer_file_name   = node['dynatrace']['wsagent_package']['windows']['installer']['file_name']

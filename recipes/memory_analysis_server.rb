@@ -5,6 +5,7 @@
 # Copyright 2015, Dynatrace
 #
 
+include_recipe 'dynatrace::helpers'
 include_recipe 'dynatrace::dynatrace_user'
 
 name = 'Dynatrace Memory Analysis Server'
@@ -31,8 +32,6 @@ if platform_family?('debian', 'fedora', 'rhel')
 
   service = 'dynaTraceAnalysis'
   init_scripts = [service]
-
-  package 'rsync'
 else
   # Unsupported
 end

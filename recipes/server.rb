@@ -8,6 +8,7 @@
 require 'json'
 require 'net/https'
 
+include_recipe 'dynatrace::helpers'
 include_recipe 'dynatrace::upgrade_system'
 include_recipe 'java'
 include_recipe 'dynatrace::dynatrace_user'
@@ -42,8 +43,6 @@ if platform_family?('debian', 'fedora', 'rhel')
   service      = 'dynaTraceServer'
   ini_files    = ['dtserver.ini', 'dtfrontendserver.ini']
   init_scripts = ['dynaTraceBackendServer', 'dynaTraceFrontendServer', service]
-
-  package 'rsync'
 else
   # Unsupported
 end

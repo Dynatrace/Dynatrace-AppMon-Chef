@@ -5,6 +5,7 @@
 # Copyright 2016, Dynatrace
 #
 
+include_recipe 'dynatrace::helpers'
 include_recipe 'dynatrace::upgrade_system'
 include_recipe 'dynatrace::dynatrace_user'
 
@@ -18,8 +19,6 @@ node_kernel_machine = node['kernel']['machine']				#	"x86_64"
 node_kernel_processor = node['kernel']['processor']			#	"x86_64"
 puts 'Platform:' + node_platform + "  version:" + node_platform_version + "  os:" + node_os.to_s + "  os_version:" + node_os_version.to_s + '  machine:' + node_kernel_machine.to_s
 could_be_installed = false
-
-package 'rsync' #TODO!
 
 #determine source tar file to execute
 tar_file = node['dynatrace']['host_agent']['installer']['file_name']

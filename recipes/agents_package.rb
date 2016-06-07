@@ -5,6 +5,7 @@
 # Copyright 2015, Dynatrace
 #
 
+include_recipe 'dynatrace::helpers'
 include_recipe 'dynatrace::upgrade_system'
 
 name = 'Dynatrace Agents Package'
@@ -33,7 +34,6 @@ end
 
 if platform_family?('debian', 'fedora', 'rhel')
   include_recipe 'dynatrace::dynatrace_user'
-  package 'rsync'
 end
 
 directory "Create the installer cache directory" do

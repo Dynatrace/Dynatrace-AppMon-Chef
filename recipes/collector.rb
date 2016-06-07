@@ -5,6 +5,7 @@
 # Copyright 2015, Dynatrace
 #
 
+include_recipe 'dynatrace::helpers'
 include_recipe 'dynatrace::upgrade_system'
 include_recipe 'java'
 include_recipe 'dynatrace::dynatrace_user'
@@ -36,8 +37,6 @@ if platform_family?('debian', 'fedora', 'rhel')
 
   service = 'dynaTraceCollector'
   init_scripts = [service]
-
-  package 'rsync'
 else
   # Unsupported
 end
