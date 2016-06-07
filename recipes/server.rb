@@ -110,7 +110,9 @@ end
 [collector_port, 2021, 6699, 8021, 9911].each do | port |
   ruby_block "Waiting for port #{port} to become available" do
     block do
-      Dynatrace::Helpers.wait_until_port_is_open(port)
+      # Set a longer timeout due to the time to open the collector port
+      # (see log "[SelfMonitoringLauncher] Waiting for self-monitoring Collector startup (max: 90 seconds)")
+      Dynatrace::Helpers.wait_until_port_is_open(port, 180)
     end
   end
 end
