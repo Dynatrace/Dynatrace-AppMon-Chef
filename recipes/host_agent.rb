@@ -15,7 +15,7 @@ node_os = node['os']										#	"linux"
 node_os_version = node['os_version']						#	"4.4.5-15.26.amzn1.x86_64"
 node_kernel_machine = node['kernel']['machine']				#	"x86_64"
 node_kernel_processor = node['kernel']['processor']			#	"x86_64"
-log 'Platform:' + node_platform + "  version:" + node_platform_version + "  os:" + node_os.to_s + "  os_version:" + node_os_version.to_s + '  machine:' + node_kernel_machine.to_s
+puts 'Platform:' + node_platform + "  version:" + node_platform_version + "  os:" + node_os.to_s + "  os_version:" + node_os_version.to_s + '  machine:' + node_kernel_machine.to_s
 could_be_installed = false
 
 #determine source tar file to execute
@@ -84,26 +84,49 @@ dynatrace_group = node['dynatrace']['group']
 host_agent_name = node['dynatrace']['host_agent']['host_agent_name']
 host_agent_collector = node['dynatrace']['host_agent']['collector']
 
+#if could_be_installed
+#  #verification if Host Agent is already installed
+#  fileExists = "/etc/init.d/dynaTraceHostagent"
+#  if File.exist?(fileExists)
+#    # cannot install host_agent because is alredy installed
+#	log 'Host Agent file' + fileExists + ' exists. Host Agent will not be installed. Run host_agent_uninstall recipe first. Be careful - you will lost your configuration.'
+#	could_be_installed = false
+#  end
+#end
+
 if could_be_installed
-  #verification if Host Agent is already installed
-  fileExists = "/etc/init.d/dynaTraceHostagent"
-  if File.exist?(fileExists)
-    # cannot install host_agent because is alredy installed
-	log 'Host Agent file' + fileExists + ' exists. Host Agent will not be installed. Run host_agent_uninstall recipe first. Be careful - you will lost your configuration.'
-	could_be_installed = false
+  if could_be_installed
+    #verification if Host Agent is already installed
+    fileExists = "/etc/init.d/dynaTraceHostagent"
+    if File.exist?(fileExists)
+      # Host Agent is already installed
+      puts 'Host Agent file' + fileExists + ' exists. Host Agent will override existing installation.'
+    end
   end
-end
 
-if could_be_installed
-
-	log 'Initializing directories'
+	puts 'Initializing directories'
 	#creating tmp installer directory
 	directory "Create temporrary installer cache directory: #{installer_cache_dir}" do
 	  path   installer_cache_dir
 	  action :create
 	end
+		
+  puts 'Create user group: ' + dynatrace_group
+  group dynatrace_group do
+    action :create
+    append true
+  end
+  
+  puts 'Create user: ' + dynatrace_owner
+  user dynatrace_owner do
+    gid dynatrace_group
+    supports :manage_home => true
+    home "/home/#{dynatrace_owner}"
+    shell "/bin/bash"
+    system true
+  end	
 
-	#download installation tar file
+  puts 'download installation tar file'
 	dynatrace_copy_or_download_file "Downloading installation tar file: #{installer_file_name}" do
 	  file_name       installer_file_name
 	  file_url        installer_file_url  
