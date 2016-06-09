@@ -80,7 +80,7 @@ def get_folder_name(dir)
 end
 
 def exec_cmd(cmd2exec) 
-	log "execute: #{cmd2exec}"
+	puts "execute: #{cmd2exec}"
 	%x[ #{cmd2exec} ]
 end
 

@@ -59,6 +59,10 @@ if platform_family?('rhel')
   log cmd2exec
   %x[ #{cmd2exec} ]
   
+  cmd2exec = "rm -rf /opt/dynatrace/agent/conf/dthostagent.ini_backup"
+  log cmd2exec
+  %x[ #{cmd2exec} ]
+  
   #TODO maybe it is possible remove more - note about conflicts with dynatrace server and different agents
 	
 else

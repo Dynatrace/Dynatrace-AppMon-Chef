@@ -33,7 +33,7 @@ if platform_family?('rhel') and node_kernel_machine == 'x86_64'
 	end
 else
 	# Unsupported
-	log 'Unsupported platform yet'
+	puts 'Unsupported platform yet'
 	
 	#have to change this verificatin (do not use platform_family)
 	#we need to have map platform_family -> name of source tar file
@@ -72,7 +72,7 @@ else
 end
 
 tar_file += ".tar"
-log 'Installer file: ' + tar_file
+puts 'Installer file: ' + tar_file
 
 installer_prefix_dir = node['dynatrace']['host_agent']['installer']['prefix_dir']
 installer_file_name  = tar_file
@@ -89,7 +89,7 @@ host_agent_collector = node['dynatrace']['host_agent']['collector']
 #  fileExists = "/etc/init.d/dynaTraceHostagent"
 #  if File.exist?(fileExists)
 #    # cannot install host_agent because is alredy installed
-#	log 'Host Agent file' + fileExists + ' exists. Host Agent will not be installed. Run host_agent_uninstall recipe first. Be careful - you will lost your configuration.'
+#	puts 'Host Agent file' + fileExists + ' exists. Host Agent will not be installed. Run host_agent_uninstall recipe first. Be careful - you will lost your configuration.'
 #	could_be_installed = false
 #  end
 #end
@@ -103,6 +103,17 @@ if could_be_installed
       puts 'Host Agent file' + fileExists + ' exists. Host Agent will override existing installation.'
     end
   end
+  
+  fileExists = "#{installer_prefix_dir}/dynatrace/agent/conf/dthostagent.ini"
+  if File.exist?(fileExists)
+    # Host Agent is already installed
+    puts 'Host Agent configuration file' + fileExists + ' exists. It will be copy to ' + installer_prefix_dir  + '/agent/conf/dthostagent.ini_backup folder before installation.'
+    cmd2exec = "cp -f #{fileExists} #{fileExists}_backup"
+    %x[ #{cmd2exec} ]
+  else
+    puts 'Host Agent configuration file' + fileExists + ' do not exists.'
+  end
+  
 
 	puts 'Initializing directories'
 	#creating tmp installer directory
@@ -154,3 +165,4 @@ if could_be_installed
 		host_agent_collector host_agent_collector
 	end
 end
+
