@@ -107,9 +107,12 @@ if could_be_installed
   fileExists = "#{installer_prefix_dir}/dynatrace/agent/conf/dthostagent.ini"
   if File.exist?(fileExists)
     # Host Agent is already installed
-    puts 'Host Agent configuration file' + fileExists + ' exists. It will be copy to ' + installer_prefix_dir  + '/agent/conf/dthostagent.ini_backup folder before installation.'
-    cmd2exec = "cp -f #{fileExists} #{fileExists}_backup"
-    %x[ #{cmd2exec} ]
+    puts 'Host Agent configuration file' + fileExists + ' exists. It will be renamed to ' + fileExists  + '_backup before installation.'
+    ruby_block "Rename file #{fileExists} to #{fileExists}_backup" do
+      block do
+        ::File.rename(fileExists,fileExists + '_backup')
+      end
+    end
   else
     puts 'Host Agent configuration file' + fileExists + ' do not exists.'
   end
