@@ -113,7 +113,7 @@ end
     block do
       # Set a longer timeout due to the time to open the collector port
       # (see log "[SelfMonitoringLauncher] Waiting for self-monitoring Collector startup (max: 90 seconds)")
-      Dynatrace::Helpers.wait_until_port_is_open(port, 180)
+      Dynatrace::Helpers.wait_until_port_is_open(port, 210)
     end
   end
 end

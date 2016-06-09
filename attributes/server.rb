@@ -15,7 +15,7 @@ default['dynatrace']['server']['linux']['installer']['prefix_dir'] = '/opt'
 default['dynatrace']['server']['linux']['installer']['file_name'] = 'dynatrace-server.jar'
 
 # A HTTP, HTTPS or FTP URL to the Dynatrace installer in the form (http|https|ftp)://[user[:pass]]@host.domain[:port]/path.
-default['dynatrace']['server']['linux']['installer']['file_url'] = 'http://192.168.0.1:8000/dynatrace_cache/dynatrace-server-linux-x86.jar'
+default['dynatrace']['server']['linux']['installer']['file_url'] = 'http://downloads.dynatracesaas.com/6.3/dynatrace-server-linux-x86.jar'
 
 # The file name of the Dynatrace License in the cookbook's files directory.
 default['dynatrace']['server']['license']['file_name'] = 'dynatrace-license.key'

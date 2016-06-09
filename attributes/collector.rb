@@ -15,7 +15,7 @@ default['dynatrace']['collector']['linux']['installer']['prefix_dir'] = '/opt'
 default['dynatrace']['collector']['linux']['installer']['file_name'] = 'dynatrace-collector.jar'
 
 # A HTTP, HTTPS or FTP URL to the Dynatrace Collector installer in the form (http|https|ftp)://[user[:pass]]@host.domain[:port]/path.
-default['dynatrace']['collector']['linux']['installer']['file_url'] = 'http://192.168.0.1:8000/dynatrace_cache/dynatrace-collector-linux-x86.jar'
+default['dynatrace']['collector']['linux']['installer']['file_url'] = 'http://downloads.dynatracesaas.com/6.3/dynatrace-collector-linux-x86.jar'
 
 # The port where the Dynatrace Collector shall listen for Agents.
 default['dynatrace']['collector']['agent']['port'] = '9998'
