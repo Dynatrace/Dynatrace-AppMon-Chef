@@ -51,6 +51,10 @@ if platform_family?('rhel')
 	end
   
 	#remove selected files
+  cmd2exec = "rm -rf /opt/dynatrace/init.d/dynaTraceHostagent"
+  log cmd2exec
+  %x[ #{cmd2exec} ]
+  
 	cmd2exec = "rm -rf /opt/dynatrace/agent/conf/dthostagent.ini"
 	log cmd2exec
 	%x[ #{cmd2exec} ]

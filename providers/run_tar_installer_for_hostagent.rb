@@ -26,19 +26,25 @@ action :run do
   		puts '#####: modify ' + install_dir + '/' + installation_path_part + '/agent/conf/dthostagent.ini  host_agent_name=' + new_resource.host_agent_name + '  collector=' + new_resource.host_agent_collector + " :#####"
   		modify_ini_file("#{install_dir}/#{installation_path_part}/agent/conf/dthostagent.ini", new_resource.host_agent_name, new_resource.host_agent_collector)
   		
-  		exec_cmd("cp #{install_dir}/#{installation_path_part}/init.d/dynaTraceHostagent /etc/init.d/")
-  		# remove init.d from tmp folder
-      exec_cmd("rm -rf #{install_dir}/#{installation_path_part}/init.d")
-  
       installation_path = "#{new_resource.installer_prefix_dir}/#{installation_path_part}"
   		exec_cmd(cp_install_dir_cmd(::File.dirname(new_resource.installer_path) << "/#{installation_path_part}", new_resource.installer_prefix_dir))
-  
    		exec_cmd(get_chown_recursively_cmd(installation_path, new_resource.dynatrace_owner, new_resource.dynatrace_group))
+   		
   		link "Create a symlink of the #{installation_path} installation to #{new_resource.installer_prefix_dir}/dynatrace" do
   			target_file "#{new_resource.installer_prefix_dir}/dynatrace"
   			to "#{installation_path}"
   		end
       exec_cmd(get_chown_link_cmd(new_resource.installer_prefix_dir + "/dynatrace", new_resource.dynatrace_owner, new_resource.dynatrace_group))
+      
+      src_host_agent_dynatrace_etc_link = new_resource.installer_prefix_dir + '/dynatrace/init.d/dynaTraceHostagent'
+      dst_host_agent_dynatrace_etc_link = '/etc/init.d/dynaTraceHostagent'
+      puts 'src_host_agent_dynatrace_etc_link=' + src_host_agent_dynatrace_etc_link
+      puts 'dst_host_agent_dynatrace_etc_link=' + dst_host_agent_dynatrace_etc_link
+      
+      link "Create a symlink of the #{src_host_agent_dynatrace_etc_link} installation to #{dst_host_agent_dynatrace_etc_link}" do
+        target_file "#{dst_host_agent_dynatrace_etc_link}"
+        to "#{src_host_agent_dynatrace_etc_link}"
+      end
 	  end
   end
 
@@ -51,8 +57,14 @@ action :run do
     action [ :enable, :start ]
   end
 
-  # Workaround: Manualy start the service as it won't be started 
-  # automatically due to a bug in the dynaTraceHostagent script
+  # Workaround: stop dynaTraceHostagent in case it is working (usually it won't be started automatically due to a bug in the dynaTraceHostagent script - see next command)
+  # to avoid multiplication of ghost dynaTraceHostagent services
+  service 'dynaTraceHostagent' do
+    supports :status => true, :restart => true, :reload => true
+    action [ :stop ]
+  end
+
+  # Workaround: Manualy start the service as it won't be started automatically due to a bug in the dynaTraceHostagent script
   execute "start dynaTraceHostagent" do
     command "/etc/init.d/dynaTraceHostagent start"
     user new_resource.dynatrace_owner
