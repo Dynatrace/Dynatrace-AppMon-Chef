@@ -43,11 +43,10 @@ action :run do
 
   link "Create a symlink of the #{new_resource.name} installation to #{new_resource.installer_prefix_dir}/#{new_resource.target_symlink}" do
     target_file "#{new_resource.installer_prefix_dir}/#{new_resource.target_symlink}"
+    owner new_resource.dynatrace_owner
+    group new_resource.dynatrace_group
     to nil
   end
-
-  exec_cmd(get_chown_link_cmd(new_resource.installer_prefix_dir + '/' + new_resource.target_symlink, new_resource.dynatrace_owner, new_resource.dynatrace_group))
-
 end
 
 def get_chown_link_cmd(dir, owner, group)
@@ -68,10 +67,4 @@ end
 
 def get_start_cmd(dest)
   return "#{dest}"
-end
-
-
-def exec_cmd(cmd2exec) 
-  puts "execute: #{cmd2exec}"
-  %x[ #{cmd2exec} ]
 end
