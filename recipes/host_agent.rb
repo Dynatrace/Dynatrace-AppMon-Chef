@@ -5,23 +5,15 @@
 # Copyright 2016, Dynatrace
 #
 
-include_recipe 'dynatrace::helpers'
-include_recipe 'dynatrace::upgrade_system'
-include_recipe 'dynatrace::dynatrace_user'
-
 name = 'Host Agent'
-														#for AWS it can be:
-node_platform = node['platform']							#	"amazon"
-node_platform_version = node['platform_version']			#	"2016.03"
-node_os = node['os']										#	"linux"
-node_os_version = node['os_version']						#	"4.4.5-15.26.amzn1.x86_64"
-node_kernel_machine = node['kernel']['machine']				#	"x86_64"
-node_kernel_processor = node['kernel']['processor']			#	"x86_64"
-puts 'Platform:' + node_platform + "  version:" + node_platform_version + "  os:" + node_os.to_s + "  os_version:" + node_os_version.to_s + '  machine:' + node_kernel_machine.to_s
+include_recipe 'dynatrace::upgrade_system'
+include_recipe 'dynatrace::helpers'
+include_recipe 'dynatrace::dynatrace_user'
 could_be_installed = false
 
 #determine source tar file to execute
 tar_file = node['dynatrace']['host_agent']['installer']['file_name']
+node_kernel_machine = node['kernel']['machine']       # "x86_64"
 if platform_family?('rhel') and node_kernel_machine == 'x86_64'
 
   tar_file += "linux-x86-"

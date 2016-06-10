@@ -7,6 +7,7 @@
 require 'json'
 require 'net/https'
 
+include_recipe 'dynatrace::node_info'
 include_recipe 'java'
 include_recipe 'dynatrace::helpers'
 include_recipe 'dynatrace::dynatrace_user'

@@ -8,8 +8,9 @@
 require 'json'
 require 'net/https'
 
-include_recipe 'dynatrace::dynatrace_user'
 name = 'Easy Travel'
+include_recipe 'dynatrace::node_info'
+include_recipe 'dynatrace::dynatrace_user'
 
 if platform_family?('debian', 'fedora', 'rhel')
 

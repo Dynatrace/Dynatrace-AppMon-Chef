@@ -5,6 +5,7 @@
 # Copyright 2015, Dynatrace
 #
 
+include_recipe 'dynatrace::node_info'
 include_recipe 'dynatrace::helpers'
 include_recipe 'dynatrace::dynatrace_user'
 
