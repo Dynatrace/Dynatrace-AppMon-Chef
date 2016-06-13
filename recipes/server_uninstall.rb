@@ -71,22 +71,7 @@ directory "Delete the installer cache directory #{installer_cache_dir}" do
 end
 
 dir2del = installer_prefix_dir + '/dynatrace'
-
-#remove directory using symlink
-cmd2exec = "rm -rf \"$(readlink #{dir2del})\""
-execute "Remove directory content using symlink: #{cmd2exec}" do
-  command cmd2exec
-end
-
-#remove symlink
-cmd2exec = "rm -rf #{dir2del}"
-execute "Remove symlink: #{cmd2exec}" do
-  command cmd2exec
-end
-
-directory "Delete the installation directory #{dir2del}" do
-  path      dir2del
-  recursive true
-  action    :delete
+dynatrace_delete_directory_by_link "#{dir2del}" do
+  link2delete dir2del
 end
 

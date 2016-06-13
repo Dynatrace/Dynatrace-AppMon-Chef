@@ -36,23 +36,8 @@ if platform_family?('debian', 'fedora', 'rhel')
     # destination directory already exists and will be deleted
     puts 'Destination directory:' + dir2delete + ' exists and is NOT empty. Easy Travel will be uninstalled. You will lost your configuration.'
 
-    #remove directory using symlink
-    cmd2exec = "rm -rf \"$(readlink #{dir2delete})\""
-    execute "Remove directory content using symlink: #{cmd2exec}" do
-      command cmd2exec
-    end
-    
-    #remove symlink
-    cmd2exec = "rm -rf #{dir2delete}"
-    execute "Remove symlink: #{cmd2exec}" do
-      command cmd2exec
-    end
-    
-    # this should delete directory and symlink but remove only symlink
-    directory "Delete the installation directory #{dir2delete}" do
-      path      dir2delete
-      recursive true
-      action    :delete
+    dynatrace_delete_directory_by_link "#{dir2delete}" do
+      link2delete dir2delete
     end
     
 #    user "Delete user '#{easytravel_owner}'" do
