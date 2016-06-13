@@ -93,6 +93,17 @@ if platform_family?('debian', 'fedora', 'rhel')
 	  dynatrace_group      easytravel_group
 	  only_if { node[:easy_travel][:installation][:is_required] }
 	end
+	  
+  # in case symlink is removed we have to create it 
+  dynatrace_make_symlink "#{name}" do
+    archive              'jar'
+    installer_path       installer_path
+    installer_prefix_dir installer_prefix_dir
+    target_dir           "easytravel-#{version}"
+    target_symlink       symlink
+    dynatrace_owner      easytravel_owner
+    dynatrace_group      easytravel_group
+  end	
   
   config_path = "#{installer_prefix_dir}/#{symlink}/resources/easyTravelConfig.properties"
   config_path_training = "#{installer_prefix_dir}/#{symlink}/resources/easyTravelTrainingConfig.properties"
