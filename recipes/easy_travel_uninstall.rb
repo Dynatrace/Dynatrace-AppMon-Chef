@@ -10,13 +10,17 @@ require 'net/https'
 
 name = 'Easy Travel'
 include_recipe 'dynatrace::node_info'
-include_recipe 'dynatrace::dynatrace_user'
+#include_recipe 'dynatrace::dynatrace_user'
 
 if platform_family?('debian', 'fedora', 'rhel')
 
   ruby_block "Stop any running instance of #{name}" do
     block do
-      Dynatrace::Helpers.stop_processes(node['easy_travel']['proc_pattern'], node['platform_family'])
+      puts 'Stoping processes'
+      Dynatrace::Helpers.stop_processes(node['easy_travel']['proc_pattern'], node['platform_family'], 30)
+      Dynatrace::Helpers.stop_processes('/opt/easytravel.*/httpd', node['platform_family'], 30)
+      Dynatrace::Helpers.stop_processes('/opt/EasyTravel/.*/httpd', node['platform_family'], 30)
+      Dynatrace::Helpers.stop_processes('dtwsagent', node['platform_family'], 30)
     end
   end
 
@@ -24,29 +28,44 @@ if platform_family?('debian', 'fedora', 'rhel')
   easytravel_group = node['easy_travel']['group']
   installer_prefix_dir = node['easy_travel']['linux']['installer']['prefix_dir']
   installer_file_name  = node['easy_travel']['linux']['installer']['file_name']
-  dir2delete = installer_prefix_dir + "/easytravel"
+  installer_link  = node['easy_travel']['linux']['installer']['link']
+  dir2delete = installer_prefix_dir + '/' + installer_link
 
   # Test if destination directory is empty.'
   if Dir.exist?(dir2delete) && !(Dir.entries(dir2delete) - %w{ . .. }).empty? 
     # destination directory already exists and will be deleted
-    log 'Destination directory:' + dir2delete + ' exists and is NOT empty. Easy Travel will be uninstalled. You will lost your configuration.'
+    puts 'Destination directory:' + dir2delete + ' exists and is NOT empty. Easy Travel will be uninstalled. You will lost your configuration.'
 
+    #remove directory using symlink
+    cmd2exec = "rm -rf \"$(readlink #{dir2delete})\""
+    execute "Remove directory content using symlink: #{cmd2exec}" do
+      command cmd2exec
+    end
+    
+    #remove symlink
+    cmd2exec = "rm -rf #{dir2delete}"
+    execute "Remove symlink: #{cmd2exec}" do
+      command cmd2exec
+    end
+    
+    # this should delete directory and symlink but remove only symlink
     directory "Delete the installation directory #{dir2delete}" do
       path      dir2delete
       recursive true
       action    :delete
     end
-
-    user "Delete user '#{easytravel_owner}'" do
-      username easytravel_owner
-      supports :manage_home=>true
-      action   :remove
-    end
-
-    group "Delete group '#{easytravel_group}'" do
-      group_name easytravel_group
-      action     :remove
-    end
+    
+#    user "Delete user '#{easytravel_owner}'" do
+#      username easytravel_owner
+#      supports :manage_home=>true
+#      action   :remove
+#    end
+#
+#    group "Delete group '#{easytravel_group}'" do
+#      group_name easytravel_group
+#      action     :remove
+#    end
+    
   else
     log 'Destination directory:' + dir2delete + ' not exists. It looks loke Easy Travel is not installed.'
   end
@@ -55,6 +74,3 @@ else
   # Unsupported platform
   log 'Unsuppored platform. Only Red Hat Enterprise Linux, Debian and Fedora are supported. Easy Travel will not be uninstalled.'
 end
-
-
-

@@ -133,6 +133,7 @@ EOH
     end
     
     def self.stop_processes(proc_pattern, platform_family, timeout = 15)
+      pids = Array.new
       pids = self.find_pids(proc_pattern, platform_family)        
       killed = false
       if pids.size > 0
@@ -160,16 +161,34 @@ EOH
     private
     def self.find_pids(pattern, platform_family)
       if ['debian', 'fedora', 'rhel'].include? platform_family
-        pids = []
+        pids = Array.new
         search_processes_cmd = "pgrep -f \"#{pattern}\""
-        %x[#{search_processes_cmd}].each_line do |pidStr|
+
+        #################################################################                
+        # code below doesn't work if workstation is on windows
+#        %x[#{search_processes_cmd}].each_line do |pidStr|
+#          if !pidStr.empty?
+#            puts 'pid:' + pidStr
+#            pids << pidStr.to_i
+#          end
+#          return pids
+#        end
+        # this part working and fixes code above
+        pidStr = %x[#{search_processes_cmd}]
         if !pidStr.empty?
-          pids << pidStr.to_i
+          text = Array.new
+          text << pidStr.lines.map(&:chomp)
+          text.each {|x| 
+            x.each {|y|
+              pids << y.to_i 
+            }
+          }
         end
+        #################################################################
+                        
         return pids
-      end
       else
-          raise "Unsupported platform"
+        raise "Unsupported platform"
       end
     end
   end
