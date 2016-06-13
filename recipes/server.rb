@@ -57,7 +57,6 @@ ruby_block "Check if #{name} already installed" do
   block do
     node.set[:dynatrace][:server][:installation][:is_required] = Dynatrace::Helpers.requires_installation?(installer_prefix_dir, installer_path, 'server', type=:jar)
   end
-  action :nothing
 end
 
 fresh_installer_action = "#{name} installer changed"
@@ -65,7 +64,7 @@ dynatrace_copy_or_download_file "#{name}" do
   file_name       installer_file_name
   file_url        installer_file_url  
   path            installer_path
- dynatrace_owner dynatrace_owner
+  dynatrace_owner dynatrace_owner
   dynatrace_group dynatrace_group
   notifies :run, "ruby_block[#{fresh_installer_action}]", :immediately
 end

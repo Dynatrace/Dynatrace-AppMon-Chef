@@ -47,18 +47,28 @@ directory "Create the installer cache directory" do
   action :create
 end
 
+ruby_block "Check if #{name} already installed" do
+  block do
+    node.set[:dynatrace][:collector][:installation][:is_required] = Dynatrace::Helpers.requires_installation?(installer_prefix_dir, installer_path, 'collector', type=:jar)
+  end
+end
+
+fresh_installer_action = "#{name} installer changed"
 dynatrace_copy_or_download_file "#{name}" do
   file_name       installer_file_name
   file_url        installer_file_url  
   path            installer_path
   dynatrace_owner dynatrace_owner
   dynatrace_group dynatrace_group
+  notifies :run, "ruby_block[#{fresh_installer_action}]", :immediately
 end
 
-ruby_block "#{name}" do
+
+ruby_block "#{fresh_installer_action}" do
   block do
-    node.set[:dynatrace][:collector][:installation][:is_required] = Dynatrace::Helpers.requires_installation?(installer_prefix_dir, installer_path, 'collector', type=:jar)
+    node.set[:dynatrace][:collector][:installation][:is_required] = true
   end
+  action :nothing
 end
 
 directory "Create the installation directory #{installer_prefix_dir}" do
