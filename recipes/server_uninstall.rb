@@ -74,16 +74,12 @@ dir2del = installer_prefix_dir + '/dynatrace'
 
 #remove directory using symlink
 cmd2exec = "rm -rf \"$(readlink #{dir2del})\""
-#puts 'remove directory content using symlink: ' + cmd2exec
-#%x[ #{cmd2exec} ]
 execute "Remove directory content using symlink: #{cmd2exec}" do
   command cmd2exec
 end
 
 #remove symlink
 cmd2exec = "rm -rf #{dir2del}"
-#puts 'remove symlink: ' + cmd2exec
-#%x[ #{cmd2exec} ]
 execute "Remove symlink: #{cmd2exec}" do
   command cmd2exec
 end
