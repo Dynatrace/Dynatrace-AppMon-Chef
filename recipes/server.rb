@@ -95,15 +95,6 @@ dynatrace_run_jar_installer "#{name}" do
   only_if { node[:dynatrace][:server][:installation][:is_required] }
 end
 
-# in case symlink is removed we have to create it 
-dynatrace_make_symlink "#{name}" do
-  archive              'jar'
-  installer_path       installer_path
-  installer_prefix_dir installer_prefix_dir
-  dynatrace_owner      dynatrace_owner
-  dynatrace_group      dynatrace_group
-end
-
 dynatrace_configure_ini_files "#{name}" do
   installer_prefix_dir installer_prefix_dir
   ini_files            ini_files
