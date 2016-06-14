@@ -10,7 +10,8 @@ require 'net/https'
 
 name = 'Easy Travel'
 include_recipe 'dynatrace::node_info'
-#include_recipe 'dynatrace::dynatrace_user'
+include_recipe 'dynatrace::agents_package_uninstall'
+include_recipe 'dynatrace::apache_wsagent_uninstall'
 
 if platform_family?('debian', 'fedora', 'rhel')
 

@@ -15,10 +15,14 @@ action :run do
       end
       
       #remove symlink
-      cmd2exec = "rm -rf #{new_resource.link2delete}"
-      execute "Remove symlink: #{cmd2exec}" do
-        command cmd2exec
-      end
+#      cmd2exec = "rm -rf #{new_resource.link2delete}"
+#      execute "Remove symlink: #{cmd2exec}" do
+#        command cmd2exec
+#      end
+      link new_resource.link2delete do
+        action :delete
+        only_if "test -L #{new_resource.link2delete}"
+      end      
       
       # this should delete directory and symlink but removes only symlink
       directory "Delete the installation directory #{new_resource.link2delete}" do

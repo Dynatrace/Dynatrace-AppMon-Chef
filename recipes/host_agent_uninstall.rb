@@ -16,6 +16,11 @@ if platform_family?('rhel')
 	##########################################################
 	# stop Host Agent process
 	
+  # stop dynaTraceHostagent 
+  service 'dynaTraceHostagent' do
+    action [:stop, :disable]
+  end
+  
 	fileExists = "/etc/init.d/dynaTraceHostagent"
 	if File.exist?(fileExists)
 		cmd2exec = "/etc/init.d/dynaTraceHostagent stop"
