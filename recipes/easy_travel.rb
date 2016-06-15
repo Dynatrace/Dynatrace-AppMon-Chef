@@ -28,6 +28,8 @@ if platform_family?('debian', 'fedora', 'rhel')
   installer_cache_dir = "#{Chef::Config['file_cache_path']}/easy_travel"
   installer_path      = "#{installer_cache_dir}/#{installer_file_name}"
   symlink = node['easy_travel']['linux']['installer']['link']
+  version = node['easy_travel']['linux']['installer']['version']
+  target_dir = "easytravel-#{version}"
 
   easytravel_owner = node['easy_travel']['owner']
   easytravel_group = node['easy_travel']['group']
@@ -53,8 +55,15 @@ if platform_family?('debian', 'fedora', 'rhel')
 	directory "Create the installer cache directory: #{installer_cache_dir}" do
 	  path   installer_cache_dir
 	  action :create
-	end
+  end
 
+  ruby_block "Check if #{name} already installed" do
+    block do
+      node.set[:easy_travel][:installation][:is_required] = !Dir.exist?("#{installer_prefix_dir}/#{target_dir}")
+    end
+  end
+
+  fresh_installer_action = "#{name} installer changed"
 	#download installation jar file
 	dynatrace_copy_or_download_file "Downloading installation jar file: #{name}" do
 	  file_name       installer_file_name
@@ -62,13 +71,15 @@ if platform_family?('debian', 'fedora', 'rhel')
 	  path            installer_path
     dynatrace_owner easytravel_owner
 	  dynatrace_group easytravel_group
+    notifies :run, "ruby_block[#{fresh_installer_action}]", :immediately
 	end
 
-	ruby_block "#{name}" do
-	  block do
-		node.set[:easy_travel][:installation][:is_required] = Dynatrace::Helpers.requires_installation?(installer_prefix_dir, installer_path, '', type=:jar)
-	  end
-	end
+  ruby_block "#{fresh_installer_action}" do
+    block do
+      node.set[:easy_travel][:installation][:is_required] = true
+    end
+    action :nothing
+  end
 
 	#creating installation directory
 	directory "Create the installation directory #{installer_prefix_dir}" do
@@ -79,14 +90,12 @@ if platform_family?('debian', 'fedora', 'rhel')
 	  action    :create
 	  only_if { node[:easy_travel][:installation][:is_required] }
 	end
-  
-  version = node['easy_travel']['linux']['installer']['version']
 
 	#perform installation of Easy Travel
 	dynatrace_run_jar_installer "#{name}" do
 	  installer_path       installer_path
 	  installer_prefix_dir installer_prefix_dir
-    target_dir           "easytravel-#{version}"
+    target_dir           target_dir
     target_symlink       symlink
 	  jar_input_sequence   "#{installer_bitsize}\\nY\\nY\\nY"
     dynatrace_owner      easytravel_owner
