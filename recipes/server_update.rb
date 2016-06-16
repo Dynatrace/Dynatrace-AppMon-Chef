@@ -30,7 +30,7 @@ end
 
 fileExists = update_file
 if File.exist?(update_file)
-  # Host Agent is already installed
+  # Dynatrace Server is already installed
   puts 'Dynatrace update file: ' + fileExists + ' exists. Update will be performed.'
   cmd2exec = "curl --insecure --header 'Content-Type:multipart/form-data' -F file='@#{update_file}' -u #{user}:#{passwd} -v '#{rest_update_url}'"
    
