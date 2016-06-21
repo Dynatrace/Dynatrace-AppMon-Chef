@@ -13,13 +13,16 @@ execute 'rm -rf /var/chef/cache/dynatrace; true;'
 
 
 user "Delete user 'dynatrace'" do
-
   username 'dynatrace'
   supports :manage_home=>true
   action   :remove
+  force true
+  ignore_failure true
 end
 
 group "Delete group 'dynatrace'" do
   group_name 'dynatrace'
   action     :remove
+  ignore_failure true
+
 end
