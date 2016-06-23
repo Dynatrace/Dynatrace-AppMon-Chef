@@ -6,7 +6,7 @@
 #
 
 action :run do
-  include_recipe 's3_file'
+  include_recipe 's3_file' if !defined? s3_file
   cookbook_file "Copy file #{new_resource.file_name} to #{new_resource.path}" do
     source new_resource.file_name
     path   new_resource.path
