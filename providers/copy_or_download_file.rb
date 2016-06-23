@@ -19,8 +19,26 @@ action :run do
   end
 
   if new_resource.file_url != nil
-    # Download from normal URL
-    if new_resource.s3_bucket.nil?
+    if new_resource.file_url.start_with?('s3://')
+      # Download from S3
+      # Example of S3 URL: s3://bucket_name/path/to/filename
+      s3_url = new_resource.file_url.dup
+      s3_url.slice!('s3://')
+      s3_path_elems = s3_url.split('/', 2)
+
+      s3_file "Download from Amazon S3 (#{new_resource.file_url}) to #{new_resource.path}" do
+        remote_path           s3_path_elems[1]
+        path                  new_resource.path
+        bucket                s3_path_elems[0]
+        aws_access_key_id     new_resource.s3_access_key_id
+        aws_secret_access_key new_resource.s3_secret_access_key
+        owner                 new_resource.dynatrace_owner
+        group                 new_resource.dynatrace_group
+        mode                  '0644'
+        action                :create
+      end
+    else
+      # Download from standard URL
       remote_file "Download file from #{new_resource.file_url} to #{new_resource.path}" do
         source new_resource.file_url unless new_resource.file_url.nil?
         path   new_resource.path
@@ -30,19 +48,7 @@ action :run do
         use_conditional_get true
         action :create
       end
-    else
-      # Download from S3
-      s3_file "Download from Amazon S3 (#{new_resource.s3_bucket}/#{new_resource.file_url}) to #{new_resource.path}" do
-        remote_path           new_resource.file_url
-        path                  new_resource.path
-        bucket                new_resource.s3_bucket
-        aws_access_key_id     new_resource.s3_access_key_id
-        aws_secret_access_key new_resource.s3_secret_access_key
-        owner                 new_resource.dynatrace_owner
-        group                 new_resource.dynatrace_group
-        mode                  '0644'
-        action                :create
-      end
+
     end
   end
 end
