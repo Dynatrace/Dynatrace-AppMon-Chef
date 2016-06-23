@@ -56,7 +56,7 @@ end
 fresh_installer_action = "#{name} installer changed"
 dynatrace_copy_or_download_file "#{name}" do
   file_name       installer_file_name
-  file_url        installer_file_url  
+  remote_path     installer_file_url
   path            installer_path
   dynatrace_owner dynatrace_owner
   dynatrace_group dynatrace_group

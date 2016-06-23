@@ -25,7 +25,7 @@ end
 
 dynatrace_copy_or_download_file "#{name}" do
   file_name       license_file_name
-  file_url        license_file_url
+  remote_path     license_file_url
   path            license_path
   dynatrace_owner dynatrace_owner
   dynatrace_group dynatrace_group

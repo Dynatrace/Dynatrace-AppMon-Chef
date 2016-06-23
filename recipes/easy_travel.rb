@@ -67,7 +67,7 @@ if platform_family?('debian', 'fedora', 'rhel')
 	#download installation jar file
 	dynatrace_copy_or_download_file "Downloading installation jar file: #{name}" do
 	  file_name       installer_file_name
-	  file_url        installer_file_url  
+    remote_path     installer_file_url
 	  path            installer_path
     dynatrace_owner easytravel_owner
 	  dynatrace_group easytravel_group

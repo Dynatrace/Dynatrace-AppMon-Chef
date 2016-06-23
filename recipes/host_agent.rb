@@ -137,7 +137,7 @@ if could_be_installed
   puts 'download installation tar file'
 	dynatrace_copy_or_download_file "Downloading installation tar file: #{installer_file_name}" do
 	  file_name       installer_file_name
-	  file_url        installer_file_url  
+		remote_path     installer_file_url
 	  path            installer_path
 	  dynatrace_owner dynatrace_owner
 	  dynatrace_group dynatrace_group
