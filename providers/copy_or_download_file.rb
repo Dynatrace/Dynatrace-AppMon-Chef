@@ -18,11 +18,11 @@ action :run do
     only_if { run_context.has_cookbook_file_in_cookbook?(cookbook_name, new_resource.file_name) }
   end
 
-  if new_resource.remote_path != nil
+  if new_resource.file_url != nil
     # Download from normal URL
     if new_resource.s3_bucket.nil?
-      remote_file "Download file from #{new_resource.remote_path} to #{new_resource.path}" do
-        source new_resource.remote_path unless new_resource.remote_path.nil?
+      remote_file "Download file from #{new_resource.file_url} to #{new_resource.path}" do
+        source new_resource.file_url unless new_resource.file_url.nil?
         path   new_resource.path
         owner  new_resource.dynatrace_owner
         group  new_resource.dynatrace_group
@@ -32,8 +32,8 @@ action :run do
       end
     else
       # Download from S3
-      s3_file "Download from Amazon S3 (#{new_resource.s3_bucket}/#{new_resource.remote_path}) to #{new_resource.path}" do
-        remote_path           new_resource.remote_path
+      s3_file "Download from Amazon S3 (#{new_resource.s3_bucket}/#{new_resource.file_url}) to #{new_resource.path}" do
+        remote_path           new_resource.file_url
         path                  new_resource.path
         bucket                new_resource.s3_bucket
         aws_access_key_id     new_resource.s3_access_key_id
