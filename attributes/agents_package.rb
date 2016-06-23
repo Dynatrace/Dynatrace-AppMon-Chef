@@ -12,7 +12,7 @@ default['dynatrace']['agents_package']['linux']['installer']['prefix_dir'] = '/o
 default['dynatrace']['agents_package']['linux']['installer']['file_name'] = 'dynatrace-agent.jar'
 
 # A HTTP, HTTPS or FTP URL to the Dynatrace Agents installer in the form (http|https|ftp)://[user[:pass]]@host.domain[:port]/path.
-# If S3 credentials and bucket attributes are set, this is the S3 path to the file e.g. 'some_folder/nested_folder/file_name'
+# Additionally it is possible to refer to objects stored in S3 e.g. 's3://bucket_name/path/to/filename'.
 default['dynatrace']['agents_package']['linux']['installer']['file_url'] = 'http://downloads.dynatracesaas.com/6.3/dynatrace-agent-unix.jar'
 
 # The Dynatrace Agents package will be installed into this directory.
@@ -22,5 +22,5 @@ default['dynatrace']['agents_package']['windows']['installer']['install_dir'] = 
 default['dynatrace']['agents_package']['windows']['installer']['file_name'] = 'dynatrace-agent.msi'
 
 # A HTTP, HTTPS or FTP URL to the Dynatrace Agents installer in the form (http|https|ftp)://[user[:pass]]@host.domain[:port]/path.
-# If S3 credentials and bucket attributes are set, this is the S3 path to the file e.g. 'some_folder/nested_folder/file_name'
+# Additionally it is possible to refer to objects stored in S3 e.g. 's3://bucket_name/path/to/filename'.
 default['dynatrace']['agents_package']['windows']['installer']['file_url'] = 'http://downloads.dynatracesaas.com/6.3/dynatrace-agent.msi'

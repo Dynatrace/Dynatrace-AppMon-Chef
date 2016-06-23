@@ -22,5 +22,5 @@ default['dynatrace']['host_agent']['installer']['prefix_dir'] = '/opt'
 default['dynatrace']['host_agent']['installer']['file_name'] = 'dynatrace-hostagent-'
 
 # A HTTP, HTTPS or FTP URL to the Dynatrace Host Agent installer in the form (http|https|ftp)://[user[:pass]]@host.domain[:port]/path.
-# If S3 credentials and bucket attributes are set, this is the S3 path to the file e.g. 'some_folder/nested_folder/'
+# Additionally it is possible to refer to objects stored in S3 e.g. 's3://bucket_name/path/to/filename'.
 default['dynatrace']['host_agent']['installer']['file_url'] = 'http://downloads.dynatracesaas.com/6.3/'
