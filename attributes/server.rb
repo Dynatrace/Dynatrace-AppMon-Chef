@@ -15,12 +15,14 @@ default['dynatrace']['server']['linux']['installer']['prefix_dir'] = '/opt'
 default['dynatrace']['server']['linux']['installer']['file_name'] = 'dynatrace-server.jar'
 
 # A HTTP, HTTPS or FTP URL to the Dynatrace installer in the form (http|https|ftp)://[user[:pass]]@host.domain[:port]/path.
+# If S3 credentials and bucket attributes are set, this is the S3 path to the file e.g. 'some_folder/nested_folder/file_name'
 default['dynatrace']['server']['linux']['installer']['file_url'] = 'http://downloads.dynatracesaas.com/6.3/dynatrace-server-linux-x86.jar'
 
 # The file name of the Dynatrace License in the cookbook's files directory.
 default['dynatrace']['server']['license']['file_name'] = 'dynatrace-license.key'
 
 # A HTTP, HTTPS or FTP URL to the Dynatrace License in the form (http|https|ftp)://[user[:pass]]@host.domain[:port]/path.
+# If S3 credentials and bucket attributes are set, this is the S3 path to the file e.g. 'some_folder/nested_folder/file_name'
 default['dynatrace']['server']['license']['file_url'] = nil
 
 # The port where the Dynatrace Server shall listen for Collectors. Use either 6698 (non-SSL) or 6699 (SSL).

@@ -21,12 +21,14 @@ default['easy_travel']['linux']['installer']['version'] = '2.0.0'
 default['easy_travel']['linux']['installer']['file_name'] = 'dynatrace-easytravel-2.0.0.2173-linux-x86.jar'
 
 # A HTTP, HTTPS or FTP URL to the Easy Travel installer in the form (http|https|ftp)://[user[:pass]]@host.domain[:port]/path.
+# If S3 credentials and bucket attributes are set, this is the S3 path to the file e.g. 'some_folder/nested_folder/file_name'
 default['easy_travel']['linux']['installer']['file_url'] = 'https://s3.amazonaws.com/easytravel/dT63/dynatrace-easytravel-2.0.0.2173-linux-x86.jar'
 
 # The file name of the Dynatrace License in the cookbook's files directory.
 default['easy_travel']['license']['file_name'] = 'dynatrace-license.key'
 
 # A HTTP, HTTPS or FTP URL to the Dynatrace License in the form (http|https|ftp)://[user[:pass]]@host.domain[:port]/path.
+# If S3 credentials and bucket attributes are set, this is the S3 path to the file e.g. 'some_folder/nested_folder/file_name'
 default['easy_travel']['license']['file_url'] = nil
 
 # The process pattern to search when the app needs to be stopped
