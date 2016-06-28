@@ -53,7 +53,7 @@ EOH
         Mixlib::ShellOut.new("rm -rf init.d", :cwd => File.dirname(installer_path)).run_command
       elsif type == :tar
         # extract the dynatrace.x.y.z directory name from the contained installer shell script
-        install_dir = Mixlib::ShellOut.new("tar -xf #{installer_path} && head -n 10 dynatrace*.sh | grep mkdir | cut -d ' ' -f 2").run_command.stdout.strip
+        install_dir = Mixlib::ShellOut.new("tar -xf #{installer_path} && head -n 10 dynatrace*.sh | grep mkdir | cut -d ' ' -f 2", :cwd => File.dirname(installer_path)).run_command.stdout.strip
       end
 
       install_dir

@@ -5,6 +5,9 @@
 # Copyright 2015, Dynatrace
 #
 
+# Let the notifications from nested resources be seen outside this LWRP
+use_inline_resources
+
 action :run do
   include_recipe 's3_file' if !defined? s3_file
   cookbook_file "Copy file #{new_resource.file_name} to #{new_resource.path}" do
@@ -37,6 +40,9 @@ action :run do
         mode                  '0644'
         action                :create
       end
+      # NOTE: when uploading the file to S3 using multi-part upload the ETag will not match the one calculated locally
+      # thus the file will always be downloaded. Read https://github.com/adamsb6/s3_file#md5-and-multi-part-upload for
+      # details.
     else
       # Download from standard URL
       remote_file "Download file from #{new_resource.file_url} to #{new_resource.path}" do
@@ -48,7 +54,6 @@ action :run do
         use_conditional_get true
         action :create
       end
-
     end
   end
 end

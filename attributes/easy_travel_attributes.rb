@@ -5,8 +5,8 @@
 # Copyright 2015, easy_travel
 #
 
-# 32 or 64
-default['easy_travel']['installer']['bitsize'] = '32'
+# x86 or x86_64
+default['easy_travel']['installer']['arch'] = 'x86'
 
 # The Easy Travel will be installed into the directory node['easy_travel']['linux']['installer']['prefix_dir']/easytravel-$major-$minor-$rev, where $major, $minor and $rev are given by the installer. A symbolic link to the actual installation directory will be created in node['easy_travel']['linux']['installer']['prefix_dir']/easy_travel.
 default['easy_travel']['linux']['installer']['prefix_dir'] = '/opt'

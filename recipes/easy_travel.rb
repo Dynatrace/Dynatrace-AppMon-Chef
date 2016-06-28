@@ -15,12 +15,6 @@ include_recipe 'dynatrace::agents_package'
 name = 'Easy Travel'
 
 if platform_family?('debian', 'fedora', 'rhel')
-   # See http://stackoverflow.com/questions/8328250/centos-64-bit-bad-elf-interpreter
-  package 'glibc.i686' do
-		action :install
-  end
-
-  installer_bitsize = node['easy_travel']['installer']['bitsize']
   installer_prefix_dir = node['easy_travel']['linux']['installer']['prefix_dir']
   installer_file_name  = node['easy_travel']['linux']['installer']['file_name']
   installer_file_url   = node['easy_travel']['linux']['installer']['file_url']
@@ -30,6 +24,21 @@ if platform_family?('debian', 'fedora', 'rhel')
   symlink = node['easy_travel']['linux']['installer']['link']
   version = node['easy_travel']['linux']['installer']['version']
   target_dir = "easytravel-#{version}"
+
+  app_arch = node['easy_travel']['installer']['arch']
+  if app_arch == 'x86'
+    # See http://stackoverflow.com/questions/8328250/centos-64-bit-bad-elf-interpreter
+    package 'glibc.i686' do
+      action :install
+    end
+    # The installation directory is normally inferred by looking at the content of the jar file using
+    # Helpers.get_install_dir_from_installer() but in this case the reported name does not match the real directory
+    # so we set it manually
+    target_dir = "easytravel-#{version}"
+  else
+    # x86_64
+    target_dir = "easytravel-#{version}-x64"
+  end
 
   easytravel_owner = node['easy_travel']['owner']
   easytravel_group = node['easy_travel']['group']
@@ -44,35 +53,35 @@ if platform_family?('debian', 'fedora', 'rhel')
     group_name easytravel_group
     members    [ easytravel_owner]
   end
-  
+
   # Collect info after adding the new user. We will need info about home directory of the new user
   ohai 'Reload information about users' do
     action :reload
     plugin 'etc'
   end
-  
-	#creating tmp installer directory
-	directory "Create the installer cache directory: #{installer_cache_dir}" do
+
+  #creating tmp installer directory
+  directory "Create the installer cache directory: #{installer_cache_dir}" do
 	  path   installer_cache_dir
 	  action :create
   end
 
-  ruby_block "Check if #{name} already installed" do
+  ruby_block "Check if #{name} already installed in #{installer_prefix_dir}/#{target_dir}" do
     block do
       node.set[:easy_travel][:installation][:is_required] = !Dir.exist?("#{installer_prefix_dir}/#{target_dir}")
     end
   end
 
   fresh_installer_action = "#{name} installer changed"
-	#download installation jar file
-	dynatrace_copy_or_download_file "Downloading installation jar file: #{name}" do
+  #download installation jar file
+  dynatrace_copy_or_download_file "Downloading installation jar file: #{name}" do
 	  file_name       installer_file_name
-	  file_url        installer_file_url  
+	  file_url        installer_file_url
 	  path            installer_path
     dynatrace_owner easytravel_owner
 	  dynatrace_group easytravel_group
     notifies :run, "ruby_block[#{fresh_installer_action}]", :immediately
-	end
+  end
 
   ruby_block "#{fresh_installer_action}" do
     block do
@@ -81,37 +90,37 @@ if platform_family?('debian', 'fedora', 'rhel')
     action :nothing
   end
 
-	#creating installation directory
-	directory "Create the installation directory #{installer_prefix_dir}" do
+  #creating installation directory
+  directory "Create the installation directory #{installer_prefix_dir}" do
 	  path      installer_prefix_dir
 	  owner     easytravel_owner unless ::File.exist?(installer_prefix_dir)
 	  group     easytravel_group unless ::File.exist?(installer_prefix_dir)
 	  recursive true
 	  action    :create
 	  only_if { node[:easy_travel][:installation][:is_required] }
-	end
+  end
 
-	#perform installation of Easy Travel
-	dynatrace_run_jar_installer "#{name}" do
+  #perform installation of Easy Travel
+  dynatrace_run_jar_installer "#{name}" do
 	  installer_path       installer_path
 	  installer_prefix_dir installer_prefix_dir
     target_dir           target_dir
     target_symlink       symlink
-	  jar_input_sequence   "#{installer_bitsize}\\nY\\nY\\nY"
+	  jar_input_sequence   "\\nY\\nY\\nY"
     dynatrace_owner      easytravel_owner
 	  dynatrace_group      easytravel_group
 	  only_if { node[:easy_travel][:installation][:is_required] }
-	end
-  
+  end
+
   config_path = "#{installer_prefix_dir}/#{symlink}/resources/easyTravelConfig.properties"
   config_path_training = "#{installer_prefix_dir}/#{symlink}/resources/easyTravelTrainingConfig.properties"
-  
+
   #switch to training mode - we want to inject agents ourselves
   remote_file  'Switch to training mode' do
     path config_path
     source "file://#{config_path_training}"
   end
-  
+
   #####################################################################################################
   # Inject Apache WebServer agent
   httpconf_tmp_path = "#{installer_prefix_dir}/#{symlink}/resources/custom_httpd.conf"
@@ -129,13 +138,13 @@ if platform_family?('debian', 'fedora', 'rhel')
     })
     action :create
   end
-  
+
   node.set['dynatrace']['apache_wsagent']['arch'] = 'x86'
   node.set['dynatrace']['apache_wsagent']['apache']['config_file_path'] = httpconf_tmp_path
   include_recipe 'dynatrace::apache_wsagent'
-  
+
   ruby_block "Inject Apache Web server agent into #{name}" do
-    block do 
+    block do
       agent_path = node['dynatrace']['apache_wsagent']['agent_path']
       # Setting agent path here is needed only to display the correct status by web console
       Dynatrace::Helpers.file_append_or_replace_line(config_path, "config.apacheWebServerAgent=", "config.apacheWebServerAgent=#{agent_path}")
@@ -143,11 +152,12 @@ if platform_family?('debian', 'fedora', 'rhel')
       Dynatrace::Helpers.file_append_or_replace_line(config_path, "config.apacheWebServerHttpdConfig=", "config.apacheWebServerHttpdConfig=#{httpconf_tmp_path}")
     end
   end
-  
+
   #####################################################################################################
   # Inject Java agents
+  # As for now the Java VM bundled with Easy Travel is 32-bit
   agent_path = node['dynatrace']['java_agent']['linux']['x86']['agent_path']
-  
+
   dynatrace_java_agent 'backendJavaAgent' do
     agent_path agent_path
   end
@@ -157,7 +167,7 @@ if platform_family?('debian', 'fedora', 'rhel')
   end
 
   ruby_block "Inject Java agents into #{name}" do
-    block do 
+    block do
       backendOptsKey = 'config\.backendJavaopts='
       frontendOptsKey = 'config\.frontendJavaopts='
       defaultOptsBackend = ''
@@ -186,11 +196,11 @@ if platform_family?('debian', 'fedora', 'rhel')
       Dynatrace::Helpers.file_replace_line(config_path, frontendOptsKey, "#{frontendJavaOpts}")
     end
   end
-  
+
   #####################################################################################################
   autostartScenarioGroup = node['easy_travel']['autostartScenarioGroup']
   autostartScenario = node['easy_travel']['autostartScenario']
-  
+
   if not autostartScenario.nil? and not autostartScenarioGroup.nil?
     ruby_block "Setting autostart scenario to #{autostartScenarioGroup}:#{autostartScenario}" do
       block do
@@ -199,13 +209,13 @@ if platform_family?('debian', 'fedora', 'rhel')
       end
     end
   end
-  
+
   ruby_block "Stop any running instance of #{name}" do
     block do
       Dynatrace::Helpers.stop_processes(node['easy_travel']['proc_pattern'], node['platform_family'], 30)
     end
   end
-  
+
   execute "Start installed program #{name}" do
     command "#{installer_prefix_dir}/#{symlink}/weblauncher/weblauncher.sh&"
     user easytravel_owner
