@@ -105,6 +105,8 @@ if platform_family?('debian', 'fedora', 'rhel')
 	  installer_path       installer_path
 	  installer_prefix_dir installer_prefix_dir
     target_dir           target_dir
+    find_installer_folder "true"
+    cache_path           installer_cache_dir
     target_symlink       symlink
 	  jar_input_sequence   "\\nY\\nY\\nY"
     dynatrace_owner      easytravel_owner
