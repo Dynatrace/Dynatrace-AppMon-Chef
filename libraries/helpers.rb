@@ -42,15 +42,27 @@ EOH
 
     def self.get_install_dir_from_installer(installer_path, type=:jar)
       if type == :jar
-        # extract an init script (includes reference to the dynatrace-x.y.z dir)
-        init_script = Mixlib::ShellOut.new("jar -tf #{installer_path} | grep -e 'init.d' | tail -n 1").run_command.stdout.strip
-        Mixlib::ShellOut.new("jar -xf #{installer_path} #{init_script}", :cwd => File.dirname(installer_path)).run_command
+        # extract the Manifest file
+        cwd = File.dirname(installer_path)
+        Mixlib::ShellOut.new("jar -xf #{installer_path} META-INF/MANIFEST.MF", :cwd => cwd).run_command
 
-        # extract the dynatrace-x.y.z directory name from the init script
-        install_dir = Mixlib::ShellOut.new("grep -e 'DT_HOME=' #{init_script} | cut -d'=' -f2 | xargs basename", :cwd => File.dirname(installer_path)).run_command.stdout.strip
+        prefix = nil
+        ver_rev = '' # optional
+        ver_maj= nil
+        ver_min = nil
+        File.open("#{cwd}/META-INF/MANIFEST.MF").each do |line|
+          prefix = $1 if /prefix:\s*(\S+)/.match(line)
+          break if prefix
+          ver_maj = $1 if /version-major:\s*(\S+)/.match(line)
+          ver_min = $1 if /version-minor:\s*(\S+)/.match(line)
+          ver_rev = ".#{$1}" if /version-revision:\s*(\S+)/.match(line)
+        end
+        # Use a default prefix if prefix attribute not present in the Manifest file
+        # The logic below is taken from the AbstractInstaller class in the Dynatrace jars
+        install_dir = prefix ? prefix : "dynatrace-#{ver_maj}.#{ver_min}#{ver_rev}"
 
         # remove temporary directories
-        Mixlib::ShellOut.new("rm -rf init.d", :cwd => File.dirname(installer_path)).run_command
+        Mixlib::ShellOut.new("rm -rf META-INF", :cwd => File.dirname(installer_path)).run_command
       elsif type == :tar
         # extract the dynatrace.x.y.z directory name from the contained installer shell script
         install_dir = Mixlib::ShellOut.new("tar -xf #{installer_path} && head -n 10 dynatrace*.sh | grep mkdir | cut -d ' ' -f 2", :cwd => File.dirname(installer_path)).run_command.stdout.strip
@@ -94,16 +106,17 @@ EOH
       return false
     end
 
-    def self.requires_installation?(installer_prefix_dir, installer_path, component_path_part = '', type=:jar)
-      install_dir = get_install_dir_from_installer(installer_path, type)
+        def self.requires_installation?(installer_prefix_dir, installer_path, component_path_part = '', type=:jar)
+          return false if !File.exist?(installer_path)
+          install_dir = get_install_dir_from_installer(installer_path, type)
       #puts "install_dir is #{install_dir}"
-      path_to_check = "#{installer_prefix_dir}/#{install_dir}/#{component_path_part}"
+          path_to_check = "#{installer_prefix_dir}/#{install_dir}/#{component_path_part}"
       #puts "path_to_check is #{path_to_check}"
-      return !(Dir.exist?(path_to_check) || File.exist?(path_to_check))
-    end
+          return !(Dir.exist?(path_to_check) || File.exist?(path_to_check))
+        end
 
-    def self.wait_until_port_is_open(port, timeout = 120, ip = '127.0.0.1')
-      Timeout.timeout(timeout, DynatraceTimeout) do
+        def self.wait_until_port_is_open(port, timeout = 120, ip = '127.0.0.1')
+          Timeout.timeout(timeout, DynatraceTimeout) do
         while !self.port_is_open?(ip, port) do
           sleep(1)
         end

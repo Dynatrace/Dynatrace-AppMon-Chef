@@ -23,7 +23,6 @@ if platform_family?('debian', 'fedora', 'rhel')
   installer_path      = "#{installer_cache_dir}/#{installer_file_name}"
   symlink = node['easy_travel']['linux']['installer']['link']
   version = node['easy_travel']['linux']['installer']['version']
-  target_dir = "easytravel-#{version}"
 
   app_arch = node['easy_travel']['installer']['arch']
   if app_arch == 'x86'
@@ -31,13 +30,6 @@ if platform_family?('debian', 'fedora', 'rhel')
     package 'glibc.i686' do
       action :install
     end
-    # The installation directory is normally inferred by looking at the content of the jar file using
-    # Helpers.get_install_dir_from_installer() but in this case the reported name does not match the real directory
-    # so we set it manually
-    target_dir = "easytravel-#{version}"
-  else
-    # x86_64
-    target_dir = "easytravel-#{version}-x64"
   end
 
   easytravel_owner = node['easy_travel']['owner']
@@ -66,9 +58,9 @@ if platform_family?('debian', 'fedora', 'rhel')
 	  action :create
   end
 
-  ruby_block "Check if #{name} already installed in #{installer_prefix_dir}/#{target_dir}" do
+  ruby_block "Check if #{name} already installed" do
     block do
-      node.set[:easy_travel][:installation][:is_required] = !Dir.exist?("#{installer_prefix_dir}/#{target_dir}")
+      node.set[:easy_travel][:installation][:is_required] = Dynatrace::Helpers.requires_installation?(installer_prefix_dir, installer_path)
     end
   end
 
@@ -104,9 +96,8 @@ if platform_family?('debian', 'fedora', 'rhel')
   dynatrace_run_jar_installer "#{name}" do
 	  installer_path       installer_path
 	  installer_prefix_dir installer_prefix_dir
-    target_dir           target_dir
-    find_installer_folder "true"
-    cache_path           installer_cache_dir
+    # find_installer_folder "true"
+    # cache_path           installer_cache_dir
     target_symlink       symlink
 	  jar_input_sequence   "\\nY\\nY\\nY"
     dynatrace_owner      easytravel_owner
