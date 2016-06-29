@@ -11,7 +11,7 @@
   node_local_ipv4 = node['ec2']['local_ipv4']
    
   #"public_hostname"=>"ec2-52-87-147-77.compute-1.amazonaws.com", "public_ipv4s"=>"52.87.147.77"
-  puts '!!! ########################################################################## !!!'
+  puts '!!! ########################################## cookbook: ' + cookbook_name + ' ################################ !!!'
 
   if node_public_hostname != nil
     puts 'Node public host name:'+node_public_hostname
