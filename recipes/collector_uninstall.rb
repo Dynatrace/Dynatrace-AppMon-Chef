@@ -6,7 +6,6 @@
 #
 include_recipe 'dynatrace::node_info'
 include_recipe 'java'
-include_recipe 'dynatrace::dynatrace_user'
 
 name = 'Uninstall Dynatrace Collector'
 

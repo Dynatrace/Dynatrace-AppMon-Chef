@@ -16,9 +16,8 @@ action :run do
     owner  new_resource.dynatrace_owner
     group  new_resource.dynatrace_group
     mode   '0644'
-    ignore_failure true
     action :create
-    only_if { run_context.has_cookbook_file_in_cookbook?(cookbook_name, new_resource.file_name) }
+    only_if { !new_resource.file_name.nil? && run_context.has_cookbook_file_in_cookbook?(cookbook_name, new_resource.file_name) }
   end
 
   if new_resource.file_url != nil

@@ -145,16 +145,15 @@ EOH
       raise DynatraceNotReady.new(endpoint, timeout)
     end
     
-    def self.stop_processes(proc_pattern, platform_family, timeout = 15)
-      pids = Array.new
-      pids = self.find_pids(proc_pattern, platform_family)        
+    def self.stop_processes(proc_pattern, proc_user, platform_family, timeout = 15, signal = 'TERM')
+      pids = self.find_pids(proc_pattern, proc_user, platform_family)
       killed = false
       if pids.size > 0
-        Process.kill 'TERM', *pids
+        Process.kill signal, *pids
         begin
           Timeout.timeout(timeout, DynatraceTimeout) do
             while (true)
-              pids = self.find_pids(proc_pattern, platform_family)
+              pids = self.find_pids(proc_pattern, proc_user, platform_family)
               if pids.size == 0
                 #puts("Process(es) #{pids} terminated")
                 killed = true
@@ -172,10 +171,12 @@ EOH
     end
     
     private
-    def self.find_pids(pattern, platform_family)
+    def self.find_pids(pattern, user, platform_family)
       if ['debian', 'fedora', 'rhel'].include? platform_family
         pids = Array.new
-        search_processes_cmd = "pgrep -f \"#{pattern}\""
+        pgrep_pattern_opt = !pattern.nil? ? "-f \"#{pattern}\"" : ''
+        pgrep_user_opt = !user.nil? ? "-u #{user}" : ''
+        search_processes_cmd = "pgrep #{pgrep_pattern_opt} #{pgrep_user_opt}"
 
         #################################################################                
         # code below doesn't work if workstation is on windows

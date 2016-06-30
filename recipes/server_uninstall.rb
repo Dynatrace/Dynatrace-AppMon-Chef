@@ -8,9 +8,7 @@
 require 'json'
 require 'net/https'
 
-include_recipe 'dynatrace::upgrade_system'
 include_recipe 'java'
-include_recipe 'dynatrace::dynatrace_user'
 
 name = 'Uninstall Dynatrace Server'
 
@@ -54,13 +52,13 @@ end
 
 ruby_block "Stop any running instance of dynatrace service: dtserver" do
   block do
-    Dynatrace::Helpers.stop_processes('dtserver', node['platform_family'])
+    Dynatrace::Helpers.stop_processes('dtserver', nil, node['platform_family'])
   end
 end
 
 ruby_block "Stop any running instance of dynatrace service: dtfrontendserver" do
   block do
-    Dynatrace::Helpers.stop_processes('dtfrontendserver', node['platform_family'])
+    Dynatrace::Helpers.stop_processes('dtfrontendserver', nil, node['platform_family'])
   end
 end
 

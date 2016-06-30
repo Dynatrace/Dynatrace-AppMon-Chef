@@ -14,23 +14,22 @@ include_recipe 'dynatrace::agents_package_uninstall'
 include_recipe 'dynatrace::apache_wsagent_uninstall'
 
 if platform_family?('debian', 'fedora', 'rhel')
+  easytravel_owner = node['easy_travel']['owner']
+  easytravel_group = node['easy_travel']['group']
+  installer_prefix_dir = node['easy_travel']['linux']['installer']['prefix_dir']
+  installer_link  = node['easy_travel']['linux']['installer']['link']
+  dir2delete = installer_prefix_dir + '/' + installer_link
+  installer_cache_dir = "#{Chef::Config['file_cache_path']}/easy_travel"
 
   ruby_block "Stop any running instance of #{name}" do
     block do
       puts 'Stoping processes'
-      Dynatrace::Helpers.stop_processes(node['easy_travel']['proc_pattern'], node['platform_family'], 30)
-      Dynatrace::Helpers.stop_processes('/opt/easytravel.*/httpd', node['platform_family'], 30)
-      Dynatrace::Helpers.stop_processes('/opt/EasyTravel/.*/httpd', node['platform_family'], 30)
-      Dynatrace::Helpers.stop_processes('dtwsagent', node['platform_family'], 30)
+      Dynatrace::Helpers.stop_processes(node['easy_travel']['proc_pattern'], nil, node['platform_family'], 60)
+      Dynatrace::Helpers.stop_processes('dtwsagent', nil, node['platform_family'], 30)
+      # In case we forget about other pending user processes we need to kill them. If some of them are still alive user deletion will fail.
+      Dynatrace::Helpers.stop_processes(nil, easytravel_owner, node['platform_family'], 5, 'KILL')
     end
   end
-
-  easytravel_owner = node['easy_travel']['owner']
-  easytravel_group = node['easy_travel']['group']
-  installer_prefix_dir = node['easy_travel']['linux']['installer']['prefix_dir']
-  installer_file_name  = node['easy_travel']['linux']['installer']['file_name']
-  installer_link  = node['easy_travel']['linux']['installer']['link']
-  dir2delete = installer_prefix_dir + '/' + installer_link
 
   # Test if destination directory is empty.'
   if Dir.exist?(dir2delete) && !(Dir.entries(dir2delete) - %w{ . .. }).empty? 
@@ -40,18 +39,23 @@ if platform_family?('debian', 'fedora', 'rhel')
     dynatrace_delete_directory_by_link "#{dir2delete}" do
       link2delete dir2delete
     end
-    
-#    user "Delete user '#{easytravel_owner}'" do
-#      username easytravel_owner
-#      supports :manage_home=>true
-#      action   :remove
-#    end
-#
-#    group "Delete group '#{easytravel_group}'" do
-#      group_name easytravel_group
-#      action     :remove
-#    end
-    
+
+    directory "Delete the installer cache directory #{installer_cache_dir}" do
+      path   installer_cache_dir
+      recursive true
+      action :delete
+    end
+
+    user "Delete user '#{easytravel_owner}'" do
+     username easytravel_owner
+     supports :manage_home=>true
+     action   :remove
+    end
+
+    group "Delete group '#{easytravel_group}'" do
+      group_name easytravel_group
+      action     :remove
+    end
   else
     log 'Destination directory:' + dir2delete + ' not exists. It looks loke Easy Travel is not installed.'
   end
