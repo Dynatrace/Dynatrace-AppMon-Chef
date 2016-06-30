@@ -1,5 +1,5 @@
-ServerRoot "<%= @easy_travel_install_prefix %>/easytravel-<%= @version %>/weblauncher/../apache2.2/Linux"
-DocumentRoot "<%= @easy_travel_install_prefix %>/easytravel-<%= @version %>/weblauncher/../apache2.2/htdocs"
+ServerRoot "<%= @easy_travel_install_prefix %>/<%= @easy_travel_install_dir %>/weblauncher/../apache2.2/Linux"
+DocumentRoot "<%= @easy_travel_install_prefix %>/<%= @easy_travel_install_dir %>/weblauncher/../apache2.2/htdocs"
 ServerName "EasyTravelWebserver"
 Listen 8079
 Listen 8999
@@ -125,6 +125,6 @@ AddType application/x-gzip .gz .tgz
 	RequestHeader unset Accept-Encoding
 	ProxyRequests On
 </VirtualHost>
-ErrorLog '|\"<%= @easy_travel_install_prefix %>/easytravel-<%= @version %>/weblauncher/../apache2.2/Linux/bin/rotatelogs\" \"<%= @home_dir %>/.dynaTrace/easyTravel 2.0.0/easyTravel/log/error_%H.log\" 3600'
+ErrorLog '|\"<%= @easy_travel_install_prefix %>/<%= @easy_travel_install_dir %>/weblauncher/../apache2.2/Linux/bin/rotatelogs\" \"<%= @home_dir %>/.dynaTrace/easyTravel <%= @version %>/easyTravel/log/error_%H.log\" 3600'
 TypesConfig "<%= @home_dir %>/.dynaTrace/easyTravel <%= @version %>/easyTravel/config/mime.types"
 PidFile "<%= @home_dir %>/.dynaTrace/easyTravel <%= @version %>/easyTravel/tmp/httpd.pid"

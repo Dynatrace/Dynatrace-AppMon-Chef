@@ -25,11 +25,11 @@ if platform_family?('debian', 'fedora', 'rhel')
   version = node['easy_travel']['linux']['installer']['version']
 
   app_arch = node['easy_travel']['installer']['arch']
-  if app_arch == 'x86'
-    # See http://stackoverflow.com/questions/8328250/centos-64-bit-bad-elf-interpreter
-    package 'glibc.i686' do
-      action :install
-    end
+  # See http://stackoverflow.com/questions/8328250/centos-64-bit-bad-elf-interpreter
+  # NOTE: Even if Easy Travel app may be a 64 bit version, as of now the internal Apache server is always a 32 bit
+  # version so we always have to install this package
+  package 'glibc.i686' do
+    action :install
   end
 
   easytravel_owner = node['easy_travel']['owner']
@@ -82,6 +82,12 @@ if platform_family?('debian', 'fedora', 'rhel')
     action :nothing
   end
 
+  ruby_block "Extract the installation target directory from #{installer_path}" do
+    block do
+      node.set[:easy_travel][:installation][:target_dir] = Dynatrace::Helpers.get_install_dir_from_installer(installer_path)
+    end
+  end
+
   #creating installation directory
   directory "Create the installation directory #{installer_prefix_dir}" do
 	  path      installer_prefix_dir
@@ -126,7 +132,8 @@ if platform_family?('debian', 'fedora', 'rhel')
       {
         :easy_travel_install_prefix => installer_prefix_dir,
         :version => version,
-        :home_dir => node['etc']['passwd'][easytravel_owner]['dir']
+        :home_dir => node['etc']['passwd'][easytravel_owner]['dir'],
+        :easy_travel_install_dir => node[:easy_travel][:installation][:target_dir]
       }
     })
     action :create
@@ -148,8 +155,9 @@ if platform_family?('debian', 'fedora', 'rhel')
 
   #####################################################################################################
   # Inject Java agents
+
   # As for now the Java VM bundled with Easy Travel is 32-bit
-  agent_path = node['dynatrace']['java_agent']['linux']['x86']['agent_path']
+  agent_path = node['dynatrace']['java_agent']['linux'][app_arch]['agent_path']
 
   dynatrace_java_agent 'backendJavaAgent' do
     agent_path agent_path
@@ -205,7 +213,7 @@ if platform_family?('debian', 'fedora', 'rhel')
 
   ruby_block "Stop any running instance of #{name}" do
     block do
-      Dynatrace::Helpers.stop_processes(node['easy_travel']['proc_pattern'], node['platform_family'], 30)
+      Dynatrace::Helpers.stop_processes(node['easy_travel']['proc_pattern'], nil, node['platform_family'], 60)
     end
   end
 
@@ -214,8 +222,16 @@ if platform_family?('debian', 'fedora', 'rhel')
     user easytravel_owner
   end
 
+  # Wait for the weblauncher console port (8094) and the Apache Web server proxy port (8079) to be opened
+  [8094, 8079].each do |port|
+    ruby_block "Waiting for port #{port} to become available" do
+      block do
+        Dynatrace::Helpers.wait_until_port_is_open(port)
+      end
+    end
+  end
+
 else
 	# Unsupported platform
-	could_be_installed = false
-	log 'Unsuppored platform. Only Red Hat Enterprise Linux, Debian and Fedora are supported. Easy Travel will not be installed.'
+	raise 'Unsuppored platform. Only Red Hat Enterprise Linux, Debian and Fedora are supported. Easy Travel will not be installed.'
 end
