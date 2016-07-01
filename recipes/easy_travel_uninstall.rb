@@ -46,6 +46,10 @@ if platform_family?('debian', 'fedora', 'rhel')
       action :delete
     end
 
+    # Some Easy Travel processes leave files in tmp which cause issues when the Easy Travel app is installed as
+    # different user.
+    execute "find /tmp -maxdepth 1 -user #{easytravel_owner} | xargs rm -rf"
+
     user "Delete user '#{easytravel_owner}'" do
      username easytravel_owner
      supports :manage_home=>true
