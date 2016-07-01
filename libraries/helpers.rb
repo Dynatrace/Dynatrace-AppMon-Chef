@@ -36,7 +36,7 @@ EOH
     def self.file_replace_line(path, regex, replace)
       FileUtils.touch(path) if !::File.exist?(path)
       file = Chef::Util::FileEdit.new(path)
-      file.search_file_replace(/#{regex}/, replace)
+      file.search_file_replace_line(/#{regex}/, replace)
       file.write_file
     end
 

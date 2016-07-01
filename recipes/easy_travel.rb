@@ -193,8 +193,8 @@ if platform_family?('debian', 'fedora', 'rhel')
       # Append Java agent related options to javaopts
       backendJavaOpts = "#{defaultOptsBackend},#{backendAgentOpts}"
       frontendJavaOpts = "#{defaultOptsFrontend},#{frontendAgentOpts}"
-      Dynatrace::Helpers.file_replace_line(config_path, backendOptsKey, "#{backendJavaOpts}")
-      Dynatrace::Helpers.file_replace_line(config_path, frontendOptsKey, "#{frontendJavaOpts}")
+      Dynatrace::Helpers.file_replace_line(config_path, 'config\.backendJavaopts=', "#{backendJavaOpts}")
+      Dynatrace::Helpers.file_replace_line(config_path, 'config\.frontendJavaopts=', "#{frontendJavaOpts}")
     end
   end
 
