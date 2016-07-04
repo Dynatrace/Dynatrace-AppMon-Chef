@@ -29,7 +29,7 @@ default['dynatrace']['server']['license']['file_url'] = nil
 default['dynatrace']['server']['collector_port'] = '6698'
 
 # The sizing of the Dynatrace Server (according to https://community.dynatrace.com/community/display/DOCDT62/Sizing+Settings). Use either 'demo', 'small', 'medium', 'large', 'xlarge', or 'xxlarge'.
-default['dynatrace']['server']['sizing'] = nil
+default['dynatrace']['server']['sizing'] = 'demo'
 
 # Whether a connection to an existing Performance Warehouse (database) shall be established, or not. Requires Dynatrace >= v6.2.
 default['dynatrace']['server']['do_pwh_connection'] = false

@@ -33,6 +33,16 @@ EOH
       file.write_file
     end
 
+    # NOTE: this method loads whole content of a file into memory
+    # before doing the pattern substitution
+    def self.file_replace(path, regex, subst)
+      data = File.read(path, mode: "r+")
+      data.gsub!(/#{regex}/, subst)
+      File.open(path, "w") do |f|
+        f.write(data)
+      end
+    end
+
     def self.file_replace_line(path, regex, replace)
       FileUtils.touch(path) if !::File.exist?(path)
       file = Chef::Util::FileEdit.new(path)
