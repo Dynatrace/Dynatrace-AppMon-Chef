@@ -213,7 +213,7 @@ if platform_family?('debian', 'fedora', 'rhel')
 
   ruby_block "Stop any running instance of #{name}" do
     block do
-      Dynatrace::Helpers.stop_processes(node['easy_travel']['proc_pattern'], nil, node['platform_family'], 60)
+      Dynatrace::Helpers.stop_processes(node['easy_travel']['proc_pattern'], nil, node['platform_family'], 120)
     end
   end
 
