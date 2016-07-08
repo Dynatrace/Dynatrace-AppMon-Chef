@@ -7,7 +7,7 @@
 
 name = 'Host Agent'
 include_recipe 'dynatrace::upgrade_system'
-include_recipe 'dynatrace::helpers'
+include_recipe 'dynatrace::prerequisites'
 include_recipe 'dynatrace::dynatrace_user'
 could_be_installed = false
 
