@@ -28,8 +28,8 @@
             command "aptitude full-upgrade -y"
         end
       else
-          raise "Unsupported platform family."
+        puts "Unsupported platform family. System will not be upgraded."
       end
   else
-      log 'System will not be upgraded - default settings has been overridden.'
+      puts 'System will not be upgraded - default settings has been overridden.'
   end

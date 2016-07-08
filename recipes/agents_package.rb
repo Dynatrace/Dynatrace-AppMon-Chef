@@ -5,7 +5,9 @@
 # Copyright 2015, Dynatrace
 #
 
-include_recipe 'dynatrace::helpers'
+if !platform_family?('windows')
+  include_recipe 'dynatrace::helpers'
+end
 include_recipe 'dynatrace::upgrade_system'
 
 name = 'Dynatrace Agents Package'
