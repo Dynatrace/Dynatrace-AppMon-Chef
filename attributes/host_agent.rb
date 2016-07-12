@@ -19,8 +19,8 @@ default['host_agent']['installer']['bitsize'] = '64'
 default['dynatrace']['host_agent']['installer']['prefix_dir'] = '/opt'
 
 # The file name of the Dynatrace Host Agent installer in the cookbook's files directory.
-default['dynatrace']['host_agent']['installer']['file_name'] = 'dynatrace-hostagent-'
+default['dynatrace']['host_agent']['installer']['file_name'] = 'dynatrace-hostagent.tar'
 
 # A HTTP, HTTPS or FTP URL to the Dynatrace Host Agent installer in the form (http|https|ftp)://[user[:pass]]@host.domain[:port]/path.
 # Additionally it is possible to refer to objects stored in S3 e.g. 's3://bucket_name/path/to/filename'.
-default['dynatrace']['host_agent']['installer']['file_url'] = 'http://downloads.dynatracesaas.com/6.3/'
+default['dynatrace']['host_agent']['installer']['file_url'] = 'http://downloads.dynatracesaas.com/6.3/dynatrace-hostagent-linux-x86-64.tar'

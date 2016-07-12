@@ -7,70 +7,28 @@
 
 name = 'Host Agent'
 include_recipe 'dynatrace::upgrade_system'
-include_recipe 'dynatrace::helpers'
+include_recipe 'dynatrace::prerequisites'
 include_recipe 'dynatrace::dynatrace_user'
 could_be_installed = false
 
 #determine source tar file to execute
-tar_file = node['dynatrace']['host_agent']['installer']['file_name']
 node_kernel_machine = node['kernel']['machine']       # "x86_64"
 if platform_family?('rhel') and node_kernel_machine == 'x86_64'
-
-  tar_file += "linux-x86-"
-
 	if node['host_agent']['installer']['bitsize'] == '64'
 		#the only platform for which we are able to test this recipe
 		could_be_installed = true
-		tar_file += "64"
-	else
-		tar_file += "32"
 	end
+  # Currently only tested on linux-x86 platform but there are many more e.g.
+  # 'aix-ppc', 'hpux-ia64', 'linux-ppc', 'linux-s390', 'linux-s390x', 'solaris-sparc', 'solaris-x86'
 else
 	# Unsupported
 	puts 'Unsupported platform yet'
-	
-	#have to change this verificatin (do not use platform_family)
-	#we need to have map platform_family -> name of source tar file
-	#
-#	if platform_family?('aix-ppc', 'hpux-ia64', 'linux-ppc', 'linux-s390', 'linux-s390x', 'linux-x86', 'solaris-sparc', 'solaris-x86')
-#		if platform_family?('linux-s390', 'linux-s390x')
-#			#tar file format:
-#			#	dynatrace-hostagent-linux-s390.tar
-#			#	dynatrace-hostagent-linux-s390x.tar		
-#			if platform_family?('linux-s390x')
-#				tar_file = tar_file + "linux-s390x"
-#			else
-#				tar_file = tar_file + "linux-s390"
-#			end
-#		else
-#			#tar file format:
-#			#	dynatrace-hostagent-linux-ppc-32.tar
-#			#	dynatrace-hostagent-linux-ppc-64.tar
-#			if platform_family?('aix-ppc')
-#				tar_file = tar_file + "aix-ppc"
-#			elsif platform_family?('hpux-ia64')
-#				tar_file = tar_file + "hpux-ia64"
-#			elsif platform_family?('linux-ppc')
-#				tar_file = tar_file + "linux-ppc"
-#			elsif platform_family?('linux-x86')
-#				tar_file = tar_file + "linux-x86"
-#			elsif platform_family?('solaris-sparc')
-#				tar_file = tar_file + "solaris-sparc"
-#			elsif platform_family?('solaris-x86')
-#				tar_file = tar_file + "solaris-x86"
-#			else
-#				tar_file = tar_file + "linux"
-#			end
-#		end
-#	end
 end
 
-tar_file += ".tar"
-puts 'Installer file: ' + tar_file
 
 installer_prefix_dir = node['dynatrace']['host_agent']['installer']['prefix_dir']
-installer_file_name  = tar_file
-installer_file_url   = node['dynatrace']['host_agent']['installer']['file_url'] + tar_file
+installer_file_url   = node['dynatrace']['host_agent']['installer']['file_url']
+installer_file_name  = node['dynatrace']['host_agent']['installer']['file_name']
 installer_cache_dir = "#{Chef::Config['file_cache_path']}/host_agent"
 installer_path      = "#{installer_cache_dir}/#{installer_file_name}"
 dynatrace_owner = node['dynatrace']['owner']

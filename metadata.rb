@@ -14,7 +14,6 @@ end
 
 depends 'apache2'
 depends 'java'
-depends 's3_file'
 
 recipe 'dynatrace', 'Installs the Dynatrace Server and Agents package.'
 recipe 'dynatrace:agents_package', 'Installs the Dynatrace Agents package.'

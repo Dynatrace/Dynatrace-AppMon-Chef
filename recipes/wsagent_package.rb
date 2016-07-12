@@ -7,7 +7,7 @@
 
 require 'json'
 
-include_recipe 'dynatrace::helpers'
+include_recipe 'dynatrace::prerequisites'
 include_recipe 'dynatrace::upgrade_system'
 
 name = 'Dynatrace WebServer Agent'

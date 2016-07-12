@@ -5,7 +5,7 @@
 # Copyright 2015, Dynatrace
 #
 
-include_recipe 'dynatrace::helpers'
+include_recipe 'dynatrace::prerequisites'
 include_recipe 'dynatrace::upgrade_system'
 include_recipe 'java'
 include_recipe 'dynatrace::dynatrace_user'
