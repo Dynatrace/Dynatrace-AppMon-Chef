@@ -1,5 +1,5 @@
 #
-# Implements per-object storage of cache control data for a S3 objects resources
+# Implements per-object storage of cache control data for S3 objects resources
 #
 # Copyright 2016, Dynatrace
 #
@@ -30,7 +30,7 @@ module Dynatrace
 
     def save(target_path, etag)
       metadata = { 'etag' => etag }
-      puts "Saving cache data to #{construct_filepath(target_path)}" #TODO!
+      # puts "Saving cache data to #{construct_filepath(target_path)}"
       File.open(target_path) { |f| metadata['local_mtime'] = f.mtime }
       File.open(construct_filepath(target_path), 'wb') { |f| f.write(Marshal.dump(metadata))}
     end
@@ -41,7 +41,7 @@ module Dynatrace
     end
 
     def load_cache_data(target_path)
-  puts "Opening cache data from #{construct_filepath(target_path)}" #TODO!
+      # puts "Opening cache data from #{construct_filepath(target_path)}"
       File.open(construct_filepath(target_path), 'rb') { |file| Marshal.load(file.read) }
     end
 

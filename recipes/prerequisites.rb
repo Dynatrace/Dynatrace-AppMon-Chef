@@ -11,11 +11,13 @@ if platform_family?('debian', 'fedora', 'rhel')
     action :install
   end
 else
-  raise "Unsupported platform family."
+  log "Unsupported platform family." do
+    level :warn
+  end
 end
 
 # Needed to by copy_or_download_file LWRP
-gem_chef 'aws_sdk' do
+chef_gem 'aws-sdk' do
   compile_time false
 end
 
