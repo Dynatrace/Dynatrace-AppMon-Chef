@@ -31,7 +31,8 @@ pwh_connection_password = node['dynatrace']['server']['pwh_connection']['passwor
 
 dynatrace_owner = node['dynatrace']['owner']
 dynatrace_group = node['dynatrace']['group']
-
+easyTravelProfile = node['dynatrace']['server']['linux']['installer']['easyTravelProfile']
+  
 if platform_family?('debian', 'fedora', 'rhel')
   installer_prefix_dir = node['dynatrace']['server']['linux']['installer']['prefix_dir']
   installer_file_name  = node['dynatrace']['server']['linux']['installer']['file_name']
@@ -53,7 +54,7 @@ directory "Create the installer cache directory" do
   action :create
 end
 
-ruby_block "Check if #{name} already installed" do
+ruby_block "Check if #{name} already installed #{installer_prefix_dir} #{installer_path}" do
   block do
     node.set[:dynatrace][:server][:installation][:is_required] = Dynatrace::Helpers.requires_installation?(installer_prefix_dir, installer_path, 'server', type=:jar)
   end
@@ -92,6 +93,14 @@ dynatrace_run_jar_installer "#{name}" do
   dynatrace_owner      dynatrace_owner
   dynatrace_group      dynatrace_group
   only_if { node[:dynatrace][:server][:installation][:is_required] }
+end
+
+dynatrace_copy_or_download_file "easyTravel.profile.xml" do
+  file_name       'easyTravel.profile.xml'
+  file_url        easyTravelProfile  
+  path            '/opt/dynatrace/server/conf/profiles/easyTravel.profile.xml'
+  dynatrace_owner dynatrace_owner
+  dynatrace_group dynatrace_group
 end
 
 dynatrace_configure_ini_files "#{name}" do

@@ -50,33 +50,99 @@ EOH
       file.write_file
     end
 
+    def self.get_install_dir_from_installer_msi(installer_path)
+      #TODO
+      # installer_path must be set to something like this:
+      #           C:\chef\cache\easy_travel\easy_travel_install.log
+      # we have to read this file and find following properties:
+      #  Property(S): APPDIR = C:\Program Files\dynaTrace\easyTravel (x64)\
+      #  Property(S): resources_DIR = C:\Program Files\dynaTrace\easyTravel (x64)\resources\
+      #  Property(S): weblauncher_DIR = C:\Program Files\dynaTrace\easyTravel (x64)\weblauncher\
+
+      app_DIR = nil
+      resources_DIR = nil
+      weblauncher_DIR = nil
+      targetdir_pattern = 'TARGETDIR ='.encode("iso-8859-1").force_encoding("utf-8")
+      property_pattern = 'Property(S): '.encode("iso-8859-1").force_encoding("utf-8")
+      File.open("#{installer_path}", "rb").each do |line|
+        line0 = line[0, 48]
+        if !line0.nil?
+          puts line0 + ' : ' + targetdir_pattern.length.to_s + ' : ' + line
+          if line0.start_with?(property_pattern)
+            if line0.start_with?(targetdir_pattern)
+              app_DIR = line
+              puts "!!!! app_DIR=#{app_DIR}"
+            end
+            if line0.start_with?('resources_DIR =')
+              resources_DIR = line
+              puts "resources_DIR=#{resources_DIR}"
+            end
+          end
+        end
+      end
+      
+      puts '!!!! targetdir_pattern.length=' + targetdir_pattern.length.to_s + ' : ' + targetdir_pattern + ' : ' + targetdir_pattern[0, targetdir_pattern.length]
+      if !app_DIR.nil?
+        puts "!!!! app_DIR=#{app_DIR}"
+      else
+        puts "!!!! app_DIR=nil !!!"
+      end
+    
+      if !resources_DIR.nil?
+        puts "resources_DIR=#{resources_DIR}"
+      end
+    
+      if !weblauncher_DIR.nil?
+        puts "weblauncher_DIR=#{weblauncher_DIR}"
+      end
+      
+      app_DIR
+    end
+    
+    def self.get_install_dir_from_installer_tar(installer_path)
+      # extract the dynatrace.x.y.z directory name from the contained installer shell script
+      install_dir = Mixlib::ShellOut.new("tar -xf #{installer_path} && head -n 10 dynatrace*.sh | grep mkdir | cut -d ' ' -f 2", :cwd => File.dirname(installer_path)).run_command.stdout.strip
+      install_dir
+    end
+    
+    def self.get_install_dir_from_installer_jar(installer_path)
+      # extract the Manifest file
+      cwd = File.dirname(installer_path)
+      Mixlib::ShellOut.new("jar -xf #{installer_path} META-INF/MANIFEST.MF", :cwd => cwd).run_command
+
+      prefix = nil
+      ver_rev = '' # optional
+      ver_maj= nil
+      ver_min = nil
+      File.open("#{cwd}/META-INF/MANIFEST.MF").each do |line|
+        prefix = $1 if /prefix:\s*(\S+)/.match(line)
+        break if prefix
+        ver_maj = $1 if /version-major:\s*(\S+)/.match(line)
+        ver_min = $1 if /version-minor:\s*(\S+)/.match(line)
+        ver_rev = ".#{$1}" if /version-revision:\s*(\S+)/.match(line)
+      end
+      # Use a default prefix if prefix attribute not present in the Manifest file
+      # The logic below is taken from the AbstractInstaller class in the Dynatrace jars
+      install_dir = prefix ? prefix : "dynatrace-#{ver_maj}.#{ver_min}#{ver_rev}"
+
+      # remove temporary directories
+      Mixlib::ShellOut.new("rm -rf META-INF", :cwd => File.dirname(installer_path)).run_command
+      
+      install_dir
+    end
+    
     def self.get_install_dir_from_installer(installer_path, type=:jar)
       if type == :jar
-        # extract the Manifest file
-        cwd = File.dirname(installer_path)
-        Mixlib::ShellOut.new("jar -xf #{installer_path} META-INF/MANIFEST.MF", :cwd => cwd).run_command
-
-        prefix = nil
-        ver_rev = '' # optional
-        ver_maj= nil
-        ver_min = nil
-        File.open("#{cwd}/META-INF/MANIFEST.MF").each do |line|
-          prefix = $1 if /prefix:\s*(\S+)/.match(line)
-          break if prefix
-          ver_maj = $1 if /version-major:\s*(\S+)/.match(line)
-          ver_min = $1 if /version-minor:\s*(\S+)/.match(line)
-          ver_rev = ".#{$1}" if /version-revision:\s*(\S+)/.match(line)
-        end
-        # Use a default prefix if prefix attribute not present in the Manifest file
-        # The logic below is taken from the AbstractInstaller class in the Dynatrace jars
-        install_dir = prefix ? prefix : "dynatrace-#{ver_maj}.#{ver_min}#{ver_rev}"
-
-        # remove temporary directories
-        Mixlib::ShellOut.new("rm -rf META-INF", :cwd => File.dirname(installer_path)).run_command
-      elsif type == :tar
-        # extract the dynatrace.x.y.z directory name from the contained installer shell script
-        install_dir = Mixlib::ShellOut.new("tar -xf #{installer_path} && head -n 10 dynatrace*.sh | grep mkdir | cut -d ' ' -f 2", :cwd => File.dirname(installer_path)).run_command.stdout.strip
+        install_dir = get_install_dir_from_installer_jar(installer_path)
       end
+      
+      if type == :tar
+        install_dir = get_install_dir_from_installer_tar(installer_path)
+      end    
+      
+      if type == :msi
+        install_dir = get_install_dir_from_installer_msi(installer_path)
+      end        
 
       install_dir
     end

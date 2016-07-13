@@ -35,16 +35,65 @@ action :run do
         action                :create
       end
     else
-      # Download from standard URL
-      remote_file "Download file from #{new_resource.file_url} to #{new_resource.path}" do
-        source new_resource.file_url unless new_resource.file_url.nil?
-        path   new_resource.path
-        owner  new_resource.dynatrace_owner
-        group  new_resource.dynatrace_group
-        mode   new_resource.mode
-        use_conditional_get true
-        action :create
+      
+      if platform_family?('windows')
+        # Download from standard URL
+        remote_file "Download file from #{new_resource.file_url} to #{new_resource.path}" do
+  
+          #####################################################################################################################        
+          # Note: flag ignore_failure true and atomic_update false are set because following exception is generated on windows:
+          # 
+          #Chef::Exceptions::Win32APIError
+          #-------------------------------
+          #No mapping between account names and security IDs was done.
+          #---- Begin Win32 API output ----
+          #System Error Code: 1332
+          #System Error Message: No mapping between account names and security IDs was done.
+          #---- End Win32 API output ----
+          # 
+          # Beside all working properly, remote file is transfered properly.
+          # This is workaround and should be removed as soon as the issue will be fixed.
+          # So far we haven't slightest idea why it occurs and how it fix. 
+          ignore_failure true
+          atomic_update false
+          #####################################################################################################################        
+          
+          source new_resource.file_url unless new_resource.file_url.nil?
+          path   new_resource.path
+          owner  new_resource.dynatrace_owner
+          group  new_resource.dynatrace_group
+          mode   new_resource.mode
+  
+          #####################################################################################################################        
+          # Note sometimes(!) there is problem on windows with folder rights 0644.
+          # I suppose that following code fix this problem first time but later after creating suitable folders should be removed because it generate additional problems - TODO: to investigate
+  #        mode   '0777'
+  #        rights :read, 'Everyone'
+  #        rights :write, 'Everyone'
+  #        rights :full_control, 'group_name_or_user_name'
+  #        rights :full_control, 'user_name', :applies_to_children => true
+          #####################################################################################################################        
+   
+          use_conditional_get true
+  #        action :create
+          action :create_if_missing
+        end
+      else
+        
+        # Download from standard URL
+        remote_file "Download file from #{new_resource.file_url} to #{new_resource.path}" do
+          source new_resource.file_url unless new_resource.file_url.nil?
+          path   new_resource.path
+          owner  new_resource.dynatrace_owner
+          group  new_resource.dynatrace_group
+          mode   new_resource.mode
+          use_conditional_get true
+          action :create
+        end
+        
       end
+
+      
     end
   end
 end
