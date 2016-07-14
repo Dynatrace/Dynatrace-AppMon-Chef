@@ -22,7 +22,7 @@ if platform_family?('debian', 'fedora', 'rhel')
   installer_cache_dir = "#{Chef::Config['file_cache_path']}/easy_travel"
   installer_path      = "#{installer_cache_dir}/#{installer_file_name}"
   symlink = node['easy_travel']['linux']['installer']['link']
-  version = node['easy_travel']['linux']['installer']['version']
+  version = node['easy_travel']['installer']['version']
 
   app_arch = node['easy_travel']['installer']['arch']
   # See http://stackoverflow.com/questions/8328250/centos-64-bit-bad-elf-interpreter

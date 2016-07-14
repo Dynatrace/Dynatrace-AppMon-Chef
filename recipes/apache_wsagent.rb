@@ -18,7 +18,9 @@ if platform_family?('debian', 'fedora', 'rhel')
   agent_path = node['dynatrace']['apache_wsagent']['linux'][arch]['agent_path']
   node.set['dynatrace']['apache_wsagent']['agent_path'] = agent_path
 else
-  raise "Unsupported platform"
+  log "Unsupported platform family." do
+    level :warn
+  end
 end
 
 ruby_block "Inject the #{name} into Apache HTTPD's config file" do
