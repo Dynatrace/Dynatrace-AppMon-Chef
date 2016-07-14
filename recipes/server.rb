@@ -120,6 +120,16 @@ dynatrace_configure_ini_files "#{name}" do
   variables({ :memory => sizing })
 end
 
+ruby_block "Modificate ini files" do
+  block do
+    additional_line = "-agentpath:./selfmonitoring/agent/lib64/libdtagent.so=agentname=DT_Server,server=localhost:9999,wait=5\n"
+    Dynatrace::Helpers.file_append_or_replace_line("#{installer_prefix_dir}/dynatrace/dtserver.ini", additional_line, additional_line)
+    
+    additional_line = "-agentpath:./selfmonitoring/agent/lib64/libdtagent.so=agentname=DT_Server_Frontend,server=localhost:9999,wait=5\n"
+    Dynatrace::Helpers.file_append_or_replace_line("#{installer_prefix_dir}/dynatrace/dtfrontendserver.ini", additional_line, additional_line)
+  end
+end
+
 dynatrace_configure_init_scripts "#{name}" do
   installer_prefix_dir installer_prefix_dir
   scripts              init_scripts
