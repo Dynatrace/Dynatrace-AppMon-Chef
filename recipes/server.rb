@@ -95,10 +95,19 @@ dynatrace_run_jar_installer "#{name}" do
   only_if { node[:dynatrace][:server][:installation][:is_required] }
 end
 
+profiles = '/opt/dynatrace/server/conf/profiles/'
+directory "Create profiles directory #{profiles}" do
+  path      profiles
+  owner     dynatrace_owner unless ::File.exist?(profiles)
+  group     dynatrace_group unless ::File.exist?(profiles)
+  recursive true
+  action    :create
+end
+
 dynatrace_copy_or_download_file "easyTravel.profile.xml" do
   file_name       'easyTravel.profile.xml'
   file_url        easyTravelProfile  
-  path            '/opt/dynatrace/server/conf/profiles/easyTravel.profile.xml'
+  path            "#{profiles}easyTravel.profile.xml"
   dynatrace_owner dynatrace_owner
   dynatrace_group dynatrace_group
 end
