@@ -11,7 +11,7 @@ default_action :run
 attribute :file_name,             :kind_of => String, :default => nil
 attribute :file_url,              :kind_of => String, :default => nil
 attribute :path,                  :kind_of => String, :default => nil
-attribute :mode,                  :kind_of => String, :default => '755'
+attribute :mode,                  :kind_of => String, :default => '0644'
 attribute :dynatrace_owner,       :kind_of => String, :default => 'dynatrace'
 attribute :dynatrace_group,       :kind_of => String, :default => 'dynatrace'
 attribute :s3_region,             :kind_of => String, :default => node['dynatrace']['s3']['region']
