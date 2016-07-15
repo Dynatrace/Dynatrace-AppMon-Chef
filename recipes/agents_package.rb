@@ -6,7 +6,7 @@
 #
 
 if !platform_family?('windows')
-  include_recipe 'dynatrace::helpers'
+  include_recipe 'dynatrace::prerequisites'
 end
 include_recipe 'dynatrace::upgrade_system'
 
