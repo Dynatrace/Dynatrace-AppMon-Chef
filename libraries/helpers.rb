@@ -248,8 +248,8 @@ EOH
     
     private
     def self.find_pids(pattern, user, platform_family)
+      pids = Array.new
       if ['debian', 'fedora', 'rhel'].include? platform_family
-        pids = Array.new
         pgrep_pattern_opt = !pattern.nil? ? "-f \"#{pattern}\"" : ''
         pgrep_user_opt = !user.nil? ? "-u #{user}" : ''
         search_processes_cmd = "pgrep #{pgrep_pattern_opt} #{pgrep_user_opt}"
@@ -276,10 +276,10 @@ EOH
         end
         #################################################################
                         
-        return pids
       else
-        raise "Unsupported platform"
+        puts "ERROR: Unsupported platform"
       end
+      return pids
     end
   end
 end
