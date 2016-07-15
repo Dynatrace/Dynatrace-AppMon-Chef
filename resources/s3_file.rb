@@ -6,6 +6,7 @@
 # Copyright:: Copyright 2016, Dynatrace
 #
 require 'fileutils'
+require 'scanf'
 
 actions :create
 default_action :create
@@ -76,8 +77,10 @@ action :create do
       resp = s3.get_object({ bucket: bucket, key: object_name }, target: target)
       s3cache.save(target, resp.etag)
       Chef::Log.debug "Downloading s3://#{bucket}/#{object_name} completed"
-      # TODO: this seem to not work well on Windows
       FileUtils.chown owner, group, target if !owner.nil? || !group.nil?
+      # Accept strings in mode parameter as in other Chef resources. FileUtils.chmod accepts only integers.
+      # e.g. "0644" => 420, "644" => 420 (= 0644)
+      mode = mode.scanf("%o")[0] if mode.kind_of? String
       FileUtils.chmod mode, target if !mode.nil?
       updated = true
     end
