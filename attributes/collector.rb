@@ -25,7 +25,7 @@ default['dynatrace']['collector']['agent']['port'] = '9998'
 default['dynatrace']['collector']['server']['hostname'] = 'localhost'
 
 # The port on the Dynatrace Server the Collector shall connect to. Use either 6698 (non-SSL) or 6699 (SSL).
-default['dynatrace']['collector']['server']['port'] = '6698'
+default['dynatrace']['collector']['server']['port'] = '6699'
 
 # The Dynatrace Collector's JVM setting: -Xms
 default['dynatrace']['collector']['jvm']['xms'] = nil
