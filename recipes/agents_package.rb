@@ -25,20 +25,19 @@ elsif platform_family?('windows')
   installer_cache_dir = "#{Chef::Config['file_cache_path']}\\dynatrace"
   installer_path      = "#{installer_cache_dir}\\#{installer_file_name}"
 else
-  raise "Unsupported platform family."
+  raise 'Unsupported platform family.'
 end
-
 
 if platform_family?('debian', 'fedora', 'rhel')
   include_recipe 'dynatrace::dynatrace_user'
 end
 
-directory "Create the installer cache directory" do
+directory 'Create the installer cache directory' do
   path   installer_cache_dir
   action :create
 end
 
-dynatrace_copy_or_download_file "#{name}" do
+dynatrace_copy_or_download_file name.to_s do
   file_name       installer_file_name
   file_url        installer_file_url
   path            installer_path
@@ -47,10 +46,10 @@ dynatrace_copy_or_download_file "#{name}" do
 end
 
 if platform_family?('debian', 'fedora', 'rhel')
-  ruby_block "#{name}" do
+  ruby_block name.to_s do
     block do
       kernel = node['kernel']['machine'].include?('64') ? '64' : ''
-      node.set[:dynatrace][:agents_package][:installation][:is_required] = Dynatrace::Helpers.requires_installation?(installer_prefix_dir, installer_path, "agent/lib#{kernel}/libdtagentcore.so", type=:jar)
+      node.set[:dynatrace][:agents_package][:installation][:is_required] = Dynatrace::Helpers.requires_installation?(installer_prefix_dir, installer_path, "agent/lib#{kernel}/libdtagentcore.so", type = :jar)
     end
   end
 
@@ -62,7 +61,7 @@ if platform_family?('debian', 'fedora', 'rhel')
     action    :create
   end
 
-  dynatrace_run_jar_installer "#{name}" do
+  dynatrace_run_jar_installer name.to_s do
     installer_path       installer_path
     installer_prefix_dir installer_prefix_dir
     dynatrace_owner      dynatrace_owner
@@ -79,7 +78,7 @@ elsif platform_family?('windows')
     action :create
   end
 
-  execute "Install the Dynatrace Agents package" do
+  execute 'Install the Dynatrace Agents package' do
     command "powershell.exe -NoLogo -NonInteractive -NoProfile -ExecutionPolicy RemoteSigned -InputFormat None -File InstallMSI.ps1 -InstallPath \"#{installer_install_dir}\" -Installer \"#{installer_path}\""
     cwd     dynatrace_powershell_scripts
   end

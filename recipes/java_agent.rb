@@ -15,8 +15,6 @@ collector_port     = node['dynatrace']['java_agent']['collector']['port']
 
 if platform_family?('debian', 'fedora', 'rhel')
   agent_path = node['dynatrace']['java_agent']['linux']['agent_path']
-else
-  # Unsupported
 end
 
 ruby_block "Inject Dynatrace Java Agent into #{env_var_file_name}" do
