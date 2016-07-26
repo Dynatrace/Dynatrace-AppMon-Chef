@@ -9,6 +9,7 @@ require 'json'
 require 'net/https'
 
 include_recipe 'java'
+include_recipe 'dynatrace::node_info'
 
 name = 'Uninstall Dynatrace Server'
 
