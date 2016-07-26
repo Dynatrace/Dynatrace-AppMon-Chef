@@ -112,7 +112,7 @@ dynatrace_copy_or_download_file "easyTravel.profile.xml" do
   dynatrace_group dynatrace_group
 end
 
-dynatrace_configure_ini_files "#{name}" do
+dynatrace_configure_ini_files "#{name} sizing=#{sizing}" do
   installer_prefix_dir installer_prefix_dir
   ini_files            ini_files
   dynatrace_owner      dynatrace_owner
@@ -139,25 +139,31 @@ dynatrace_configure_init_scripts "#{name}" do
   notifies             :restart, "service[#{name}]", :immediately
 end
 
-dtserver_ini_file = "#{installer_prefix_dir}/dynatrace/dtfrontendserver.ini"
+dtserver_ini_file = "#{installer_prefix_dir}/dynatrace/dtserver.ini"
+dtfrontendserver  = "#{installer_prefix_dir}/dynatrace/dtfrontendserver.ini"
 
 ruby_block "Modificate ini files" do
   block do
     additional_line = "-agentpath:./selfmonitoring/agent/lib64/libdtagent.so=agentname=DT_Server,server=localhost:9999,wait=5\n"
     Dynatrace::Helpers.file_append_or_replace_line("#{dtserver_ini_file}", additional_line, additional_line)
     
-    additional_line = "-agentpath:./selfmonitoring/agent/lib64/libdtagent.so=agentname=DT_Server_Frontend,server=localhost:9999,wait=5\n"
-    Dynatrace::Helpers.file_append_or_replace_line("#{installer_prefix_dir}/dynatrace/dtfrontendserver.ini", additional_line, additional_line)
+    endof = "-Deof=eof"
     
+    Dynatrace::Helpers.file_replace_line("#{dtfrontendserver}", "#{endof}", "")
+    
+    additional_line = "-agentpath:./selfmonitoring/agent/lib64/libdtagent.so=agentname=DT_Server_Frontend,server=localhost:9999,wait=5\n"
+    Dynatrace::Helpers.file_append_or_replace_line("#{dtfrontendserver}", additional_line, additional_line)
+    Dynatrace::Helpers.file_append_or_replace_line("#{dtfrontendserver}", "#{endof}", "#{endof}")
+        
 #    puts "!!!!! Read file: #{dtserver_ini_file}"
 #    File.readlines("#{dtserver_ini_file}").each do |line|
 #      puts line
 #    end
 #    
-#    puts "!!!!! Read file: #{installer_prefix_dir}/dynatrace/dtfrontendserver.ini"
-#    File.readlines("#{installer_prefix_dir}/dynatrace/dtfrontendserver.ini").each do |line|
-#      puts line
-#    end
+    puts "!!!!! Read file: #{installer_prefix_dir}/dynatrace/dtfrontendserver.ini"
+    File.readlines("#{installer_prefix_dir}/dynatrace/dtfrontendserver.ini").each do |line|
+      puts line
+    end
     
   end
 end
