@@ -112,7 +112,7 @@ dynatrace_copy_or_download_file "easyTravel.profile.xml" do
   dynatrace_group dynatrace_group
 end
 
-dynatrace_configure_ini_files "#{name} sizing=#{sizing}" do
+dynatrace_configure_ini_files "#{name} sizing=#{sizing}" do     #TODO probably do not work
   installer_prefix_dir installer_prefix_dir
   ini_files            ini_files
   dynatrace_owner      dynatrace_owner
@@ -120,15 +120,19 @@ dynatrace_configure_ini_files "#{name} sizing=#{sizing}" do
   variables({ :memory => sizing })
 end
 
-#ruby_block "Modificate ini files" do
-#  block do
-#    additional_line = "-agentpath:./selfmonitoring/agent/lib64/libdtagent.so=agentname=DT_Server,server=localhost:9999,wait=5\n"
-#    Dynatrace::Helpers.file_append_or_replace_line("#{installer_prefix_dir}/dynatrace/dtserver.ini", additional_line, additional_line)
-#    
-#    additional_line = "-agentpath:./selfmonitoring/agent/lib64/libdtagent.so=agentname=DT_Server_Frontend,server=localhost:9999,wait=5\n"
-#    Dynatrace::Helpers.file_append_or_replace_line("#{installer_prefix_dir}/dynatrace/dtfrontendserver.ini", additional_line, additional_line)
-#  end
-#end
+
+dtserver_ini_file = "#{installer_prefix_dir}/dynatrace/dtserver.ini"
+dtfrontendserver_ini_file  = "#{installer_prefix_dir}/dynatrace/dtfrontendserver.ini"
+
+ruby_block "Test #{dtfrontendserver_ini_file} file" do
+  block do
+    
+    puts "!!!!! Read file: #{dtfrontendserver_ini_file}"
+    File.readlines("#{dtfrontendserver_ini_file}").each do |line|
+      puts line
+    end
+  end
+end
 
 dynatrace_configure_init_scripts "#{name}" do
   installer_prefix_dir installer_prefix_dir
@@ -139,29 +143,39 @@ dynatrace_configure_init_scripts "#{name}" do
   notifies             :restart, "service[#{name}]", :immediately
 end
 
-dtserver_ini_file = "#{installer_prefix_dir}/dynatrace/dtserver.ini"
-dtfrontendserver  = "#{installer_prefix_dir}/dynatrace/dtfrontendserver.ini"
-
 ruby_block "Modificate ini files" do
   block do
+    endof = "-Deof=eof"
+    memory = "-memory"
+    demo = "demo"
+    
+    #backend------------------------------
+    Dynatrace::Helpers.file_replace_line("#{dtserver_ini_file}", "#{memory}", "")
+    Dynatrace::Helpers.file_replace_line("#{dtserver_ini_file}", "#{demo}", "")
+    Dynatrace::Helpers.file_append_or_replace_line("#{dtserver_ini_file}", "#{memory}", "#{memory}")
+    Dynatrace::Helpers.file_append_or_replace_line("#{dtserver_ini_file}", "#{sizing}", "#{sizing}")
+
     additional_line = "-agentpath:./selfmonitoring/agent/lib64/libdtagent.so=agentname=DT_Server,server=localhost:9999,wait=5\n"
     Dynatrace::Helpers.file_append_or_replace_line("#{dtserver_ini_file}", additional_line, additional_line)
+        
+    puts "!!!!! Read file: #{dtserver_ini_file}"
+    File.readlines("#{dtserver_ini_file}").each do |line|
+      puts line
+    end
     
-    endof = "-Deof=eof"
-    
-    Dynatrace::Helpers.file_replace_line("#{dtfrontendserver}", "#{endof}", "")
+    #frontend ------------------------------
+    Dynatrace::Helpers.file_replace_line("#{dtfrontendserver_ini_file}", "#{endof}", "")
+    Dynatrace::Helpers.file_replace_line("#{dtfrontendserver_ini_file}", "#{memory}", "")
+    Dynatrace::Helpers.file_replace_line("#{dtfrontendserver_ini_file}", "#{demo}", "")
     
     additional_line = "-agentpath:./selfmonitoring/agent/lib64/libdtagent.so=agentname=DT_Server_Frontend,server=localhost:9999,wait=5\n"
-    Dynatrace::Helpers.file_append_or_replace_line("#{dtfrontendserver}", additional_line, additional_line)
-    Dynatrace::Helpers.file_append_or_replace_line("#{dtfrontendserver}", "#{endof}", "#{endof}")
-        
-#    puts "!!!!! Read file: #{dtserver_ini_file}"
-#    File.readlines("#{dtserver_ini_file}").each do |line|
-#      puts line
-#    end
-#    
-    puts "!!!!! Read file: #{installer_prefix_dir}/dynatrace/dtfrontendserver.ini"
-    File.readlines("#{installer_prefix_dir}/dynatrace/dtfrontendserver.ini").each do |line|
+    Dynatrace::Helpers.file_append_or_replace_line("#{dtfrontendserver_ini_file}", additional_line, additional_line)
+    Dynatrace::Helpers.file_append_or_replace_line("#{dtfrontendserver_ini_file}", "#{memory}", "#{memory}")
+    Dynatrace::Helpers.file_append_or_replace_line("#{dtfrontendserver_ini_file}", "#{sizing}", "#{sizing}")
+    Dynatrace::Helpers.file_append_or_replace_line("#{dtfrontendserver_ini_file}", "#{endof}", "#{endof}")
+    
+    puts "!!!!! Read file: #{dtfrontendserver_ini_file}"
+    File.readlines("#{dtfrontendserver_ini_file}").each do |line|
       puts line
     end
     
