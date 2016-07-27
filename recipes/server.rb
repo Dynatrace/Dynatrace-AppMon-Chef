@@ -112,7 +112,7 @@ dynatrace_copy_or_download_file "easyTravel.profile.xml" do
   dynatrace_group dynatrace_group
 end
 
-dynatrace_configure_ini_files "#{name} sizing=#{sizing}" do     #TODO probably do not work
+dynatrace_configure_ini_files "#{name} sizing=#{sizing}" do     #TODO probably do not work ->   variables({ :memory => sizing })
   installer_prefix_dir installer_prefix_dir
   ini_files            ini_files
   dynatrace_owner      dynatrace_owner
@@ -120,19 +120,16 @@ dynatrace_configure_ini_files "#{name} sizing=#{sizing}" do     #TODO probably d
   variables({ :memory => sizing })
 end
 
-
 dtserver_ini_file = "#{installer_prefix_dir}/dynatrace/dtserver.ini"
 dtfrontendserver_ini_file  = "#{installer_prefix_dir}/dynatrace/dtfrontendserver.ini"
 
-ruby_block "Test #{dtfrontendserver_ini_file} file" do
+ruby_block "Test ini files" do    #TODO after tests remove this block
   block do
-    
-    puts "!!!!! Read file: #{dtfrontendserver_ini_file}"
-    File.readlines("#{dtfrontendserver_ini_file}").each do |line|
-      puts line
-    end
+    Dynatrace::Helpers.read_file2out("Test #{dtserver_ini_file} file", dtserver_ini_file)
+    Dynatrace::Helpers.read_file2out("Test #{dtfrontendserver_ini_file} file", dtfrontendserver_ini_file)
   end
 end
+
 
 dynatrace_configure_init_scripts "#{name}" do
   installer_prefix_dir installer_prefix_dir
@@ -157,11 +154,6 @@ ruby_block "Modificate ini files" do
 
     additional_line = "-agentpath:./selfmonitoring/agent/lib64/libdtagent.so=agentname=DT_Server,server=localhost:9999,wait=5\n"
     Dynatrace::Helpers.file_append_or_replace_line("#{dtserver_ini_file}", additional_line, additional_line)
-        
-    puts "!!!!! Read file: #{dtserver_ini_file}"
-    File.readlines("#{dtserver_ini_file}").each do |line|
-      puts line
-    end
     
     #frontend ------------------------------
     Dynatrace::Helpers.file_replace_line("#{dtfrontendserver_ini_file}", "#{endof}", "")
@@ -173,12 +165,12 @@ ruby_block "Modificate ini files" do
     Dynatrace::Helpers.file_append_or_replace_line("#{dtfrontendserver_ini_file}", "#{memory}", "#{memory}")
     Dynatrace::Helpers.file_append_or_replace_line("#{dtfrontendserver_ini_file}", "#{sizing}", "#{sizing}")
     Dynatrace::Helpers.file_append_or_replace_line("#{dtfrontendserver_ini_file}", "#{endof}", "#{endof}")
-    
-    puts "!!!!! Read file: #{dtfrontendserver_ini_file}"
-    File.readlines("#{dtfrontendserver_ini_file}").each do |line|
-      puts line
-    end
-    
+  end
+end
+ruby_block "After modification ini files" do
+  block do
+    Dynatrace::Helpers.read_file2out("After modification #{dtserver_ini_file} file", dtserver_ini_file)
+    Dynatrace::Helpers.read_file2out("After modification #{dtfrontendserver_ini_file} file", dtfrontendserver_ini_file)
   end
 end
 
@@ -220,3 +212,4 @@ ruby_block "Establish the #{name}'s Performance Warehouse connection" do
   end
   only_if { do_pwh_connection }
 end
+
