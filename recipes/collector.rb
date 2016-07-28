@@ -89,13 +89,43 @@ dynatrace_run_jar_installer "#{name}" do
   only_if { node[:dynatrace][:collector][:installation][:is_required] }
 end
 
+service "#{name}" do
+  service_name service
+  supports     :status => true
+  action       [:stop, :enable]
+  ignore_failure true
+end
+
+node_public_hostname = nil
+node_public_ipv4 = nil
+ec2 = node['ec2']
+if !ec2.nil?
+  node_public_hostname = node['ec2']['public_hostname']
+  node_public_ipv4 = node['ec2']['public_ipv4']
+end
+
+if node_public_ipv4.nil?
+  node_public_ipv4=''
+end
+
 dynatrace_configure_init_scripts "#{name}" do
   installer_prefix_dir installer_prefix_dir
   scripts              init_scripts
   dynatrace_owner      dynatrace_owner
   dynatrace_group      dynatrace_group
-  variables({ :agent_port => agent_port, :server_hostname => server_hostname, :server_port => server_port, :jvm_xmx => collector_jvm_xmx, :jvm_xms => collector_jvm_xms, :jvm_perm_size => collector_jvm_perm_size, :jvm_max_perm_size => collector_jvm_max_perm_size })
-  notifies             :restart, "service[#{name}]", :immediately
+  variables({ :agent_port => agent_port, 
+              :server_hostname => server_hostname, 
+              :server_port => server_port, 
+              :jvm_xmx => collector_jvm_xmx, 
+              :jvm_xms => collector_jvm_xms, 
+              :jvm_perm_size => collector_jvm_perm_size, 
+              :jvm_max_perm_size => collector_jvm_max_perm_size})
+#  notifies :restart, "service[#{name}]", :immediately                  #JK: removed because we have to remove '/opt/dynatrace-6.5/collector/conf/collector.config.xml' file to proper collector start
+end
+
+file '/opt/dynatrace-6.5/collector/conf/collector.config.xml' do
+  action :delete
+  ignore_failure true
 end
 
 service "#{name}" do
@@ -106,6 +136,6 @@ end
 
 ruby_block "Waiting for port #{agent_port} to become available" do
   block do
-    Dynatrace::Helpers.wait_until_port_is_open(agent_port)
+    Dynatrace::Helpers.wait_until_port_is_open(agent_port, 240, '127.0.0.1', 'yes')
   end
 end

@@ -147,10 +147,10 @@ ruby_block "Modificate ini files" do
     demo = "demo"
     
     #backend------------------------------
-    Dynatrace::Helpers.file_replace_line("#{dtserver_ini_file}", "#{memory}", "")
-    Dynatrace::Helpers.file_replace_line("#{dtserver_ini_file}", "#{demo}", "")
-    Dynatrace::Helpers.file_append_or_replace_line("#{dtserver_ini_file}", "#{memory}", "#{memory}")
-    Dynatrace::Helpers.file_append_or_replace_line("#{dtserver_ini_file}", "#{sizing}", "#{sizing}")
+    Dynatrace::Helpers.file_replace_line("#{dtserver_ini_file}", "#{memory}", "")                        #remove "-memory" line
+    Dynatrace::Helpers.file_replace_line("#{dtserver_ini_file}", "#{demo}", "")                          #remove "demo" line
+    Dynatrace::Helpers.file_append_or_replace_line("#{dtserver_ini_file}", "#{memory}", "#{memory}")     #append "-memory" line at the end of file
+    Dynatrace::Helpers.file_append_or_replace_line("#{dtserver_ini_file}", "#{sizing}", "#{sizing}")     #append "small" line at the end of file (value of sizing variable)
 
     additional_line = "-agentpath:./selfmonitoring/agent/lib64/libdtagent.so=agentname=DT_Server,server=localhost:9999,wait=5\n"
     Dynatrace::Helpers.file_append_or_replace_line("#{dtserver_ini_file}", additional_line, additional_line)
