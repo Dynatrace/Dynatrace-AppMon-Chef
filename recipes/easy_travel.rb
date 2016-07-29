@@ -159,11 +159,14 @@ if platform_family?('debian', 'fedora', 'rhel')
   # As for now the Java VM bundled with Easy Travel is 32-bit
   agent_path = node['dynatrace']['java_agent']['linux'][app_arch]['agent_path']
 
-  dynatrace_java_agent 'backendJavaAgent' do
+  backendAgentName = node['dynatrace']['easyTravel']['java_agent']['backendAgentName']
+  frontendAgentName = node['dynatrace']['easyTravel']['java_agent']['frontendAgentName']
+
+  dynatrace_java_agent "#{backendAgentName}" do
     agent_path agent_path
   end
 
-  dynatrace_java_agent 'frontendJavaAgent' do
+  dynatrace_java_agent "#{frontendAgentName}" do
     agent_path agent_path
   end
 
@@ -188,13 +191,16 @@ if platform_family?('debian', 'fedora', 'rhel')
         end
       end
       # Comma character requires escaping
-      backendAgentOpts = node['dynatrace']['java_agent']['javaopts']['backendJavaAgent'].gsub(/,/, ",,")
-      frontendAgentOpts = node['dynatrace']['java_agent']['javaopts']['frontendJavaAgent'].gsub(/,/, ",,")
+      backendAgentOpts = node['dynatrace']['java_agent']['javaopts']["#{backendAgentName}"].gsub(/,/, ",,")
+      frontendAgentOpts = node['dynatrace']['java_agent']['javaopts']["#{frontendAgentName}"].gsub(/,/, ",,")
       # Append Java agent related options to javaopts
       backendJavaOpts = "#{defaultOptsBackend},#{backendAgentOpts}"
       frontendJavaOpts = "#{defaultOptsFrontend},#{frontendAgentOpts}"
+      puts "Using agent path for backend: #{backendAgentOpts}"
+      puts "Usinf agent path for frontend: #{frontendAgentOpts}"
       Dynatrace::Helpers.file_replace_line(config_path, 'config\.backendJavaopts=', "#{backendJavaOpts}")
       Dynatrace::Helpers.file_replace_line(config_path, 'config\.frontendJavaopts=', "#{frontendJavaOpts}")
+
     end
   end
 

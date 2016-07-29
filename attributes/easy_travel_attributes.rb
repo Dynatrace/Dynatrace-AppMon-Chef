@@ -64,3 +64,6 @@ default['easy_travel']['windows']['installer']['folder'] = 'C:/Program Files/dyn
 #TODO remove this entry
 #place where user specific folders and configuration is placed
 default['easy_travel']['windows']['installer']['user_folder'] = 'C:\\Users\\Administrator'
+
+default['dynatrace']['easyTravel']['java_agent']['backendAgentName'] = 'BusinessBackend_easyTravel'
+default['dynatrace']['easyTravel']['java_agent']['frontendAgentName'] = 'CustomerFrontend_easyTravel'
