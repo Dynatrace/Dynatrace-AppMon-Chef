@@ -199,11 +199,16 @@ EOH
     end
 
     def self.wait_until_port_is_open(port, timeout = 120, ip = '127.0.0.1', continue_exec = nil)
+      
+      time_begin = Time.now           # Current time
       puts "!!!!! wait_until_port_is_open IP=#{ip}:#{port} timeout=#{timeout}"
         Timeout.timeout(timeout, DynatraceTimeout) do
       while !self.port_is_open?(ip, port) do
         sleep(1)
       end
+      time_end = Time.now           # Current time
+      diff = (time_end - time_begin).ceil
+      puts "!!!!! wait_until_port_is_open - waited=#{diff} seconds"
     end
     rescue DynatraceTimeout
       if continue_exec.nil? 
