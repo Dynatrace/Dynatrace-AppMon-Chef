@@ -95,6 +95,13 @@ dynatrace_run_jar_installer "#{name}" do
   only_if { node[:dynatrace][:server][:installation][:is_required] }
 end
 
+service "Stop service #{name}" do
+  service_name service
+  supports     :status => true
+  action       [:stop, :enable]
+  ignore_failure true                 #TODO added because of service[Stop service Dynatrace Server]: Service is not known to chkconfig.
+end
+
 profiles = '/opt/dynatrace/server/conf/profiles/'
 directory "Create profiles directory #{profiles}" do
   path      profiles
@@ -123,13 +130,12 @@ end
 dtserver_ini_file = "#{installer_prefix_dir}/dynatrace/dtserver.ini"
 dtfrontendserver_ini_file  = "#{installer_prefix_dir}/dynatrace/dtfrontendserver.ini"
 
-ruby_block "Test ini files" do    #TODO after tests remove this block
+ruby_block "Test ini files memory sizing=#{sizing}" do    #TODO after tests remove this block
   block do
-    Dynatrace::Helpers.read_file2out("Test #{dtserver_ini_file} file", dtserver_ini_file)
-    Dynatrace::Helpers.read_file2out("Test #{dtfrontendserver_ini_file} file", dtfrontendserver_ini_file)
+    Dynatrace::Helpers.read_file2out("Test memory sizing in #{dtserver_ini_file} file", dtserver_ini_file)
+    Dynatrace::Helpers.read_file2out("Test memory sizing in#{dtfrontendserver_ini_file} file", dtfrontendserver_ini_file)
   end
 end
-
 
 dynatrace_configure_init_scripts "#{name}" do
   installer_prefix_dir installer_prefix_dir
@@ -137,7 +143,14 @@ dynatrace_configure_init_scripts "#{name}" do
   dynatrace_owner      dynatrace_owner
   dynatrace_group      dynatrace_group
   variables({ :collector_port => collector_port })
-  notifies             :restart, "service[#{name}]", :immediately
+#  notifies             :restart, "service[#{name}]", :immediately                            #removed because have to modify ini files - see below
+end
+
+ruby_block "Test ini files collector_port=#{collector_port}" do       #TODO test only, remove it 
+  block do
+    Dynatrace::Helpers.read_file2out("Before modification #{dtserver_ini_file} file", dtserver_ini_file)
+    Dynatrace::Helpers.read_file2out("Before modification #{dtfrontendserver_ini_file} file", dtfrontendserver_ini_file)
+  end
 end
 
 ruby_block "Modificate ini files" do
@@ -177,7 +190,8 @@ end
 service "#{name}" do
   service_name service
   supports     :status => true
-  action       [:start, :enable]
+  action       [:restart, :enable]
+  ignore_failure true
 end
 
 [collector_port, 2021, 6699, 8021, 9911].each do | port |
@@ -185,8 +199,9 @@ end
     block do
       # Set a longer timeout due to the time to open the collector port
       # (see log "[SelfMonitoringLauncher] Waiting for self-monitoring Collector startup (max: 90 seconds)")
-      Dynatrace::Helpers.wait_until_port_is_open(port, 210)
+      Dynatrace::Helpers.wait_until_port_is_open(port, 300)     #wait 5 minutes
     end
+    ignore_failure true
   end
 end
 
@@ -212,4 +227,3 @@ ruby_block "Establish the #{name}'s Performance Warehouse connection" do
   end
   only_if { do_pwh_connection }
 end
-
