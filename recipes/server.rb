@@ -146,13 +146,6 @@ dynatrace_configure_init_scripts "#{name}" do
 #  notifies             :restart, "service[#{name}]", :immediately                            #removed because have to modify ini files - see below
 end
 
-ruby_block "Test ini files collector_port=#{collector_port}" do       #TODO test only, remove it 
-  block do
-    Dynatrace::Helpers.read_file2out("Before modification #{dtserver_ini_file} file", dtserver_ini_file)
-    Dynatrace::Helpers.read_file2out("Before modification #{dtfrontendserver_ini_file} file", dtfrontendserver_ini_file)
-  end
-end
-
 ruby_block "Modificate ini files" do
   block do
     endof = "-Deof=eof"
@@ -180,7 +173,8 @@ ruby_block "Modificate ini files" do
     Dynatrace::Helpers.file_append_or_replace_line("#{dtfrontendserver_ini_file}", "#{endof}", "#{endof}")
   end
 end
-ruby_block "After modification ini files" do
+
+ruby_block "Test ini files after modification" do
   block do
     Dynatrace::Helpers.read_file2out("After modification #{dtserver_ini_file} file", dtserver_ini_file)
     Dynatrace::Helpers.read_file2out("After modification #{dtfrontendserver_ini_file} file", dtfrontendserver_ini_file)
