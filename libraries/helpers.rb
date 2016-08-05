@@ -57,14 +57,17 @@ EOH
       file.write_file
     end
 
-    def self.file_replace_two_lines(path, regex, replace1, replace2)
+    def self.file_replace_two_lines(path, regex1, regex2_array, replace1, replace2)
       #TODO
       FileUtils.touch(path) if !::File.exist?(path)
       file = Chef::Util::FileEdit.new(path)
-      result = file.search_file_replace_line(/#{regex}/, replace1)
-#      if !result.nil?
-#        puts '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ' + result.to_s
-#      end 
+      result = file.search_file_replace_line(/#{regex1}/, replace1)
+      puts '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! file_replace_two_lines: ' + result.to_s + " path:#{path} regex:#{regex1} replace1:#{replace1} replace2:#{replace2}"
+      if result.nil?
+        regex2_array.each { |x| 
+          file.search_file_replace_line(/#{x}/, replace2)
+        }
+      end
       file.write_file
     end
 
