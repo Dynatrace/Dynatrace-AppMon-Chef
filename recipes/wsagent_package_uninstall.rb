@@ -7,9 +7,7 @@
 
 require 'json'
 
-#include_recipe 'dynatrace::helpers'
-
-name = 'Dynatrace WebServer Agent'
+name = 'Dynatrace WebServer Agent package uninstall'
 
 dynatrace_owner = node['dynatrace']['owner']
 dynatrace_group = node['dynatrace']['group']
@@ -59,6 +57,7 @@ if platform_family?('debian', 'fedora', 'rhel')
       
   
 elsif platform_family?('windows')
+  #TODO
   dynatrace_powershell_scripts_project = "#{installer_cache_dir}\\Dynatrace-Powershell"
   dynatrace_powershell_scripts = "#{dynatrace_powershell_scripts_project}\\scripts"
 

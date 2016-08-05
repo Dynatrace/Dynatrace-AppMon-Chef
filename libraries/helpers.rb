@@ -57,6 +57,17 @@ EOH
       file.write_file
     end
 
+    def self.file_replace_two_lines(path, regex, replace1, replace2)
+      #TODO
+      FileUtils.touch(path) if !::File.exist?(path)
+      file = Chef::Util::FileEdit.new(path)
+      result = file.search_file_replace_line(/#{regex}/, replace1)
+#      if !result.nil?
+#        puts '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ' + result.to_s
+#      end 
+      file.write_file
+    end
+
     def self.get_install_dir_from_installer_msi(installer_path)
       #TODO
       # installer_path must be set to something like this:

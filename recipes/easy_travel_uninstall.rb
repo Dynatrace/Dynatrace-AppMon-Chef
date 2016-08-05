@@ -10,9 +10,6 @@ require 'net/https'
 
 name = 'Easy Travel'
 include_recipe 'dynatrace::node_info'
-include_recipe 'dynatrace::agents_package_uninstall'
-include_recipe 'dynatrace::apache_wsagent_uninstall'
-
 if platform_family?('debian', 'fedora', 'rhel')
   easytravel_owner = node['easy_travel']['owner']
   easytravel_group = node['easy_travel']['group']
@@ -64,7 +61,11 @@ if platform_family?('debian', 'fedora', 'rhel')
     log 'Destination directory:' + dir2delete + ' not exists. It looks loke Easy Travel is not installed.'
   end
   
+  include_recipe 'dynatrace::apache_wsagent_uninstall'
+  include_recipe 'dynatrace::agents_package_uninstall'
+  
 else
   # Unsupported platform
   log 'Unsuppored platform. Only Red Hat Enterprise Linux, Debian and Fedora are supported. Easy Travel will not be uninstalled.'
 end
+

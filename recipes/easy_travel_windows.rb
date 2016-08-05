@@ -226,21 +226,66 @@ if platform_family?('windows')
     end
   end
   
-  ruby_block "Stop any running instance of #{name}" do
+#  ruby_block "Stop any running instance of #{name}" do
+#    block do
+#      Dynatrace::Helpers.stop_processes(node['easy_travel']['proc_pattern'], nil, node['platform_family'], 120)
+#    end
+#  end
+
+  ruby_block "Creating ScheduledTask to start Easy Travel on Windows" do
     block do
-      Dynatrace::Helpers.stop_processes(node['easy_travel']['proc_pattern'], nil, node['platform_family'], 120)
+      d = Date.parse(Time.now.to_s)
+#      dt = (d >> 1).strftime("%d/%m/%Y %H:%M")
+      dt = d.strftime("%d/%m/%Y %H:%M")
+      ts = d.strftime("%H:%M")
+      puts "Current timestamp: #{dt}  ts only: #{ts}"     # 00:00 why?
+      
+      
+#      require 'date'
+#      
+#      current_time = DateTime.now
+#      
+#      current_time.strftime "%d/%m/%Y %H:%M"
+#      # => "14/09/2011 17:02"
+#      
+#      current_time.next_month.strftime "%d/%m/%Y %H:%M"
+#      # => "14/10/2011 17:02"       
     end
   end
-  
-#  toExec = "start.vbs"
-#  toExec = "start.bat"
-#  cmd = "#{destination_folder}/weblauncher/"
+
+cmd = "#{destination_folder}/weblauncher/"
+      
+##  toExec = "start.vbs"
+##  toExec = "start.bat"
+##  toExec = "weblauncher.cmd"
+#  toExec = "weblauncher.bat"
 #  execute "Start installed program using command: #{toExec}  in #{cmd}" do
 #    command toExec
 #    cwd "#{cmd}"
 ##    live_stream true
 ##    user easytravel_owner
 #  end
+  
+toExec = "weblauncher.bat"
+powershell_script "Start installed program using command: #{toExec}  in #{cmd}" do
+  architecture               :x86_64
+#  code                       String
+  command                    toExec
+#  convert_boolean_return     TrueClass, FalseClass
+#  creates                    String
+  cwd                        "#{destination_folder}/weblauncher/"
+#  environment                Hash
+#  flags                      String
+#  group                      String, Integer
+#  guard_interpreter          Symbol
+#  interpreter                String
+#  notifies                   # see description
+  provider                   Chef::Provider::PowershellScript
+#  returns                    Integer, Array
+#  subscribes                 # see description
+#  timeout                    Integer, Float
+#  action                     Symbol # defaults to :run if not specified
+end
   
 #  # Wait for the weblauncher console port (cd ) and the Apache Web server proxy port (8079) to be opened
 #  [8094, 8079].each do |port|

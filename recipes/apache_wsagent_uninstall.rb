@@ -5,8 +5,6 @@
 # Copyright 2016, Dynatrace
 #
 
-include_recipe 'dynatrace::wsagent_package_uninstall'
-
 name = "Dynatrace Apache WebServer Agent uninstall"
 
 apache_config_file_path = node['dynatrace']['apache_wsagent']['apache']['config_file_path']
@@ -22,10 +20,10 @@ else
   end
 end
 
-fileExists = apache_config_file_path
-if File.exist?(fileExists)
-  ruby_block "Remove the #{name} from Apache HTTPD's config file #{apache_config_file_path}" do
-    block do
+ruby_block "Remove the #{name} from Apache HTTPD's config file #{apache_config_file_path}" do
+  block do
+    fileExists = apache_config_file_path
+    if File.exist?(fileExists)
       # Host Agent is already installed
       search_pattern = "LoadModule dtagent_module"
       line_to_remove = "#{search_pattern} \"#{agent_path}\""
@@ -33,34 +31,34 @@ if File.exist?(fileExists)
       puts "Search pattern: #{search_pattern}"
       puts "Line to remove: #{line_to_remove}"
       
-      Dynatrace::Helpers.file_replace_line(apache_config_file_path, line_to_remove, '')
+      Dynatrace::Helpers.file_replace_line(fileExists, line_to_remove, '')
     end
-    if not apache_daemon.empty?
-      notifies :restart, "service[#{apache_daemon}]", :immediately
-    end
-    ignore_failure true
   end
+  if not apache_daemon.empty?
+    notifies :restart, "service[#{apache_daemon}]", :immediately
+  end
+  ignore_failure true
 end
 
 apache_config_file_path = '/opt/easytravel/resources/custom_httpd.conf'
-fileExists = apache_config_file_path
-if File.exist?(fileExists)
-  ruby_block "Remove the #{name} from Apache HTTPD's config file #{apache_config_file_path}" do
-    block do
-        # Host Agent is already installed
-        search_pattern = "LoadModule dtagent_module"
-        line_to_remove = "#{search_pattern} \"#{agent_path}\""
-        
-        puts "Search pattern: #{search_pattern}"
-        puts "Line to remove: #{line_to_remove}"
-        
-        Dynatrace::Helpers.file_replace_line(apache_config_file_path, line_to_remove, '')
+ruby_block "Remove the #{name} from Apache HTTPD's config file #{apache_config_file_path}" do
+  block do
+    fileExists = apache_config_file_path
+    if File.exist?(fileExists)
+      # Host Agent is already installed
+      search_pattern = "LoadModule dtagent_module"
+      line_to_remove = "#{search_pattern} \"#{agent_path}\""
+      
+      puts "Search pattern: #{search_pattern}"
+      puts "Line to remove: #{line_to_remove}"
+      
+      Dynatrace::Helpers.file_replace_line(fileExists, line_to_remove, '')
     end
-    if not apache_daemon.empty?
-      notifies :restart, "service[#{apache_daemon}]", :immediately
-    end
-    ignore_failure true
   end
+  if not apache_daemon.empty?
+    notifies :restart, "service[#{apache_daemon}]", :immediately
+  end
+  ignore_failure true
 end
 
 # We only state here that such a daemon already exists. We do this to
@@ -70,3 +68,5 @@ end
     action :nothing
   end
 end
+
+include_recipe 'dynatrace::wsagent_package_uninstall'
