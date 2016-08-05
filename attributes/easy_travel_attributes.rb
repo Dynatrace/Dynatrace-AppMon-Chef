@@ -19,12 +19,12 @@ default['easy_travel']['linux']['installer']['link'] = 'easytravel'
 default['easy_travel']['installer']['version'] = '2.0.0'
 
 # The file name of the easy_travel installer in the cookbook's files directory.
-default['easy_travel']['linux']['installer']['file_name'] = 'dynatrace-easytravel-2.0.0.2173-linux-x86.jar'
+default['easy_travel']['linux']['installer']['file_name'] = 'dynatrace-easytravel-2.0.0.2455-linux-x86.jar'
 default['easy_travel']['windows']['installer']['file_name'] = 'dynatrace-easytravel-windows-x86_64-2.0.0.2347.msi'
 
 # A HTTP, HTTPS or FTP URL to the Easy Travel installer in the form (http|https|ftp)://[user[:pass]]@host.domain[:port]/path.
 # Additionally it is possible to refer to objects stored in S3 e.g. 's3://bucket_name/path/to/filename'.
-default['easy_travel']['linux']['installer']['file_url'] = 'https://s3.amazonaws.com/easytravel/dT63/dynatrace-easytravel-2.0.0.2173-linux-x86.jar'
+default['easy_travel']['linux']['installer']['file_url'] = 'https://s3.amazonaws.com/easytravel/dT63/dynatrace-easytravel-2.0.0.2455-linux-x86.jar'
 #default['easy_travel']['linux']['installer']['file_url'] = 'https://s3.amazonaws.com/downloads.dynasprint/easytravel/2.0.0.2347/dynatrace-easytravel-windows-x86_64-2.0.0.2347.msi'
 default['easy_travel']['windows']['installer']['file_url'] = 'https://s3.amazonaws.com/dynatrace-automation/dynatrace-easytravel-windows-x86_64-2.0.0.2347.msi'
 

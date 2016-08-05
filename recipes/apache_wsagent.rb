@@ -23,10 +23,14 @@ else
   end
 end
 
-ruby_block "Inject the #{name} into Apache HTTPD's config file" do
+ruby_block "Inject the #{name} into Apache HTTPD's config file #{apache_config_file_path}" do
   block do
     search_pattern = "LoadModule dtagent_module"
     line_to_add = "#{search_pattern} \"#{agent_path}\""
+    
+    puts "Search pattern: #{search_pattern}"
+    puts "Line to remove: #{line_to_add}"
+
     Dynatrace::Helpers.file_append_or_replace_line(apache_config_file_path, search_pattern, line_to_add)
   end
   if not apache_daemon.empty?

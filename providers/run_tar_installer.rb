@@ -6,8 +6,8 @@
 #
 
 action :run do
-  execute "Extract the #{new_resource.name} tarball" do
-    command "tar xvf #{new_resource.installer_path}"
+  execute "Extract the tar installer #{new_resource.name}" do
+    command "tar xf #{new_resource.installer_path} > /dev/null"
     cwd     ::File.dirname(new_resource.installer_path)
   end
 
