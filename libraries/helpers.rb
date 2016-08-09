@@ -62,7 +62,7 @@ EOH
       FileUtils.touch(path) if !::File.exist?(path)
       file = Chef::Util::FileEdit.new(path)
       result = file.search_file_replace_line(/#{regex1}/, replace1)
-      puts '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! file_replace_two_lines: ' + result.to_s + " path:#{path} regex:#{regex1} replace1:#{replace1} replace2:#{replace2}"
+      puts '>> file_replace_two_lines: ' + result.to_s + " path:#{path} regex:#{regex1} replace1:#{replace1} replace2:#{replace2}"
       if result.nil?
         regex2_array.each { |x| 
           file.search_file_replace_line(/#{x}/, replace2)
@@ -215,14 +215,14 @@ EOH
     def self.wait_until_port_is_open(port, timeout = 120, ip = '127.0.0.1', continue_exec = nil)
       
       time_begin = Time.now           # Current time
-      puts "!!!!! wait_until_port_is_open IP=#{ip}:#{port} timeout=#{timeout}"
+      puts ">> wait_until_port_is_open IP=#{ip}:#{port} timeout=#{timeout}"
         Timeout.timeout(timeout, DynatraceTimeout) do
       while !self.port_is_open?(ip, port) do
         sleep(1)
       end
       time_end = Time.now           # Current time
       diff = (time_end - time_begin).ceil
-      puts "!!!!! wait_until_port_is_open - waited=#{diff} seconds"
+      puts ">> wait_until_port_is_open - waited=#{diff} seconds"
     end
     rescue DynatraceTimeout
       if continue_exec.nil? 

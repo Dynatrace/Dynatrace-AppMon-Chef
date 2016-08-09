@@ -119,23 +119,9 @@ dynatrace_copy_or_download_file "easyTravel.profile.xml" do
   dynatrace_group dynatrace_group
 end
 
-dynatrace_configure_ini_files "#{name} sizing=#{sizing}" do     #TODO probably do not work ->   variables({ :memory => sizing })
-  installer_prefix_dir installer_prefix_dir
-  ini_files            ini_files
-  dynatrace_owner      dynatrace_owner
-  dynatrace_group      dynatrace_group
-  variables({ :memory => sizing })
-end
-
 dtserver_ini_file = "#{installer_prefix_dir}/dynatrace/dtserver.ini"
 dtfrontendserver_ini_file  = "#{installer_prefix_dir}/dynatrace/dtfrontendserver.ini"
 
-ruby_block "Test ini files memory sizing=#{sizing}" do    #TODO after tests remove this block
-  block do
-    Dynatrace::Helpers.read_file2out("Test memory sizing in #{dtserver_ini_file} file", dtserver_ini_file)
-    Dynatrace::Helpers.read_file2out("Test memory sizing in#{dtfrontendserver_ini_file} file", dtfrontendserver_ini_file)
-  end
-end
 
 dynatrace_configure_init_scripts "#{name}" do
   installer_prefix_dir installer_prefix_dir
@@ -146,52 +132,42 @@ dynatrace_configure_init_scripts "#{name}" do
 #  notifies             :restart, "service[#{name}]", :immediately                            #removed because have to modify ini files - see below
 end
 
-endof = "-Deof=eof"
-memory = "-memory"
-ruby_block "Modificate1 ini files" do
-  block do
-    patterns_array = [ "demo", "small", "medium", "large" ]
-      
-    #backend------------------------------
-    Dynatrace::Helpers.file_replace_two_lines("#{dtserver_ini_file}", "#{memory}", patterns_array, "", "")  #remove "-memory" line as well as next(? TODO) line if second pattern matches  
-#    Dynatrace::Helpers.file_append_or_replace_line("#{dtserver_ini_file}", "#{memory}", "#{memory}")     #append "-memory" line at the end of file
-#    Dynatrace::Helpers.file_append_or_replace_line("#{dtserver_ini_file}", "#{sizing}", "#{sizing}")     #append "small" line at the end of file (value of sizing variable)
-
-    #frontend ------------------------------
-    Dynatrace::Helpers.file_replace_two_lines("#{dtserver_ini_file}", "#{memory}", patterns_array, "", "")  #remove "-memory" line as well as next(? TODO) line if second pattern matches  
-    Dynatrace::Helpers.file_replace_line("#{dtfrontendserver_ini_file}", "#{endof}", "")
-    
-#    Dynatrace::Helpers.file_append_or_replace_line("#{dtfrontendserver_ini_file}", "#{memory}", "#{memory}")
-#    Dynatrace::Helpers.file_append_or_replace_line("#{dtfrontendserver_ini_file}", "#{sizing}", "#{sizing}")
-#    Dynatrace::Helpers.file_append_or_replace_line("#{dtfrontendserver_ini_file}", "#{endof}", "#{endof}")
-  end
+service "#{name}" do
+  service_name service
+  supports     :status => true
+  action       [:restart, :enable]
+  ignore_failure true
 end
 
-ruby_block "Modificate2 ini files" do
+ruby_block "Test ini files memory sizing=#{sizing}" do
   block do
-    #backend------------------------------
-    Dynatrace::Helpers.file_append_or_replace_line("#{dtserver_ini_file}", "#{memory}", "#{memory}")     #append "-memory" line at the end of file
-    Dynatrace::Helpers.file_append_or_replace_line("#{dtserver_ini_file}", "#{sizing}", "#{sizing}")     #append "small" line at the end of file (value of sizing variable)
-
-    #frontend ------------------------------
-    Dynatrace::Helpers.file_append_or_replace_line("#{dtfrontendserver_ini_file}", "#{memory}", "#{memory}")
-    Dynatrace::Helpers.file_append_or_replace_line("#{dtfrontendserver_ini_file}", "#{sizing}", "#{sizing}")
-    Dynatrace::Helpers.file_append_or_replace_line("#{dtfrontendserver_ini_file}", "#{endof}", "#{endof}")
+    #wait for update ini files
+    puts '>> Wait for update ini files on clean installation'
+    sleep(30)
   end
+  only_if { node[:dynatrace][:server][:installation][:is_required] }
 end
 
-ruby_block "Test ini files after modification" do
-  block do
-    Dynatrace::Helpers.read_file2out("After modification #{dtserver_ini_file} file", dtserver_ini_file)
-    Dynatrace::Helpers.read_file2out("After modification #{dtfrontendserver_ini_file} file", dtfrontendserver_ini_file)
-  end
+dynatrace_configure_ini_files "#{name} sizing=#{sizing}" do
+  installer_prefix_dir installer_prefix_dir
+  ini_files            ini_files
+  dynatrace_owner      dynatrace_owner
+  dynatrace_group      dynatrace_group
+  variables({ :memory => sizing })
 end
 
 service "#{name}" do
   service_name service
   supports     :status => true
   action       [:restart, :enable]
-  ignore_failure true
+  ignore_failure false
+end
+
+ruby_block "Display ini files after applying memory sizing=#{sizing}" do
+  block do
+    Dynatrace::Helpers.read_file2out(">> Content of ini file #{dtserver_ini_file}", dtserver_ini_file)
+    Dynatrace::Helpers.read_file2out(">> Content of ini file #{dtfrontendserver_ini_file} file", dtfrontendserver_ini_file)
+  end
 end
 
 [collector_port, 2021, 6699, 8021, 9911].each do | port |
@@ -201,7 +177,7 @@ end
       # (see log "[SelfMonitoringLauncher] Waiting for self-monitoring Collector startup (max: 90 seconds)")
       Dynatrace::Helpers.wait_until_port_is_open(port, 300)     #wait 5 minutes
     end
-    ignore_failure true
+    ignore_failure false
   end
 end
 
