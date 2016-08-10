@@ -22,10 +22,10 @@
           end
       elsif platform_family?('debian')
         execute "Update system" do
-            command "aptitude update -y"
+            command "apt-get update -y"
         end
         execute "Upgrade system" do
-            command "aptitude full-upgrade -y"
+            command "apt-get full-upgrade -y"
         end
       else
         puts "Unsupported platform family. System will not be upgraded."
