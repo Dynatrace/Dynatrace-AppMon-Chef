@@ -7,8 +7,6 @@
 require 'json'
 require 'net/https'
 
-include_recipe 'dynatrace::upgrade_system'
-
 name = 'Dynatrace Server update'
 
 #https://downloads.dynatracesaas.com/updates/dynaTrace-6.3.4.1034.zip

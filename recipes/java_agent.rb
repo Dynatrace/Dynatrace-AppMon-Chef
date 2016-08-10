@@ -5,7 +5,6 @@
 # Copyright 2015, Dynatrace
 #
 
-include_recipe 'dynatrace::upgrade_system'
 include_recipe "dynatrace::agents_package"
 
 dynatrace_java_agent node['dynatrace']['java_agent']['name'] do
