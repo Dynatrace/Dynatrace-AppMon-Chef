@@ -21,11 +21,11 @@
               command "yum update -y"
           end
       elsif platform_family?('debian')
-        execute "Update system" do
+        execute "Update package index" do
             command "apt-get update -y"
         end
-        execute "Upgrade system" do
-            command "apt-get full-upgrade -y"
+        execute "Update system" do
+            command "apt-get upgrade -y"
         end
       else
         puts "Unsupported platform family. System will not be upgraded."
