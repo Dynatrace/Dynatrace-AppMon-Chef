@@ -169,7 +169,7 @@ ruby_block "Display ini files after applying memory sizing=#{sizing}" do
   end
 end
 
-[collector_port, 2021, 6699, 8021, 9911].each do | port |
+[collector_port, 2021, 8021, 9911].each do | port |
   ruby_block "Waiting for port #{port} to become available" do
     block do
       # Set a longer timeout due to the time to open the collector port
