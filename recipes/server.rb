@@ -121,7 +121,7 @@ end
 
 dtserver_ini_file = "#{installer_prefix_dir}/dynatrace/dtserver.ini"
 dtfrontendserver_ini_file  = "#{installer_prefix_dir}/dynatrace/dtfrontendserver.ini"
-
+server_config_xml_file = "#{installer_prefix_dir}/dynatrace/server/config/server.config.xml"
 
 dynatrace_configure_init_scripts "#{name}" do
   installer_prefix_dir installer_prefix_dir
@@ -154,6 +154,11 @@ dynatrace_configure_ini_files "#{name} sizing=#{sizing}" do
   dynatrace_owner      dynatrace_owner
   dynatrace_group      dynatrace_group
   variables({ :memory => sizing })
+end
+
+ruby_block "Modify server configuration #{server_config_xml_file}" do
+  
+
 end
 
 service "#{name}" do
