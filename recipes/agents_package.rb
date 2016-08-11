@@ -8,7 +8,6 @@
 if !platform_family?('windows')
   include_recipe 'dynatrace::prerequisites'
 end
-include_recipe 'dynatrace::upgrade_system'
 
 name = 'Dynatrace Agents Package'
 

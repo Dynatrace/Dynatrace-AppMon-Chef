@@ -7,8 +7,6 @@
 
 require 'json'
 
-include_recipe 'dynatrace::upgrade_system'
-
 name = "Dynatrace .NET Agent"
 
 dynatrace_agentlib_bitsize = node['dynatrace']['iis_wsagent']['dynatrace']['agentlib']['bitsize']

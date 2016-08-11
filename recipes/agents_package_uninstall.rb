@@ -7,7 +7,6 @@
 #
 
 include_recipe 'dynatrace::prerequisites'
-include_recipe 'dynatrace::upgrade_system'
 
 name = 'Dynatrace Agents Package uninstall'
 
