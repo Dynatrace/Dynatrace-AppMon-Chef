@@ -158,7 +158,10 @@ end
 
 ruby_block "Modify server configuration #{server_config_xml_file}" do
   block do
+    puts ">> External host name is: #{external_hostname}"
     Dynatrace::Helpers.file_replace("#{server_config_xml_file}", " externalhostname=\"[a-zA-Z0-9._-]*\"", " externalhostname=\"#{external_hostname}\"")
+    #verify
+    Dynatrace::Helpers.find_line_in_file("#{server_config_xml_file}", "externalhostname")
   end
 
 end

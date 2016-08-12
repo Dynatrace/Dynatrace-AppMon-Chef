@@ -50,6 +50,17 @@ EOH
       end
     end
 
+    def self.find_line_in_file(path, regex)
+      File.open(path) do |file|
+        file.find_all {
+            |line|
+          if line =~ /#{regex}/
+           puts line
+          end
+        }
+      end
+    end
+
     def self.file_replace_line(path, regex, replace)
       FileUtils.touch(path) if !::File.exist?(path)
       file = Chef::Util::FileEdit.new(path)
