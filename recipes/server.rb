@@ -27,6 +27,7 @@ pwh_connection_dbms     = node['dynatrace']['server']['pwh_connection']['dbms']
 pwh_connection_database = node['dynatrace']['server']['pwh_connection']['database']
 pwh_connection_username = node['dynatrace']['server']['pwh_connection']['username']
 pwh_connection_password = node['dynatrace']['server']['pwh_connection']['password']
+external_hostname = node['dynatrace']['server']['externalhostname']
 
 dynatrace_owner = node['dynatrace']['owner']
 dynatrace_group = node['dynatrace']['group']
@@ -120,7 +121,7 @@ end
 
 dtserver_ini_file = "#{installer_prefix_dir}/dynatrace/dtserver.ini"
 dtfrontendserver_ini_file  = "#{installer_prefix_dir}/dynatrace/dtfrontendserver.ini"
-
+server_config_xml_file = "#{installer_prefix_dir}/dynatrace/server/conf/server.config.xml"
 
 dynatrace_configure_init_scripts "#{name}" do
   installer_prefix_dir installer_prefix_dir
@@ -153,6 +154,16 @@ dynatrace_configure_ini_files "#{name} sizing=#{sizing}" do
   dynatrace_owner      dynatrace_owner
   dynatrace_group      dynatrace_group
   variables({ :memory => sizing })
+end
+
+ruby_block "Modify server configuration #{server_config_xml_file}" do
+  block do
+    puts ">> External host name is: #{external_hostname}"
+    Dynatrace::Helpers.file_replace("#{server_config_xml_file}", " externalhostname=\"[a-zA-Z0-9._-]*\"", " externalhostname=\"#{external_hostname}\"")
+    #verify
+    Dynatrace::Helpers.find_line_in_file("#{server_config_xml_file}", "externalhostname")
+  end
+
 end
 
 service "#{name}" do
