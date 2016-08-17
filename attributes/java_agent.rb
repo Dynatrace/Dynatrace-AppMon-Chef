@@ -8,9 +8,6 @@
 # x86 or x86_64
 default['dynatrace']['java_agent']['arch'] = 'x86_64'
 
-# The name of the environment variable to be used for Dynatrace Agent injection.
-default['dynatrace']['java_agent']['env_var']['name'] = 'JAVA_OPTS'
-
 # The name of the Dynatrace Agent as it appears in the Dynatrace Server.
 default['dynatrace']['java_agent']['name'] = 'java-agent'
 

@@ -111,19 +111,15 @@ suites:
 #            installer:
 #              file_url: http://192.168.1.2:8000/dynatrace-collector-linux-x86.jar
 
-  - name: java_agent
+  - name: agents_package
     run_list:
       - recipe[dynatrace::agents_package]
-      - recipe[dynatrace::java_agent]
     attributes:
       dynatrace:
 #        agents_package:
 #          linux:
 #            installer:
 #              file_url: http://192.168.1.2:8000/dynatrace-agent-unix.jar
-        java_agent:
-          env_var:
-            file_name: /tmp/environment
 
   - name: memory_analysis_server
     run_list:
