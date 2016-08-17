@@ -37,6 +37,8 @@ platforms:
       provision_command:
         - apt-get update
         - apt-get install -y net-tools tar
+        # See https://github.com/docker/docker/issues/963
+        - apt-get install -y --no-install-recommends openjdk-7-jdk
     run_list:
       - recipe[apt]
       - recipe[java]
