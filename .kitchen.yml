@@ -45,6 +45,12 @@ platforms:
     attributes:
       java:
         jdk_version: 7
+      dynatrace:
+        apache_wsagent:
+          apache:
+            config_file_path: '/etc/apache2/apache2.conf'
+          linux:
+            apache_daemon: 'apache2
 
   - name: ubuntu-12.04
     driver_config:
@@ -58,6 +64,12 @@ platforms:
     attributes:
       java:
         jdk_version: 7
+      dynatrace:
+        apache_wsagent:
+          apache:
+            config_file_path: '/etc/apache2/apache2.conf'
+          linux:
+            apache_daemon: 'apache2
 
 suites:
   - name: apache_wsagent
