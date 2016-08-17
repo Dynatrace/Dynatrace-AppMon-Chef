@@ -4,10 +4,19 @@ provisioner:
 
 driver:
   name: docker
+  # In case of following error "Message: You must first install the Docker CLI tool" uncomment following line
+  #use_sudo: false
+
+# NOTE: To speed up test kitchen execution time:
+# * Run the docker_images/build_images.sh script
+# * Uncomment "image: ..." lines in the 'platforms' section
+# * Setup a cache server with Dynatrace installers downloaded locally using for example python e.g. python -m SimpleHTTPServer 8000
+# * Uncomment and update the file_url attributes in the 'suites' section
 
 platforms:
   - name: centos-6
     driver_config:
+      #image: centos-6-chef
       provision_command:
         - yum update -y
         - yum install -y net-tools tar
@@ -24,6 +33,7 @@ platforms:
 
   - name: debian-7.8
     driver_config:
+      #image: debian-7.8-chef
       provision_command:
         - apt-get update
         - apt-get install -y net-tools tar
@@ -36,6 +46,7 @@ platforms:
 
   - name: ubuntu-12.04
     driver_config:
+      #image: ubuntu-12.04-chef
       provision_command:
         - apt-get update
         - apt-get install -y net-tools tar
@@ -56,20 +67,20 @@ suites:
         apache_wsagent:
           apache:
             do_patch_init_script: true
-        wsagent_package:
-          linux:
-            installer:
-              file_url: http://10.0.2.2/dynatrace/6.3/dynatrace-wsagent.tar
+#        wsagent_package:
+#          linux:
+#            installer:
+#              file_url:  http://192.168.1.2:8000/dynatrace-wsagent-linux-x64.tar
 
   - name: agents_package
     run_list:
       - recipe[dynatrace::agents_package]
-    attributes:
-      dynatrace:
-        agents_package:
-          linux:
-            installer:
-              file_url: http://10.0.2.2/dynatrace/6.3/dynatrace-agent.jar
+#    attributes:
+#      dynatrace:
+#        agents_package:
+#          linux:
+#            installer:
+#              file_url: http://192.168.1.2:8000/dynatrace-agent-unix.jar
 
   - name: collector
     run_list:
@@ -82,9 +93,9 @@ suites:
             xmx: 1024M
             perm_size: 256m
             max_perm_size: 384m
-          linux:
-            installer:
-              file_url: http://10.0.2.2/dynatrace/6.3/dynatrace-collector.jar
+#          linux:
+#            installer:
+#              file_url: http://192.168.1.2:8000/dynatrace-collector-linux-x86.jar
 
   - name: java_agent
     run_list:
@@ -92,10 +103,10 @@ suites:
       - recipe[dynatrace::java_agent]
     attributes:
       dynatrace:
-        agents_package:
-          linux:
-            installer:
-              file_url: http://10.0.2.2/dynatrace/6.3/dynatrace-agent.jar
+#        agents_package:
+#          linux:
+#            installer:
+#              file_url: http://192.168.1.2:8000/dynatrace-agent-unix.jar
         java_agent:
           env_var:
             file_name: /tmp/environment
@@ -111,9 +122,9 @@ suites:
             xmx: 1024M
             perm_size: 256m
             max_perm_size: 384m
-          linux:
-            installer:
-              file_url: http://10.0.2.2/dynatrace/6.3/dynatrace-analysisserver.jar
+#          linux:
+#            installer:
+#              file_url: http://10.0.2.2/dynatrace/6.3/dynatrace-analysisserver.jar
 
   - name: server
     run_list:
@@ -122,17 +133,17 @@ suites:
       dynatrace:
         server:
           do_pwh_connection: true
-          linux:
-            installer:
-              file_url: http://10.0.2.2/dynatrace/6.3/dynatrace-server.jar
+#          linux:
+#            installer:
+#              file_url: file_url: http://192.168.1.2:8000/dynatrace-server-linux-x86.jar
           sizing: small
 
   - name: wsagent_package
     run_list:
       - recipe[dynatrace::wsagent_package]
-    attributes:
-      dynatrace:
-        wsagent_package:
-          linux:
-            installer:
-              file_url: http://10.0.2.2/dynatrace/6.3/dynatrace-wsagent.tar
+#    attributes:
+#      dynatrace:
+#        wsagent_package:
+#          linux:
+#            installer:
+#              file_url: http://192.168.1.2:8000/dynatrace-wsagent-linux-x64.tar
