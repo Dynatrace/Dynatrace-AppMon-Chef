@@ -92,7 +92,7 @@ service "#{name}" do
   service_name service
   supports     :status => true
   action       [:stop, :enable]
-  ignore_failure true
+  only_if { node[:dynatrace][:collector][:installation][:was_installed] }
 end
 
 node_public_hostname = nil
