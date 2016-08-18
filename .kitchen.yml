@@ -4,8 +4,8 @@ provisioner:
 
 driver:
   name: docker
-  # In case of following error "Message: You must first install the Docker CLI tool" uncomment following line
-  #use_sudo: false
+  # In case of error "Message: You must first install the Docker CLI tool" try uncommenting following line
+#  use_sudo: false
 
 # NOTE: To speed up test kitchen execution time:
 # * Run the docker_images/build_images.sh script
@@ -16,7 +16,7 @@ driver:
 platforms:
   - name: centos-6
     driver_config:
-      #image: centos-6-chef
+#      image: centos-6-chef
       provision_command:
         - yum update -y
         - yum install -y net-tools tar
@@ -33,7 +33,7 @@ platforms:
 
   - name: debian-7.8
     driver_config:
-      #image: debian-7.8-chef
+#      image: debian-7.8-chef
       provision_command:
         - apt-get update
         - apt-get install -y net-tools tar
@@ -50,11 +50,11 @@ platforms:
           apache:
             config_file_path: '/etc/apache2/apache2.conf'
           linux:
-            apache_daemon: 'apache2
+            apache_daemon: 'apache2'
 
   - name: ubuntu-12.04
     driver_config:
-      #image: ubuntu-12.04-chef
+#      image: ubuntu-12.04-chef
       provision_command:
         - apt-get update
         - apt-get install -y net-tools tar
@@ -69,7 +69,7 @@ platforms:
           apache:
             config_file_path: '/etc/apache2/apache2.conf'
           linux:
-            apache_daemon: 'apache2
+            apache_daemon: 'apache2'
 
 suites:
   - name: apache_wsagent
@@ -84,7 +84,7 @@ suites:
 #        wsagent_package:
 #          linux:
 #            installer:
-#              file_url:  http://192.168.1.2:8000/dynatrace-wsagent-linux-x64.tar
+#              file_url:  http://172.18.129.150:8000/dynatrace-wsagent-linux-x64.tar
 
   - name: agents_package
     run_list:
@@ -94,7 +94,7 @@ suites:
 #        agents_package:
 #          linux:
 #            installer:
-#              file_url: http://192.168.1.2:8000/dynatrace-agent-unix.jar
+#              file_url: http://172.18.129.150:8000/dynatrace-agent-unix.jar
 
   - name: collector
     run_list:
@@ -109,17 +109,17 @@ suites:
             max_perm_size: 384m
 #          linux:
 #            installer:
-#              file_url: http://192.168.1.2:8000/dynatrace-collector-linux-x86.jar
+#              file_url: http://172.18.129.150:8000/dynatrace-collector-linux-x86.jar
 
   - name: agents_package
     run_list:
       - recipe[dynatrace::agents_package]
-    attributes:
-      dynatrace:
+#    attributes:
+#      dynatrace:
 #        agents_package:
 #          linux:
 #            installer:
-#              file_url: http://192.168.1.2:8000/dynatrace-agent-unix.jar
+#              file_url: http://172.18.129.150:8000/dynatrace-agent-unix.jar
 
   - name: memory_analysis_server
     run_list:
@@ -134,7 +134,7 @@ suites:
             max_perm_size: 384m
 #          linux:
 #            installer:
-#              file_url: http://10.0.2.2/dynatrace/6.3/dynatrace-analysisserver.jar
+#              file_url: http://172.18.129.150:8000/dynatrace-analysisserver-linux-x86.jar
 
   - name: server
     run_list:
@@ -145,7 +145,7 @@ suites:
           do_pwh_connection: true
 #          linux:
 #            installer:
-#              file_url: file_url: http://192.168.1.2:8000/dynatrace-server-linux-x86.jar
+#              file_url: http://172.18.129.150:8000/dynatrace-server-linux-x86.jar
           sizing: small
 
   - name: wsagent_package
@@ -156,4 +156,4 @@ suites:
 #        wsagent_package:
 #          linux:
 #            installer:
-#              file_url: http://192.168.1.2:8000/dynatrace-wsagent-linux-x64.tar
+#              file_url: http://172.18.129.150:8000/dynatrace-wsagent-linux-x64.tar
