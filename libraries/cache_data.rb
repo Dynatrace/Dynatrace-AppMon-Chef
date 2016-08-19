@@ -16,7 +16,7 @@ module Dynatrace
     end
 
     def valid?(target_path, etag)
-      if cache_data_exists? target_path
+      if File.file?(target_path) and cache_data_exists? target_path
         cache_data = load_cache_data(target_path)
         mtime = nil
         File.open(target_path) { |f| mtime = f.mtime }
