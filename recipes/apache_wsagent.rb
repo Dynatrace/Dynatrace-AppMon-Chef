@@ -33,7 +33,7 @@ ruby_block "Inject the #{name} into Apache HTTPD's config file #{apache_config_f
     Dynatrace::Helpers.file_append_or_replace_line(apache_config_file_path, search_pattern, line_to_add)
   end
   if not apache_daemon.empty?
-    notifies :restart, "service[#{apache_daemon}]", :immediately
+    notifies :restart, "service[#{apache_daemon}]"
   end
 end
 
