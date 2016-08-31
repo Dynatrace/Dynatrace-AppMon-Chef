@@ -40,24 +40,27 @@ if platform_family?('debian', 'fedora', 'rhel')
   service      = 'dynaTraceServer'
   ini_files    = ['dtserver.ini', 'dtfrontendserver.ini']
   init_scripts = ['dynaTraceBackendServer', 'dynaTraceFrontendServer', service]
+else
+  # Unsupported
 end
 
-directory 'Create the installer cache directory' do
+
+directory "Create the installer cache directory" do
   path   installer_cache_dir
   action :create
 end
 
-dynatrace_copy_or_download_file name.to_s do
+dynatrace_copy_or_download_file "#{name}" do
   file_name       installer_file_name
-  file_url        installer_file_url
+  file_url        installer_file_url  
   path            installer_path
   dynatrace_owner dynatrace_owner
   dynatrace_group dynatrace_group
 end
 
-ruby_block name.to_s do
+ruby_block "#{name}" do
   block do
-    node.set[:dynatrace][:server][:installation][:is_required] = Dynatrace::Helpers.requires_installation?(installer_prefix_dir, installer_path, 'server', type = :jar)
+    node.set[:dynatrace][:server][:installation][:is_required] = Dynatrace::Helpers.requires_installation?(installer_prefix_dir, installer_path, 'server', type=:jar)
   end
 end
 
@@ -70,7 +73,7 @@ directory "Create the installation directory #{installer_prefix_dir}" do
   only_if { node[:dynatrace][:server][:installation][:is_required] }
 end
 
-dynatrace_run_jar_installer name.to_s do
+dynatrace_run_jar_installer "#{name}" do
   installer_path       installer_path
   installer_prefix_dir installer_prefix_dir
   jar_input_sequence   "#{installer_bitsize}\\nY\\nY\\nY"
@@ -79,30 +82,30 @@ dynatrace_run_jar_installer name.to_s do
   only_if { node[:dynatrace][:server][:installation][:is_required] }
 end
 
-dynatrace_configure_ini_files name.to_s do
+dynatrace_configure_ini_files "#{name}" do
   installer_prefix_dir installer_prefix_dir
   ini_files            ini_files
   dynatrace_owner      dynatrace_owner
   dynatrace_group      dynatrace_group
-  variables(:memory => sizing)
+  variables({ :memory => sizing })
 end
 
-dynatrace_configure_init_scripts name.to_s do
+dynatrace_configure_init_scripts "#{name}" do
   installer_prefix_dir installer_prefix_dir
   scripts              init_scripts
   dynatrace_owner      dynatrace_owner
   dynatrace_group      dynatrace_group
-  variables(:collector_port => collector_port)
-  notifies :restart, "service[#{name}]", :immediately
+  variables({ :collector_port => collector_port })
+  notifies             :restart, "service[#{name}]", :immediately
 end
 
-service name.to_s do
+service "#{name}" do
   service_name service
   supports     :status => true
   action       [:start, :enable]
 end
 
-[collector_port, 2021, 6699, 8021, 9911].each do |port|
+[collector_port, 2021, 6699, 8021, 9911].each do | port |
   ruby_block "Waiting for port #{port} to become available" do
     block do
       Dynatrace::Helpers.wait_until_port_is_open(port)
@@ -124,9 +127,9 @@ ruby_block "Establish the #{name}'s Performance Warehouse connection" do
     http.use_ssl = true
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 
-    request = Net::HTTP::Put.new(uri, 'Accept' => 'application/json', 'Content-Type' => 'application/json')
+    request = Net::HTTP::Put.new(uri, {'Accept' => 'application/json', 'Content-Type' => 'application/json'})
     request.basic_auth('admin', 'admin')
-    request.body = { :host => pwh_connection_hostname.to_s, :port => pwh_connection_port.to_s, :dbms => pwh_connection_dbms.to_s, :dbname => pwh_connection_database.to_s, :user => pwh_connection_username.to_s, :password => pwh_connection_password.to_s, :usessl => false, :useurl => false, :url => nil }.to_json
+    request.body = { :host => "#{pwh_connection_hostname}", :port => "#{pwh_connection_port}", :dbms => "#{pwh_connection_dbms}", :dbname => "#{pwh_connection_database}", :user => "#{pwh_connection_username}", :password => "#{pwh_connection_password}", :usessl => false, :useurl => false, :url => nil }.to_json
 
     http.request(request)
   end

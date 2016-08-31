@@ -19,7 +19,7 @@ describe file('/opt/dynatrace/server') do
   it { should be_grouped_into 'dynatrace' }
 end
 
-describe file '/etc/init.d/dynaTraceAnalysis' do
+describe file ('/etc/init.d/dynaTraceAnalysis') do
   it { should be_owned_by 'root' }
   it { should be_grouped_into 'root' }
 
@@ -52,9 +52,9 @@ describe service('dynaTraceAnalysis') do
   it { should be_running }
 
   if os[:family] == 'debian' || os[:family] == 'ubuntu'
-    it { should be_enabled.with_level(3) }
-    it { should be_enabled.with_level(4) }
-    it { should be_enabled.with_level(5) }
+      it { should be_enabled.with_level(3) }
+      it { should be_enabled.with_level(4) }
+      it { should be_enabled.with_level(5) }
   end
 end
 

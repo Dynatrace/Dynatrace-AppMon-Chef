@@ -31,24 +31,27 @@ if platform_family?('debian', 'fedora', 'rhel')
 
   service = 'dynaTraceAnalysis'
   init_scripts = [service]
+else
+  # Unsupported
 end
 
-directory 'Create the installer cache directory' do
+
+directory "Create the installer cache directory" do
   path   installer_cache_dir
   action :create
 end
 
-dynatrace_copy_or_download_file name.to_s do
+dynatrace_copy_or_download_file "#{name}" do
   file_name       installer_file_name
-  file_url        installer_file_url
+  file_url        installer_file_url  
   path            installer_path
   dynatrace_owner dynatrace_owner
   dynatrace_group dynatrace_group
 end
 
-ruby_block name.to_s do
+ruby_block "#{name}" do
   block do
-    node.set[:dynatrace][:memory_analysis_server][:installation][:is_required] = Dynatrace::Helpers.requires_installation?(installer_prefix_dir, installer_path, 'dtanalysisserver', type = :jar)
+    node.set[:dynatrace][:memory_analysis_server][:installation][:is_required] = Dynatrace::Helpers.requires_installation?(installer_prefix_dir, installer_path, 'dtanalysisserver', type=:jar)
   end
 end
 
@@ -61,7 +64,7 @@ directory "Create the installation directory #{installer_prefix_dir}" do
   only_if { node[:dynatrace][:memory_analysis_server][:installation][:is_required] }
 end
 
-dynatrace_run_jar_installer name.to_s do
+dynatrace_run_jar_installer "#{name}" do
   installer_path       installer_path
   installer_prefix_dir installer_prefix_dir
   jar_input_sequence   "#{installer_bitsize}\\nY\\nY\\nY"
@@ -70,16 +73,16 @@ dynatrace_run_jar_installer name.to_s do
   only_if { node[:dynatrace][:memory_analysis_server][:installation][:is_required] }
 end
 
-dynatrace_configure_init_scripts name.to_s do
+dynatrace_configure_init_scripts "#{name}" do
   installer_prefix_dir installer_prefix_dir
   scripts              init_scripts
   dynatrace_owner      dynatrace_owner
   dynatrace_group      dynatrace_group
-  variables(:server_port => server_port, :jvm_xmx => memory_analysis_server_jvm_xmx, :jvm_xms => memory_analysis_server_jvm_xms, :jvm_perm_size => memory_analysis_server_jvm_perm_size, :jvm_max_perm_size => memory_analysis_server_jvm_max_perm_size)
-  notifies :restart, "service[#{name}]", :immediately
+  variables({ :server_port => server_port, :jvm_xmx => memory_analysis_server_jvm_xmx, :jvm_xms => memory_analysis_server_jvm_xms, :jvm_perm_size => memory_analysis_server_jvm_perm_size, :jvm_max_perm_size => memory_analysis_server_jvm_max_perm_size })
+  notifies             :restart, "service[#{name}]", :immediately
 end
 
-service name.to_s do
+service "#{name}" do
   service_name service
   supports     :status => true
   action       [:start, :enable]

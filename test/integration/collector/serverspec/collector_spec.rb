@@ -19,7 +19,7 @@ describe file('/opt/dynatrace/collector') do
   it { should be_grouped_into 'dynatrace' }
 end
 
-describe file '/etc/init.d/dynaTraceCollector' do
+describe file ('/etc/init.d/dynaTraceCollector') do
   it { should be_owned_by 'root' }
   it { should be_grouped_into 'root' }
 
@@ -50,9 +50,9 @@ describe service('dynaTraceCollector') do
   it { should be_enabled }
 
   if os[:family] == 'debian' || os[:family] == 'ubuntu'
-    it { should be_enabled.with_level(3) }
-    it { should be_enabled.with_level(4) }
-    it { should be_enabled.with_level(5) }
+      it { should be_enabled.with_level(3) }
+      it { should be_enabled.with_level(4) }
+      it { should be_enabled.with_level(5) }
   end
 end
 
