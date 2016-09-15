@@ -102,7 +102,7 @@ service "Stop service #{name}" do
   ignore_failure true                 #TODO added because of service[Stop service Dynatrace Server]: Service is not known to chkconfig.
 end
 
-profiles = '/opt/dynatrace/server/conf/profiles/'
+profiles = "#{installer_prefix_dir}/dynatrace/server/conf/profiles/"
 directory "Create profiles directory #{profiles}" do
   path      profiles
   owner     dynatrace_owner unless ::File.exist?(profiles)

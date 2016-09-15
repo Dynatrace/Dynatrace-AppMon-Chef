@@ -123,7 +123,7 @@ dynatrace_configure_init_scripts "#{name}" do
 #  notifies :restart, "service[#{name}]", :immediately                  #JK: removed because we have to remove '/opt/dynatrace-6.5/collector/conf/collector.config.xml' file to proper collector start
 end
 
-file '/opt/dynatrace-6.5/collector/conf/collector.config.xml' do
+file "#{installer_prefix_dir}/dynatrace/collector/conf/collector.config.xml" do
   action :delete
   ignore_failure true
 end
