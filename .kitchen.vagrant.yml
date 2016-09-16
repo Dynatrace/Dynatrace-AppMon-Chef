@@ -132,6 +132,15 @@ suites:
     includes:
       - windows-2012r2
 
+  - name: dynatrace_user
+    run_list:
+      - recipe[dynatrace::dynatrace_user]
+
+  - name: dynatrace_user_uninstall
+    run_list:
+      - recipe[dynatrace::dynatrace_user]
+      - recipe[dynatrace::dynatrace_user_uninstall]
+
   - name: java_agent
     run_list:
       - recipe[dynatrace::agents_package]

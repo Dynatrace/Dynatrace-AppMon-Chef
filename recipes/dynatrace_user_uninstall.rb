@@ -15,12 +15,11 @@ ruby_block "Stop any running processes of user #{dynatrace_owner}" do
 end
 
 user "Delete user '#{dynatrace_owner}'" do
-  username '#{dynatrace_owner}'
-  supports :manage_home=>true
+  username dynatrace_owner
   action   :remove
 end
 
 group "Delete group '#{dynatrace_group}'" do
-  group_name '#{dynatrace_group}'
+  group_name dynatrace_group
   action :remove
 end

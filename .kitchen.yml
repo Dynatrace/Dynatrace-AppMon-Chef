@@ -143,6 +143,15 @@ suites:
 #            installer:
 #              file_url: http://172.18.129.150:8000/dynatrace-agent-unix.jar
 
+  - name: dynatrace_user
+    run_list:
+      - recipe[dynatrace::dynatrace_user]
+
+  - name: dynatrace_user_uninstall
+    run_list:
+      - recipe[dynatrace::dynatrace_user]
+      - recipe[dynatrace::dynatrace_user_uninstall]
+
   - name: memory_analysis_server
     run_list:
       - recipe[dynatrace::memory_analysis_server]
