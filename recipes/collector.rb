@@ -2,7 +2,7 @@
 # Cookbook Name:: dynatrace
 # Recipes:: collector
 #
-# Copyright 2015, Dynatrace
+# Copyright 2016, Dynatrace
 #
 
 include_recipe 'dynatrace::prerequisites'
@@ -37,7 +37,7 @@ if platform_family?('debian', 'fedora', 'rhel')
   service = 'dynaTraceCollector'
   init_scripts = [service]
 else
-  # Unsupported
+  raise "Unsupported platform family."
 end
 
 
@@ -131,7 +131,7 @@ end
 service "#{name}" do
   service_name service
   supports     :status => true
-  action       [:start, :enable]
+  action       [:restart, :enable]
 end
 
 ruby_block "Waiting for port #{agent_port} to become available" do
