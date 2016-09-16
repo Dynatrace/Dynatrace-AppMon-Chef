@@ -123,10 +123,10 @@ suites:
       - recipe[dynatrace::dotnet_agent]
     attributes:
       dynatrace:
-        agents_package:
-          windows:
-            installer:
-              file_url: http://10.0.2.2/dynatrace/6.3/dynatrace-agents.msi
+#        agents_package:
+#          windows:
+#            installer:
+#              file_url: http://172.18.129.150:8000/dynatrace-agent-x86.msi
         dotnet_agent:
           process_list: [w3wp.exe -ap myApp]
     includes:

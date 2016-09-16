@@ -2,12 +2,10 @@
 # Cookbook Name:: dynatrace
 # Recipes:: dotnet_agent
 #
-# Copyright 2015, Dynatrace
+# Copyright 2015-2016, Dynatrace
 #
 
 require 'json'
-
-name = "Dynatrace .NET Agent"
 
 dynatrace_agentlib_bitsize = node['dynatrace']['iis_wsagent']['dynatrace']['agentlib']['bitsize']
 dynatrace_install_dir      = node['dynatrace']['iis_wsagent']['dynatrace']['install_dir']
