@@ -2,7 +2,7 @@
 # Cookbook Name:: dynatrace
 # Recipes:: dynatrace_user
 #
-# Copyright 2015, Dynatrace
+# Copyright 2015-2016, Dynatrace
 #
 
 dynatrace_owner = node['dynatrace']['owner']
