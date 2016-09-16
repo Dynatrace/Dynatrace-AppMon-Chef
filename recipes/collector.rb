@@ -2,7 +2,7 @@
 # Cookbook Name:: dynatrace
 # Recipes:: collector
 #
-# Copyright 2016, Dynatrace
+# Copyright 2015-2016, Dynatrace
 #
 
 include_recipe 'dynatrace::prerequisites'
