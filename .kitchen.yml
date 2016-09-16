@@ -81,14 +81,25 @@ suites:
         apache_wsagent:
           apache:
             do_patch_init_script: true
-#        wsagent_package:
-#          linux:
-#            installer:
-#              file_url:  http://172.18.129.150:8000/dynatrace-wsagent-linux-x64.tar
+        wsagent_package:
+          linux:
+            installer:
+              file_url:  http://172.18.129.150:8000/dynatrace-wsagent-linux-x86-64.tar
 
   - name: agents_package
     run_list:
       - recipe[dynatrace::agents_package]
+#    attributes:
+#      dynatrace:
+#        agents_package:
+#          linux:
+#            installer:
+#              file_url: http://172.18.129.150:8000/dynatrace-agent-unix.jar
+
+  - name: agents_package_uninstall
+    run_list:
+      - recipe[dynatrace::agents_package]
+      - recipe[dynatrace::agents_package_uninstall]
 #    attributes:
 #      dynatrace:
 #        agents_package:

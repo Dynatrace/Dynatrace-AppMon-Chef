@@ -2,12 +2,10 @@
 # Cookbook Name:: dynatrace
 # Recipes:: agents_package
 #
-# Copyright 2015, Dynatrace
+# Copyright 2015-2016, Dynatrace
 #
 
-if !platform_family?('windows')
-  include_recipe 'dynatrace::prerequisites'
-end
+include_recipe 'dynatrace::prerequisites'
 
 name = 'Dynatrace Agents Package'
 
