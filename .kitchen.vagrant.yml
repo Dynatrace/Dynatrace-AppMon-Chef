@@ -40,6 +40,8 @@ platforms:
         jdk_version: 7
 
   - name: windows-2012r2
+    driver:
+      box: mwrock/Windows2012R2
 
 suites:
   - name: apache_wsagent
@@ -63,15 +65,28 @@ suites:
   - name: agents_package
     run_list:
       - recipe[dynatrace::agents_package]
-    attributes:
-      dynatrace:
-        agents_package:
-          linux:
-            installer:
-              file_url: http://10.0.2.2/dynatrace/6.3/dynatrace-agent.jar
-          windows:
-            installer:
-              file_url: http://10.0.2.2/dynatrace/6.3/dynatrace-agents.msi
+#    attributes:
+#      dynatrace:
+#        agents_package:
+#          linux:
+#            installer:
+#              file_url: http://172.18.129.150:8000/dynatrace-agent-unix.jar
+#          windows:
+#            installer:
+#              file_url: http://172.18.129.150:8000/dynatrace-agent-x86.msi
+
+  - name: agents_package_uninstall
+    run_list:
+      - recipe[dynatrace::agents_package]
+      - recipe[dynatrace::agents_package_uninstall]
+#    attributes:
+#      dynatrace:
+#        agents_package:
+#          linux:
+#            installer:
+#              file_url: http://172.18.129.150:8000/dynatrace-agent-unix.jar
+    excludes:
+      - windows-2012r2
 
   - name: collector
     run_list:
