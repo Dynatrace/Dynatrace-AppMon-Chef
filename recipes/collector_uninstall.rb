@@ -29,6 +29,7 @@ directory "Delete the installer cache directory #{installer_cache_dir}" do
   action :delete
 end
 
+# NOTE: this may also delete files from other packages!
 link2del = installer_prefix_dir + '/dynatrace'
 dynatrace_delete_directory_by_link "#{link2del}" do
   link2delete link2del

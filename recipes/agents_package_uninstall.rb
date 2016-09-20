@@ -18,6 +18,7 @@ if platform_family?('debian', 'fedora', 'rhel')
     action :delete
   end
 
+  # NOTE: this may also delete files from other packages!
   link2del = installer_prefix_dir + '/dynatrace'
   dynatrace_delete_directory_by_link "#{link2del}" do
     link2delete link2del

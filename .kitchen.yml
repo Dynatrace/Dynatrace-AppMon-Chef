@@ -152,6 +152,29 @@ suites:
       - recipe[dynatrace::dynatrace_user]
       - recipe[dynatrace::dynatrace_user_uninstall]
 
+  - name: host_agent
+    run_list:
+      - recipe[dynatrace::host_agent]
+    attributes:
+      dynatrace:
+        host_agent:
+          host_agent_name:
+            myhostagent
+          collector:
+            myhostaddr
+#          installer:
+#            file_url: http://172.18.129.150:8000/dynatrace-hostagent-linux-x86-64.tar
+
+  - name: host_agent_uninstall
+    run_list:
+      - recipe[dynatrace::host_agent]
+      - recipe[dynatrace::host_agent_uninstall]
+#    attributes:
+#      dynatrace:
+#        host_agent:
+#          installer:
+#            file_url: http://172.18.129.150:8000/dynatrace-hostagent-linux-x86-64.tar
+
   - name: memory_analysis_server
     run_list:
       - recipe[dynatrace::memory_analysis_server]

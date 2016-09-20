@@ -10,6 +10,7 @@ require 'net/http'
 require 'open-uri'
 require 'socket'
 require 'timeout'
+require 'tmpdir'
 
 module Dynatrace
   module Helpers
@@ -133,7 +134,20 @@ EOH
     
     def self.get_install_dir_from_installer_tar(installer_path)
       # extract the dynatrace.x.y.z directory name from the contained installer shell script
-      install_dir = Mixlib::ShellOut.new("tar -xf #{installer_path} && head -n 10 dynatrace*.sh | grep mkdir | cut -d ' ' -f 2", :cwd => File.dirname(installer_path)).run_command.stdout.strip
+      install_dir = nil
+      Dir.mktmpdir do |tmpdir|
+        install_dir = Mixlib::ShellOut.new("tar -xf #{installer_path} -C #{tmpdir} && cd #{tmpdir} && head -n 10 dynatrace*.sh | grep mkdir | cut -d ' ' -f 2", :cwd => File.dirname(installer_path)).run_command.stdout.strip
+        if install_dir.empty?
+          Dir.chdir
+          dynatrace_dirs = Dir["#{tmpdir}/dynatrace*"]
+          dynatrace_dirs.each do |elem|
+            if File.directory?(elem)
+              install_dir = File.basename elem
+              break
+            end
+          end
+        end
+      end
       install_dir
     end
     

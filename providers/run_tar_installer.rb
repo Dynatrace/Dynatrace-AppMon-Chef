@@ -6,14 +6,17 @@
 #
 
 action :run do
+  install_base_dir_func = lambda { ::File.dirname(new_resource.installer_path) }
+
   execute "Extract the tar installer #{new_resource.name}" do
     command "tar xf #{new_resource.installer_path} > /dev/null"
-    cwd     ::File.dirname(new_resource.installer_path)
+    cwd     install_base_dir_func.call
   end
 
   execute "Install the #{new_resource.name}" do
     command "sh dynatrace-*.sh"
     cwd     ::File.dirname(new_resource.installer_path)
+    only_if { ::Dir["#{install_base_dir_func.call}/dynatrace-*.sh"].size > 0 }
   end
 
   ruby_block "Determine the #{new_resource.name}'s installation directory" do

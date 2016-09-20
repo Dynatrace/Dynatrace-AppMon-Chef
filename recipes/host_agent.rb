@@ -8,115 +8,75 @@
 name = 'Host Agent'
 include_recipe 'dynatrace::prerequisites'
 include_recipe 'dynatrace::dynatrace_user'
-could_be_installed = false
 
-#determine source tar file to execute
-node_kernel_machine = node['kernel']['machine']       # "x86_64"
-if platform_family?('rhel') and node_kernel_machine == 'x86_64'
-	if node['host_agent']['installer']['bitsize'] == '64'
-		#the only platform for which we are able to test this recipe
-		could_be_installed = true
-	end
-  # Currently only tested on linux-x86 platform but there are many more e.g.
-  # 'aix-ppc', 'hpux-ia64', 'linux-ppc', 'linux-s390', 'linux-s390x', 'solaris-sparc', 'solaris-x86'
+if platform_family?('debian', 'fedora', 'rhel') #platform_family?('rhel') and node_kernel_machine == 'x86_64'
+  installer_prefix_dir = node['dynatrace']['host_agent']['installer']['prefix_dir']
+  installer_file_url   = node['dynatrace']['host_agent']['installer']['file_url']
+  installer_file_name  = node['dynatrace']['host_agent']['installer']['file_name']
+  installer_cache_dir = "#{Chef::Config['file_cache_path']}/host_agent"
+  installer_path      = "#{installer_cache_dir}/#{installer_file_name}"
+
+  service_name = 'dynaTraceHostagent'
 else
-	# Unsupported
-	puts 'Unsupported platform yet'
+  raise "Unsupported platform family."
+end
+
+directory "Create the installer cache directory" do
+  path   installer_cache_dir
+  action :create
+end
+
+dynatrace_copy_or_download_file "#{name}" do
+  file_name       installer_file_name
+  file_url        installer_file_url
+  path            installer_path
+  dynatrace_owner dynatrace_owner
+  dynatrace_group dynatrace_group
+end
+
+ruby_block "#{name}" do
+  block do
+    kernel = node['host_agent']['installer']['bitsize']
+    node.set[:dynatrace][:host_agent][:installation][:is_required] = Dynatrace::Helpers.requires_installation?(installer_prefix_dir, installer_path, "agent/lib#{kernel}/dthostagent", type=:tar)
+  end
+end
+
+directory "Create the installation directory #{installer_prefix_dir}" do
+  path      installer_prefix_dir
+  owner     dynatrace_owner unless ::File.exist?(installer_prefix_dir)
+  group     dynatrace_group unless ::File.exist?(installer_prefix_dir)
+  recursive true
+  action    :create
+end
+
+dynatrace_run_tar_installer "#{name}" do
+  installer_path       installer_path
+  installer_prefix_dir installer_prefix_dir
+  dynatrace_owner      dynatrace_owner
+  dynatrace_group      dynatrace_group
 end
 
 
-installer_prefix_dir = node['dynatrace']['host_agent']['installer']['prefix_dir']
-installer_file_url   = node['dynatrace']['host_agent']['installer']['file_url']
-installer_file_name  = node['dynatrace']['host_agent']['installer']['file_name']
-installer_cache_dir = "#{Chef::Config['file_cache_path']}/host_agent"
-installer_path      = "#{installer_cache_dir}/#{installer_file_name}"
-dynatrace_owner = node['dynatrace']['owner']
-dynatrace_group = node['dynatrace']['group']
 host_agent_name = node['dynatrace']['host_agent']['host_agent_name']
 host_agent_collector = node['dynatrace']['host_agent']['collector']
-
-#if could_be_installed
-#  #verification if Host Agent is already installed
-#  fileExists = "/etc/init.d/dynaTraceHostagent"
-#  if File.exist?(fileExists)
-#    # cannot install host_agent because is alredy installed
-#	puts 'Host Agent file' + fileExists + ' exists. Host Agent will not be installed. Run host_agent_uninstall recipe first. Be careful - you will lost your configuration.'
-#	could_be_installed = false
-#  end
-#end
-
-if could_be_installed
-  if could_be_installed
-    #verification if Host Agent is already installed
-    fileExists = "/etc/init.d/dynaTraceHostagent"
-    if File.exist?(fileExists)
-      # Host Agent is already installed
-      puts 'Host Agent file' + fileExists + ' exists. Host Agent will override existing installation.'
-    end
+config_path = "#{installer_prefix_dir}/dynatrace/agent/conf/dthostagent.ini"
+ruby_block "Setting the name and collector address in #{config_path}" do
+  block do
+    Dynatrace::Helpers.file_replace_line(config_path, '^Name', "Name #{host_agent_name}")
+    Dynatrace::Helpers.file_replace_line(config_path, '^Server', "Server #{host_agent_collector}")
   end
-  
-  fileExists = "#{installer_prefix_dir}/dynatrace/agent/conf/dthostagent.ini"
-  if File.exist?(fileExists)
-    # Host Agent is already installed
-    puts 'Host Agent configuration file' + fileExists + ' exists. It will be renamed to ' + fileExists  + '_backup before installation.'
-    ruby_block "Rename file #{fileExists} to #{fileExists}_backup" do
-      block do
-        ::File.rename(fileExists,fileExists + '_backup')
-      end
-    end
-  else
-    puts 'Host Agent configuration file' + fileExists + ' do not exists.'
-  end
-  
-
-	puts 'Initializing directories'
-	#creating tmp installer directory
-	directory "Create temporrary installer cache directory: #{installer_cache_dir}" do
-	  path   installer_cache_dir
-	  action :create
-	end
-		
-  puts 'Create user group: ' + dynatrace_group
-  group dynatrace_group do
-    action :create
-    append true
-  end
-  
-  puts 'Create user: ' + dynatrace_owner
-  user dynatrace_owner do
-    gid dynatrace_group
-    supports :manage_home => true
-    home "/home/#{dynatrace_owner}"
-    shell "/bin/bash"
-    system true
-  end	
-
-  puts 'download installation tar file'
-	dynatrace_copy_or_download_file "Downloading installation tar file: #{installer_file_name}" do
-	  file_name       installer_file_name
-	  file_url        installer_file_url  
-	  path            installer_path
-	  dynatrace_owner dynatrace_owner
-	  dynatrace_group dynatrace_group
-	end
-
-	#creating installation directory. It usually exists, default is /opt
-	directory "Create the installation directory #{installer_prefix_dir}" do
-	  path      installer_prefix_dir
-	  owner     dynatrace_owner unless ::File.exist?(installer_prefix_dir)
-	  group     dynatrace_group unless ::File.exist?(installer_prefix_dir)
-	  recursive true
-	  action    :create
-	end
-
-	#perform installation of host_agent
-	dynatrace_run_tar_installer_for_hostagent "Installing #{name}" do
-		installer_prefix_dir installer_prefix_dir
-		installer_path       installer_path
-		dynatrace_owner      dynatrace_owner
-		dynatrace_group      dynatrace_group
-		host_agent_name 	 host_agent_name
-		host_agent_collector host_agent_collector
-	end
 end
 
+init_scripts = [service_name]
+dynatrace_configure_init_scripts "#{name}" do
+  installer_prefix_dir installer_prefix_dir
+  scripts              init_scripts
+  dynatrace_owner      dynatrace_owner
+  dynatrace_group      dynatrace_group
+end
+
+service name do
+  service_name service_name
+  supports :status => true
+  action [ :enable, :restart ]
+end
