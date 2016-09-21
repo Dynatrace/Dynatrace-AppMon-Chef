@@ -2,7 +2,7 @@
 # Cookbook Name:: dynatrace
 # Recipes:: wsagent_package
 #
-# Copyright 2015, Dynatrace
+# Copyright 2015-2016, Dynatrace
 #
 
 require 'json'
@@ -54,12 +54,6 @@ dynatrace_copy_or_download_file "#{name}" do
 end
 
 if platform_family?('debian', 'fedora', 'rhel')
-  ruby_block "#{name}" do
-    block do
-      kernel = node['kernel']['machine'].include?('64') ? '64' : ''
-    end
-  end
-
   directory "Create the installation directory #{installer_prefix_dir}" do
     path      installer_prefix_dir
     owner     dynatrace_owner unless ::File.exist?(installer_prefix_dir)
