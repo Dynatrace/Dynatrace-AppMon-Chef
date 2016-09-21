@@ -81,7 +81,7 @@ case "$1" in
       COUNT=`expr ${COUNT} + 1`
     done
 
-    if [ "${COUNT}" -gt "${DT_SHUTDOWN_WAIT}" ]; then
+    if [ "${COUNT}" -ge "${DT_SHUTDOWN_WAIT}" ]; then
       echo "Killing Dynatrace $DT_PRODUCT (${PROCESSPID}) because the shutdown lasted longer than ${DT_SHUTDOWN_WAIT} seconds"
       kill -9 ${PROCESSPID}
     fi
