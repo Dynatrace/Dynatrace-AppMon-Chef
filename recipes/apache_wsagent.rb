@@ -17,19 +17,13 @@ if platform_family?('debian', 'fedora', 'rhel')
   agent_path = node['dynatrace']['apache_wsagent']['linux'][arch]['agent_path']
   node.set['dynatrace']['apache_wsagent']['agent_path'] = agent_path
 else
-  log "Unsupported platform family." do
-    level :warn
-  end
+  raise "Unsupported platform family."
 end
 
 ruby_block "Inject the #{name} into Apache HTTPD's config file #{apache_config_file_path}" do
   block do
     search_pattern = "LoadModule dtagent_module"
     line_to_add = "#{search_pattern} \"#{agent_path}\""
-    
-    puts "Search pattern: #{search_pattern}"
-    puts "Line to remove: #{line_to_add}"
-
     Dynatrace::Helpers.file_append_or_replace_line(apache_config_file_path, search_pattern, line_to_add)
   end
   if not apache_daemon.empty?
