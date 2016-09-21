@@ -96,18 +96,6 @@ service "#{name}" do
   only_if { node[:dynatrace][:collector][:installation][:was_installed] }
 end
 
-node_public_hostname = nil
-node_public_ipv4 = nil
-ec2 = node['ec2']
-if !ec2.nil?
-  node_public_hostname = node['ec2']['public_hostname']
-  node_public_ipv4 = node['ec2']['public_ipv4']
-end
-
-if node_public_ipv4.nil?
-  node_public_ipv4=''
-end
-
 dynatrace_configure_init_scripts "#{name}" do
   installer_prefix_dir installer_prefix_dir
   scripts              init_scripts
