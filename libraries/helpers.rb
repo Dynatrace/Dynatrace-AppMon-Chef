@@ -68,69 +68,6 @@ EOH
       file.search_file_replace_line(/#{regex}/, replace)
       file.write_file
     end
-
-    def self.file_replace_two_lines(path, regex1, regex2_array, replace1, replace2)
-      #TODO
-      FileUtils.touch(path) if !::File.exist?(path)
-      file = Chef::Util::FileEdit.new(path)
-      result = file.search_file_replace_line(/#{regex1}/, replace1)
-      puts '>> file_replace_two_lines: ' + result.to_s + " path:#{path} regex:#{regex1} replace1:#{replace1} replace2:#{replace2}"
-      if result.nil?
-        regex2_array.each { |x| 
-          file.search_file_replace_line(/#{x}/, replace2)
-        }
-      end
-      file.write_file
-    end
-
-    def self.get_install_dir_from_installer_msi(installer_path)
-      #TODO
-      # installer_path must be set to something like this:
-      #           C:\chef\cache\easy_travel\easy_travel_install.log
-      # we have to read this file and find following properties:
-      #  Property(S): APPDIR = C:\Program Files\dynaTrace\easyTravel (x64)\
-      #  Property(S): resources_DIR = C:\Program Files\dynaTrace\easyTravel (x64)\resources\
-      #  Property(S): weblauncher_DIR = C:\Program Files\dynaTrace\easyTravel (x64)\weblauncher\
-
-      app_DIR = nil
-      resources_DIR = nil
-      weblauncher_DIR = nil
-      targetdir_pattern = 'TARGETDIR ='.encode("iso-8859-1").force_encoding("utf-8")
-      property_pattern = 'Property(S): '.encode("iso-8859-1").force_encoding("utf-8")
-      File.open("#{installer_path}", "rb").each do |line|
-        line0 = line[0, 48]
-        if !line0.nil?
-          puts line0 + ' : ' + targetdir_pattern.length.to_s + ' : ' + line
-          if line0.start_with?(property_pattern)
-            if line0.start_with?(targetdir_pattern)
-              app_DIR = line
-              puts "!!!! app_DIR=#{app_DIR}"
-            end
-            if line0.start_with?('resources_DIR =')
-              resources_DIR = line
-              puts "resources_DIR=#{resources_DIR}"
-            end
-          end
-        end
-      end
-      
-      puts '!!!! targetdir_pattern.length=' + targetdir_pattern.length.to_s + ' : ' + targetdir_pattern + ' : ' + targetdir_pattern[0, targetdir_pattern.length]
-      if !app_DIR.nil?
-        puts "!!!! app_DIR=#{app_DIR}"
-      else
-        puts "!!!! app_DIR=nil !!!"
-      end
-    
-      if !resources_DIR.nil?
-        puts "resources_DIR=#{resources_DIR}"
-      end
-    
-      if !weblauncher_DIR.nil?
-        puts "weblauncher_DIR=#{weblauncher_DIR}"
-      end
-      
-      app_DIR
-    end
     
     def self.get_install_dir_from_installer_tar(installer_path)
       # extract the dynatrace.x.y.z directory name from the contained installer shell script
@@ -184,11 +121,7 @@ EOH
       
       if type == :tar
         install_dir = get_install_dir_from_installer_tar(installer_path)
-      end    
-      
-      if type == :msi
-        install_dir = get_install_dir_from_installer_msi(installer_path)
-      end        
+      end
 
       install_dir
     end
@@ -231,23 +164,23 @@ EOH
     def self.requires_installation?(installer_prefix_dir, installer_path, component_path_part = '', type=:jar)
       return false if !File.exist?(installer_path)
       install_dir = get_install_dir_from_installer(installer_path, type)
-  #puts "install_dir is #{install_dir}"
+      #puts "install_dir is #{install_dir}"
       path_to_check = "#{installer_prefix_dir}/#{install_dir}/#{component_path_part}"
-  #puts "path_to_check is #{path_to_check}"
+      #puts "path_to_check is #{path_to_check}"
       return !(Dir.exist?(path_to_check) || File.exist?(path_to_check))
     end
 
     def self.wait_until_port_is_open(port, timeout = 120, ip = '127.0.0.1', continue_exec = nil)
       
       time_begin = Time.now           # Current time
-      puts ">> wait_until_port_is_open IP=#{ip}:#{port} timeout=#{timeout}"
+      #puts ">> wait_until_port_is_open IP=#{ip}:#{port} timeout=#{timeout}"
         Timeout.timeout(timeout, DynatraceTimeout) do
       while !self.port_is_open?(ip, port) do
         sleep(1)
       end
       time_end = Time.now           # Current time
       diff = (time_end - time_begin).ceil
-      puts ">> wait_until_port_is_open - waited=#{diff} seconds"
+      #puts ">> wait_until_port_is_open - waited=#{diff} seconds"
     end
     rescue DynatraceTimeout
       if continue_exec.nil? 
@@ -333,7 +266,7 @@ EOH
         #################################################################
                         
       else
-        puts "ERROR: Unsupported platform"
+        raise "ERROR: Unsupported platform"
       end
       return pids
     end

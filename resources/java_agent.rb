@@ -20,6 +20,5 @@ action :setjavaopts do
       node.set['dynatrace']['java_agent']['javaopts'][agent_name] = "-agentpath:#{agent_path}=name=#{agent_name},server=#{collector_hostname}:#{collector_port}"
     end
   end
-
 end
 
