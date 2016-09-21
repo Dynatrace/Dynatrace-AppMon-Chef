@@ -2,7 +2,7 @@
 # Cookbook Name:: dynatrace
 # Recipes:: memory_analysis_server
 #
-# Copyright 2015, Dynatrace
+# Copyright 2015-2016, Dynatrace
 #
 
 include_recipe 'dynatrace::node_info'
@@ -34,7 +34,7 @@ if platform_family?('debian', 'fedora', 'rhel')
   service = 'dynaTraceAnalysis'
   init_scripts = [service]
 else
-  # Unsupported
+  raise "Unsupported platform family."
 end
 
 
