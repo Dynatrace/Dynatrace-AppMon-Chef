@@ -10,19 +10,9 @@ if platform_family?('debian', 'fedora', 'rhel')
   package 'rsync' do
     action :install
   end
-else
-  log "Unsupported platform family." do
-    level :warn
-  end
 end
 
-if !platform_family?('windows')      
-                    # on Windows we have NoMemoryError failed to allocate memory, 
-                    # The issue got resolved by applying the windows hot fix KB2842230 on aws ami.
-                    #  [https://support.microsoft.com/en-us/kb/2842230]
-  # Needed to by copy_or_download_file LWRP; 
-  chef_gem 'aws-sdk' do
-    compile_time false
-  end
+# needed by dynatrace_copy_or_download_file to download from S3
+chef_gem 'aws-sdk' do
+  compile_time false
 end
-
