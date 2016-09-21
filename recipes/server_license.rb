@@ -2,7 +2,7 @@
 # Cookbook Name:: dynatrace
 # Recipes:: server_license
 #
-# Copyright 2015, Dynatrace
+# Copyright 2015-2016, Dynatrace
 #
 
 include_recipe 'dynatrace::dynatrace_user'
@@ -19,7 +19,7 @@ if platform_family?('debian', 'fedora', 'rhel')
   installer_prefix_dir = node['dynatrace']['server']['linux']['installer']['prefix_dir']
   license_path = "#{installer_prefix_dir}/dynatrace/server/conf/dtlicense.key"
 else
-  # Unsupported
+  raise "Unsupported platform family."
 end
 
 
