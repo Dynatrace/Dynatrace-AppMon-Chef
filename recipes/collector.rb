@@ -120,7 +120,6 @@ dynatrace_configure_init_scripts "#{name}" do
               :jvm_xms => collector_jvm_xms, 
               :jvm_perm_size => collector_jvm_perm_size, 
               :jvm_max_perm_size => collector_jvm_max_perm_size})
-#  notifies :restart, "service[#{name}]", :immediately                  #JK: removed because we have to remove '/opt/dynatrace-6.5/collector/conf/collector.config.xml' file to proper collector start
 end
 
 file "#{installer_prefix_dir}/dynatrace/collector/conf/collector.config.xml" do
