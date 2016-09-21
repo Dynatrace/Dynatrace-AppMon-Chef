@@ -178,7 +178,7 @@ suites:
 #            installer:
 #              file_url: http://172.18.129.150:8000/dynatrace-server-linux-x86-64.jar
     excludes:
-          - windows-2012r2
+      - windows-2012r2
 
   - name: server_uninstall
     run_list:
@@ -191,7 +191,7 @@ suites:
 #            installer:
 #              file_url: http://172.18.129.150:8000/dynatrace-server-linux-x86-64.jar
     excludes:
-          - windows-2012r2
+      - windows-2012r2
 
   - name: wsagent_package
     run_list:
