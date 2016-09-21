@@ -14,7 +14,12 @@ user "Create system user '#{dynatrace_owner}'" do
   action   :create
 end
 
-group "Create group '#{dynatrace_group}'" do
-  group_name dynatrace_group
-  members    [dynatrace_owner]
+
+# On Windows creating a group with the same name as a just created user throws error: "The account already exists."
+if !platform_family?('windows')
+  group "Create group '#{dynatrace_group}'" do
+    group_name dynatrace_group
+    members    [dynatrace_owner]
+    action
+  end
 end

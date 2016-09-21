@@ -30,10 +30,7 @@ else
   raise "Unsupported platform family."
 end
 
-
-if platform_family?('debian', 'fedora', 'rhel')
-  include_recipe 'dynatrace::dynatrace_user'
-end
+include_recipe 'dynatrace::dynatrace_user'
 
 directory "Create the installer cache directory" do
   path   installer_cache_dir
