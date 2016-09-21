@@ -197,10 +197,23 @@ suites:
       dynatrace:
         server:
           do_pwh_connection: true
+          externalhostname: "myaddr"
+          sizing: small
+#          collector_port: 6699 # on version 6.5
 #          linux:
 #            installer:
-#              file_url: http://172.18.129.150:8000/dynatrace-server-linux-x86.jar
-          sizing: small
+#              file_url: http://172.18.129.150:8000/dynatrace-server-linux-x86-64.jar
+
+  - name: server_uninstall
+    run_list:
+      - recipe[dynatrace::server]
+      - recipe[dynatrace::server_uninstall]
+#    attributes:
+#      dynatrace:
+#        server:
+#          linux:
+#            installer:
+#              file_url: http://172.18.129.150:8000/dynatrace-server-linux-x86-64.jar
 
   - name: wsagent_package
     run_list:

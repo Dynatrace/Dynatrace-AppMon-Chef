@@ -2,7 +2,7 @@
 # Cookbook Name:: dynatrace
 # Recipes:: server
 #
-# Copyright 2015, Dynatrace
+# Copyright 2015-2016, Dynatrace
 #
 
 require 'json'
@@ -45,9 +45,8 @@ if platform_family?('debian', 'fedora', 'rhel')
   ini_files    = ['dtserver.ini', 'dtfrontendserver.ini']
   init_scripts = ['dynaTraceBackendServer', 'dynaTraceFrontendServer', service]
 else
-  # Unsupported
+  raise "Unsupported platform family."
 end
-
 
 directory "Create the installer cache directory" do
   path   installer_cache_dir
@@ -98,8 +97,7 @@ end
 service "Stop service #{name}" do
   service_name service
   supports     :status => true
-  action       [:stop, :enable]
-  ignore_failure true                 #TODO added because of service[Stop service Dynatrace Server]: Service is not known to chkconfig.
+  action       [:stop]
 end
 
 profiles = "#{installer_prefix_dir}/dynatrace/server/conf/profiles/"
@@ -119,8 +117,6 @@ dynatrace_copy_or_download_file "easyTravel.profile.xml" do
   dynatrace_group dynatrace_group
 end
 
-dtserver_ini_file = "#{installer_prefix_dir}/dynatrace/dtserver.ini"
-dtfrontendserver_ini_file  = "#{installer_prefix_dir}/dynatrace/dtfrontendserver.ini"
 server_config_xml_file = "#{installer_prefix_dir}/dynatrace/server/conf/server.config.xml"
 
 dynatrace_configure_init_scripts "#{name}" do
@@ -129,21 +125,22 @@ dynatrace_configure_init_scripts "#{name}" do
   dynatrace_owner      dynatrace_owner
   dynatrace_group      dynatrace_group
   variables({ :collector_port => collector_port })
-#  notifies             :restart, "service[#{name}]", :immediately                            #removed because have to modify ini files - see below
 end
 
 service "#{name}" do
   service_name service
   supports     :status => true
   action       [:restart, :enable]
-  ignore_failure true
 end
 
-ruby_block "Test ini files memory sizing=#{sizing}" do
+ruby_block "Wait to set memory sizing=#{sizing} in ini file" do
   block do
-    #wait for update ini files
-    puts '>> Wait for update ini files on clean installation'
-    sleep(30)
+    Chef::Log.info 'Wait to update ini files on clean installation'
+    for i in 0..60
+      Chef::Log.debug "Waiting for file #{server_config_xml_file}..."
+      break if ::File.exists? server_config_xml_file
+      sleep(1)
+    end
   end
   only_if { node[:dynatrace][:server][:installation][:is_required] }
 end
@@ -156,12 +153,10 @@ dynatrace_configure_ini_files "#{name} sizing=#{sizing}" do
   variables({ :memory => sizing })
 end
 
-ruby_block "Modify server configuration #{server_config_xml_file}" do
+ruby_block "Set external host name in #{server_config_xml_file}" do
   block do
-    puts ">> External host name is: #{external_hostname}"
+    Chef::Log.info "External host name is: #{external_hostname}"
     Dynatrace::Helpers.file_replace("#{server_config_xml_file}", " externalhostname=\"[a-zA-Z0-9._-]*\"", " externalhostname=\"#{external_hostname}\"")
-    #verify
-    Dynatrace::Helpers.find_line_in_file("#{server_config_xml_file}", "externalhostname")
   end
 
 end
@@ -170,14 +165,6 @@ service "#{name}" do
   service_name service
   supports     :status => true
   action       [:restart, :enable]
-  ignore_failure false
-end
-
-ruby_block "Display ini files after applying memory sizing=#{sizing}" do
-  block do
-    Dynatrace::Helpers.read_file2out(">> Content of ini file #{dtserver_ini_file}", dtserver_ini_file)
-    Dynatrace::Helpers.read_file2out(">> Content of ini file #{dtfrontendserver_ini_file} file", dtfrontendserver_ini_file)
-  end
 end
 
 [collector_port, 2021, 8021, 9911].each do | port |
@@ -187,7 +174,6 @@ end
       # (see log "[SelfMonitoringLauncher] Waiting for self-monitoring Collector startup (max: 90 seconds)")
       Dynatrace::Helpers.wait_until_port_is_open(port, 300)     #wait 5 minutes
     end
-    ignore_failure false
   end
 end
 
