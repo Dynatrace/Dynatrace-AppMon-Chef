@@ -15,16 +15,16 @@ if platform_family?('debian', 'fedora', 'rhel')
 
   service = 'dynaTraceWebServerAgent'
 elsif platform_family?('windows')
-  raise "Unsupported platform family."
+  raise 'Unsupported platform family.'
 end
 
-service "#{name}" do
+service name.to_s do
   service_name service
   supports     :status => true
   action [:stop, :disable]
 end
 
-directory "Delete the installer cache directory" do
+directory 'Delete the installer cache directory' do
   path   installer_cache_dir
   recursive true
   action :delete
@@ -32,6 +32,6 @@ end
 
 # NOTE: this may also delete files from other packages!
 link2del = installer_prefix_dir + '/dynatrace'
-dynatrace_delete_directory_by_link "#{link2del}" do
+dynatrace_delete_directory_by_link link2del.to_s do
   link2delete link2del
 end

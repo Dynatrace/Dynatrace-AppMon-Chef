@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-if ['debian', 'redhat', 'ubuntu'].include? os[:family]
+if %w(debian redhat ubuntu).include? os[:family]
   describe file('/opt/dynatrace') do
     it { should_not exist }
   end
 
-  describe file ('/etc/init.d/dynaTraceCollector') do
+  describe file '/etc/init.d/dynaTraceCollector' do
     it { should_not exist }
   end
 

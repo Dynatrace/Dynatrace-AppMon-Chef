@@ -7,4 +7,4 @@
 actions :run
 default_action :run
 
-attribute :link2delete,   :kind_of => String, :default => 'dynatrace'
+attribute :link2delete, :kind_of => String, :default => 'dynatrace'

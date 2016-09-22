@@ -9,7 +9,7 @@ name = 'Host Agent'
 include_recipe 'dynatrace::prerequisites'
 include_recipe 'dynatrace::dynatrace_user'
 
-if platform_family?('debian', 'fedora', 'rhel') #platform_family?('rhel') and node_kernel_machine == 'x86_64'
+if platform_family?('debian', 'fedora', 'rhel') # platform_family?('rhel') and node_kernel_machine == 'x86_64'
   installer_prefix_dir = node['dynatrace']['host_agent']['installer']['prefix_dir']
   installer_file_url   = node['dynatrace']['host_agent']['installer']['file_url']
   installer_file_name  = node['dynatrace']['host_agent']['installer']['file_name']
@@ -18,15 +18,15 @@ if platform_family?('debian', 'fedora', 'rhel') #platform_family?('rhel') and no
 
   service_name = 'dynaTraceHostagent'
 else
-  raise "Unsupported platform family."
+  raise 'Unsupported platform family.'
 end
 
-directory "Create the installer cache directory" do
+directory 'Create the installer cache directory' do
   path   installer_cache_dir
   action :create
 end
 
-dynatrace_copy_or_download_file "#{name}" do
+dynatrace_copy_or_download_file name.to_s do
   file_name       installer_file_name
   file_url        installer_file_url
   path            installer_path
@@ -34,10 +34,10 @@ dynatrace_copy_or_download_file "#{name}" do
   dynatrace_group dynatrace_group
 end
 
-ruby_block "#{name}" do
+ruby_block name.to_s do
   block do
     kernel = node['host_agent']['installer']['bitsize']
-    node.set[:dynatrace][:host_agent][:installation][:is_required] = Dynatrace::Helpers.requires_installation?(installer_prefix_dir, installer_path, "agent/lib#{kernel}/dthostagent", type=:tar)
+    node.set[:dynatrace][:host_agent][:installation][:is_required] = Dynatrace::Helpers.requires_installation?(installer_prefix_dir, installer_path, "agent/lib#{kernel}/dthostagent", type = :tar)
   end
 end
 
@@ -49,13 +49,12 @@ directory "Create the installation directory #{installer_prefix_dir}" do
   action    :create
 end
 
-dynatrace_run_tar_installer "#{name}" do
+dynatrace_run_tar_installer name.to_s do
   installer_path       installer_path
   installer_prefix_dir installer_prefix_dir
   dynatrace_owner      dynatrace_owner
   dynatrace_group      dynatrace_group
 end
-
 
 host_agent_name = node['dynatrace']['host_agent']['host_agent_name']
 host_agent_collector = node['dynatrace']['host_agent']['collector']
@@ -68,7 +67,7 @@ ruby_block "Setting the name and collector address in #{config_path}" do
 end
 
 init_scripts = [service_name]
-dynatrace_configure_init_scripts "#{name}" do
+dynatrace_configure_init_scripts name.to_s do
   installer_prefix_dir installer_prefix_dir
   scripts              init_scripts
   dynatrace_owner      dynatrace_owner
@@ -78,5 +77,5 @@ end
 service name do
   service_name service_name
   supports :status => true
-  action [ :enable, :restart ]
+  action [:enable, :restart]
 end

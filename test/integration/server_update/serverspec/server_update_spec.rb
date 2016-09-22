@@ -14,14 +14,14 @@ describe 'Dynatrace Server update' do
     http.use_ssl = true
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 
-    request = Net::HTTP::Get.new(uri, {'Accept' => 'text/xml'})
+    request = Net::HTTP::Get.new(uri, 'Accept' => 'text/xml')
     request.basic_auth('admin', 'admin')
     response = http.request(request)
     expect(response.code).to eq('200')
 
     # e.g. <?xml version="1.0" encoding="UTF-8" standalone="yes"?><result value="6.3.10.1010"/>
     xmldoc = Document.new(response.body)
-    result = XPath.first(xmldoc, "//result")
+    result = XPath.first(xmldoc, '//result')
     version = result.attributes['value']
     expect(version).to eq('6.3.10.1010')
   end

@@ -7,8 +7,8 @@
 require 'json'
 require 'net/https'
 
-if !platform_family?('debian', 'fedora', 'rhel')
-  raise "Unsupported platform family."
+unless platform_family?('debian', 'fedora', 'rhel')
+  raise 'Unsupported platform family.'
 end
 
 update_file_url = node['dynatrace']['server']['linux']['update']['update_file_url']
@@ -17,13 +17,13 @@ if update_file_url.to_s.empty?
 end
 
 cache_dir = "#{Chef::Config['file_cache_path']}/dynatrace"
-directory "Create the installer cache directory" do
+directory 'Create the installer cache directory' do
   path   cache_dir
   action :create
 end
 
 update_file_url = node['dynatrace']['server']['linux']['update']['update_file_url']
-update_file_zip_path =  "#{cache_dir}/server_update.zip"
+update_file_zip_path = "#{cache_dir}/server_update.zip"
 update_file_path = "#{cache_dir}/server_update.dtf"
 dynatrace_copy_or_download_file "Downloading update file: #{update_file_url}" do
   file_url        update_file_url
@@ -42,14 +42,13 @@ ruby_block "Extract dtf file from #{update_file_zip_path} as #{update_file_path}
     dtf_file_unpacked = false
     Zip::File.open(update_file_zip_path) do |zip_file|
       zip_file.each do |f|
-        if File.extname(f.name) == '.dtf'
-          # Extract with force overwriting existing file option set
-          zip_file.extract(f, update_file_path) { true }
-          dtf_file_unpacked = true
-        end
+        next unless File.extname(f.name) == '.dtf'
+        # Extract with force overwriting existing file option set
+        zip_file.extract(f, update_file_path) { true }
+        dtf_file_unpacked = true
       end
     end
-    if !dtf_file_unpacked
+    unless dtf_file_unpacked
       raise "Could not extract dtf file from #{update_file_zip_path}"
     end
   end
@@ -70,16 +69,16 @@ execute "Update Dynatrace server using #{update_file_path} file" do
   live_stream true
 end
 
-service_name      = 'dynaTraceServer'
+service_name = 'dynaTraceServer'
 # Wait for server to prepare the udpate before restarting it
 ruby_block "Wait before restarting service '#{service_name}'" do
   block do
-    # TODO use the REST interface
+    # TODO: use the REST interface
     sleep 120
   end
 end
 
-service "#{service_name}" do
+service service_name.to_s do
   action [:restart]
 end
 

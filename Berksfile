@@ -8,4 +8,3 @@ cookbook 'java'
 group :integration do
   cookbook 'apache2'
 end
-

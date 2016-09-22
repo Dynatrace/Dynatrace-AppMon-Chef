@@ -14,7 +14,7 @@ default['dynatrace']['host_agent']['collector'] = 'localhost'
 # 32 or 64
 default['host_agent']['installer']['bitsize'] = '64'
 
-# The Dynatrace Host Agent package will be installed into the directory node['dynatrace']['host_agent']['linux']['installer']['prefix_dir']/dynatrace-$major-$minor-$rev, where $major, $minor and $rev are given by the installer. 
+# The Dynatrace Host Agent package will be installed into the directory node['dynatrace']['host_agent']['linux']['installer']['prefix_dir']/dynatrace-$major-$minor-$rev, where $major, $minor and $rev are given by the installer.
 # A symbolic link to the actual installation directory will be created in node['dynatrace']['host_agent']['linux']['installer']['prefix_dir']/dynatrace.
 default['dynatrace']['host_agent']['installer']['prefix_dir'] = '/opt'
 

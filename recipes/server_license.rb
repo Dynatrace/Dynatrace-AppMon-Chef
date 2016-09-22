@@ -19,11 +19,10 @@ if platform_family?('debian', 'fedora', 'rhel')
   installer_prefix_dir = node['dynatrace']['server']['linux']['installer']['prefix_dir']
   license_path = "#{installer_prefix_dir}/dynatrace/server/conf/dtlicense.key"
 else
-  raise "Unsupported platform family."
+  raise 'Unsupported platform family.'
 end
 
-
-dynatrace_copy_or_download_file "#{name}" do
+dynatrace_copy_or_download_file name.to_s do
   file_name       license_file_name
   file_url        license_file_url
   path            license_path

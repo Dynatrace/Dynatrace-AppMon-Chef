@@ -10,7 +10,7 @@ action :run do
   jar_cmd << " | java -jar #{new_resource.installer_path}"
 
   bash "Install the #{new_resource.name}" do
-    code "#{jar_cmd}"
+    code jar_cmd.to_s
     cwd  ::File.dirname(new_resource.installer_path)
   end
 
@@ -25,7 +25,7 @@ action :run do
       res = resources("execute[Move the installation directory to #{new_resource.installer_prefix_dir}]")
       res.command get_mv_install_dir_cmd(::File.dirname(new_resource.installer_path) << "/#{new_resource.target_dir}", new_resource.installer_prefix_dir)
 
-      res = resources("execute[Change ownership of the installation directory]")
+      res = resources('execute[Change ownership of the installation directory]')
       res.command get_chown_recursively_cmd(installation_path, new_resource.dynatrace_owner, new_resource.dynatrace_group)
 
       res = resources("link[Create a symlink of the #{new_resource.name} installation to #{new_resource.installer_prefix_dir}/#{new_resource.target_symlink}]")
@@ -37,7 +37,7 @@ action :run do
     command nil
   end
 
-  execute "Change ownership of the installation directory" do
+  execute 'Change ownership of the installation directory' do
     command nil
   end
 
@@ -50,11 +50,10 @@ action :run do
 end
 
 def get_chown_recursively_cmd(dir, owner, group)
-  return "chown -R #{owner}:#{group} #{dir}"
+  "chown -R #{owner}:#{group} #{dir}"
 end
 
 def get_mv_install_dir_cmd(src, dest)
   # puts 'mv_install_dir_cmd src:' + src + ' dest:' +dest
-  return "rsync -a #{src} #{dest} && rm -rf #{src}"
+  "rsync -a #{src} #{dest} && rm -rf #{src}"
 end
-

@@ -21,9 +21,8 @@ if platform_family?('windows')
   dynatrace_powershell_scripts_project = "#{installer_cache_dir}\\Dynatrace-Powershell"
   dynatrace_powershell_scripts         = "#{dynatrace_powershell_scripts_project}\\scripts"
 else
-  raise "Unsupported platform family."
+  raise 'Unsupported platform family.'
 end
-
 
 include_recipe 'dynatrace::agents_package'
 
@@ -33,9 +32,9 @@ remote_directory "Copy Dynatrace PowerShell scripts to #{dynatrace_powershell_sc
   action :create
 end
 
-dotnet_process_list = process_list.to_json.gsub('"', "\\\\\"")
+dotnet_process_list = process_list.to_json.gsub('"', '\\\\"')
 
-execute "Install the Dynatrace WebServer Agent in IIS" do
+execute 'Install the Dynatrace WebServer Agent in IIS' do
   command "powershell.exe -NoLogo -NonInteractive -NoProfile -ExecutionPolicy RemoteSigned -InputFormat None -File InstallDotNetAgent.ps1 -InstallPath \"#{dynatrace_install_dir}\" -AgentName #{agent_name} -CollectorHost #{collector_hostname}:#{collector_port} #{dynatrace_agentlib_bitsize == '64' ? '-Use64Bit' : ''} -JSONProcessList \"#{dotnet_process_list}\" > C:\\Windows\\Temp\\1.txt"
   cwd     dynatrace_powershell_scripts
 end

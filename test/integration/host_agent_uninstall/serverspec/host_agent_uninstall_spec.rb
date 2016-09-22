@@ -7,7 +7,7 @@ describe file('/opt/dynatrace') do
   it { should_not exist }
 end
 
-describe file ('/etc/init.d/dynaTraceHostagent') do
+describe file '/etc/init.d/dynaTraceHostagent' do
   it { should_not exist }
 end
 

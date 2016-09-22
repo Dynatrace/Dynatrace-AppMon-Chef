@@ -5,7 +5,7 @@
 # Copyright 2016, Dynatrace
 #
 
-                                                  # for EC2 instance it can be:
+# for EC2 instance it can be:
 node_platform = node['platform']                  # "amazon"
 node_platform_version = node['platform_version']  # "2016.03"
 node_os = node['os']                              # "linux"
@@ -26,26 +26,24 @@ end
 
 Chef::Log.info '########################################## cookbook: ' + cookbook_name + ' ################################'
 
-if node_public_hostname != nil
-  Chef::Log.info 'Node public host name:'+node_public_hostname
+unless node_public_hostname.nil?
+  Chef::Log.info 'Node public host name:' + node_public_hostname
 end
-if node_public_ipv4 != nil
-  Chef::Log.info 'Node public IP Address:'+node_public_ipv4
+unless node_public_ipv4.nil?
+  Chef::Log.info 'Node public IP Address:' + node_public_ipv4
 end
-if node_local_ipv4 != nil
-  Chef::Log.info 'Node local IP Address:'+node_local_ipv4
-elsif node_ipaddress != nil
-  Chef::Log.info 'Node IP Address:'+node_ipaddress
+if !node_local_ipv4.nil?
+  Chef::Log.info 'Node local IP Address:' + node_local_ipv4
+elsif !node_ipaddress.nil?
+  Chef::Log.info 'Node IP Address:' + node_ipaddress
 end
 
 if !node_ipaddress.nil? && !node_local_ipv4.nil?
   if node_local_ipv4 != node_ipaddress
-    if node_ipaddress != nil
-      Chef::Log.info 'Node IP Address:'+node_ipaddress
-    end
+    Chef::Log.info 'Node IP Address:' + node_ipaddress unless node_ipaddress.nil?
   end
 end
 
 if !node_platform.nil? && !node_platform_version.nil? && !node_os.nil? && !node_os_version.nil? && !node_kernel_machine.nil?
-  Chef::Log.info 'Platform:' + node_platform + "  version:" + node_platform_version + "  os:" + node_os.to_s + "  os_version:" + node_os_version.to_s + '  machine:' + node_kernel_machine.to_s
+  Chef::Log.info 'Platform:' + node_platform + '  version:' + node_platform_version + '  os:' + node_os.to_s + '  os_version:' + node_os_version.to_s + '  machine:' + node_kernel_machine.to_s
 end

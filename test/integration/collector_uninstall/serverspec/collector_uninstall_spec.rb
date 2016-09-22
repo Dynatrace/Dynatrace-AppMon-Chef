@@ -7,7 +7,7 @@ describe file('/opt/dynatrace') do
   it { should_not exist }
 end
 
-describe file ('/etc/init.d/dynaTraceCollector') do
+describe file '/etc/init.d/dynaTraceCollector' do
   it { should_not exist }
 end
 

@@ -9,19 +9,19 @@ include_recipe 'dynatrace::node_info'
 upgrade_system = node['upgrade']['system']
 
 if upgrade_system == 'yes'
-  if !platform_family?('debian', 'fedora', 'rhel')
-    raise "Unsupported platform family."
+  unless platform_family?('debian', 'fedora', 'rhel')
+    raise 'Unsupported platform family.'
   end
   if platform_family?('fedora', 'rhel')
-      execute "Update system" do
-          command "yum update -y"
-      end
-  elsif platform_family?('debian')
-    execute "Update package index" do
-        command "apt-get update -y"
+    execute 'Update system' do
+      command 'yum update -y'
     end
-    execute "Update system" do
-        command "apt-get upgrade -y"
+  elsif platform_family?('debian')
+    execute 'Update package index' do
+      command 'apt-get update -y'
+    end
+    execute 'Update system' do
+      command 'apt-get upgrade -y'
     end
   else
     log 'Unsupported platform family. System will not be upgraded.' do

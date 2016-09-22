@@ -26,16 +26,16 @@ EOH
     end
 
     def self.read_file2out(description, file)
-      puts "#{description}"
-      File.readlines("#{file}").each do |line|
+      puts description.to_s
+      File.readlines(file.to_s).each do |line|
         puts line
       end
     end
-    
+
     def self.file_append_or_replace_line(path, regex, line)
-      FileUtils.touch(path) if !::File.exist?(path)
+      FileUtils.touch(path) unless ::File.exist?(path)
       file = Chef::Util::FileEdit.new(path)
-      if not file.insert_line_if_no_match(/#{regex}/, line)
+      unless file.insert_line_if_no_match(/#{regex}/, line)
         file.search_file_replace_line(/#{regex}/, line)
       end
       file.write_file
@@ -44,31 +44,28 @@ EOH
     # NOTE: this method loads whole content of a file into memory
     # before doing the pattern substitution
     def self.file_replace(path, regex, subst)
-      data = File.read(path, mode: "r+")
+      data = File.read(path, :mode => 'r+')
       data.gsub!(/#{regex}/, subst)
-      File.open(path, "w") do |f|
+      File.open(path, 'w') do |f|
         f.write(data)
       end
     end
 
     def self.find_line_in_file(path, regex)
       File.open(path) do |file|
-        file.find_all {
-            |line|
-          if line =~ /#{regex}/
-           puts line
-          end
-        }
+        file.find_all do |line|
+          puts line if line =~ /#{regex}/
+        end
       end
     end
 
     def self.file_replace_line(path, regex, replace)
-      FileUtils.touch(path) if !::File.exist?(path)
+      FileUtils.touch(path) unless ::File.exist?(path)
       file = Chef::Util::FileEdit.new(path)
       file.search_file_replace_line(/#{regex}/, replace)
       file.write_file
     end
-    
+
     def self.get_install_dir_from_installer_tar(installer_path)
       # extract the dynatrace.x.y.z directory name from the contained installer shell script
       install_dir = nil
@@ -87,7 +84,7 @@ EOH
       end
       install_dir
     end
-    
+
     def self.get_install_dir_from_installer_jar(installer_path)
       # extract the Manifest file
       cwd = File.dirname(installer_path)
@@ -95,30 +92,30 @@ EOH
 
       prefix = nil
       ver_rev = '' # optional
-      ver_maj= nil
+      ver_maj = nil
       ver_min = nil
       File.open("#{cwd}/META-INF/MANIFEST.MF").each do |line|
-        prefix = $1 if /prefix:\s*(\S+)/.match(line)
+        prefix = Regexp.last_match(1) if /prefix:\s*(\S+)/ =~ line
         break if prefix
-        ver_maj = $1 if /version-major:\s*(\S+)/.match(line)
-        ver_min = $1 if /version-minor:\s*(\S+)/.match(line)
-        ver_rev = ".#{$1}" if /version-revision:\s*(\S+)/.match(line)
+        ver_maj = Regexp.last_match(1) if /version-major:\s*(\S+)/ =~ line
+        ver_min = Regexp.last_match(1) if /version-minor:\s*(\S+)/ =~ line
+        ver_rev = ".#{Regexp.last_match(1)}" if /version-revision:\s*(\S+)/ =~ line
       end
       # Use a default prefix if prefix attribute not present in the Manifest file
       # The logic below is taken from the AbstractInstaller class in the Dynatrace jars
       install_dir = prefix ? prefix : "dynatrace-#{ver_maj}.#{ver_min}#{ver_rev}"
 
       # remove temporary directories
-      Mixlib::ShellOut.new("rm -rf META-INF", :cwd => File.dirname(installer_path)).run_command
-      
+      Mixlib::ShellOut.new('rm -rf META-INF', :cwd => File.dirname(installer_path)).run_command
+
       install_dir
     end
-    
-    def self.get_install_dir_from_installer(installer_path, type=:jar)
+
+    def self.get_install_dir_from_installer(installer_path, type = :jar)
       if type == :jar
         install_dir = get_install_dir_from_installer_jar(installer_path)
       end
-      
+
       if type == :tar
         install_dir = get_install_dir_from_installer_tar(installer_path)
       end
@@ -131,10 +128,10 @@ EOH
       shell = Mixlib::ShellOut.new(cmd, :cwd => installer_prefix_dir)
       shell.run_command
 
-      return "#{installer_prefix_dir}/#{shell.stdout}"
+      "#{installer_prefix_dir}/#{shell.stdout}"
     end
 
-    private
+    # private_class_method
     def self.port_is_open?(ip, port)
       s = Socket.new(Socket::AF_INET, Socket::SOCK_STREAM, 0)
       sa = Socket.sockaddr_in(port, ip)
@@ -152,40 +149,36 @@ EOH
           rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH
             return false
           ensure
-            s.close if !s.closed?
+            s.close unless s.closed?
           end
         end
       end
 
-      s.close if !s.closed?
-      return false
+      s.close unless s.closed?
+      false
     end
 
-    def self.requires_installation?(installer_prefix_dir, installer_path, component_path_part = '', type=:jar)
-      return false if !File.exist?(installer_path)
+    def self.requires_installation?(installer_prefix_dir, installer_path, component_path_part = '', type = :jar)
+      return false unless File.exist?(installer_path)
       install_dir = get_install_dir_from_installer(installer_path, type)
-      #puts "install_dir is #{install_dir}"
+      # puts "install_dir is #{install_dir}"
       path_to_check = "#{installer_prefix_dir}/#{install_dir}/#{component_path_part}"
-      #puts "path_to_check is #{path_to_check}"
-      return !(Dir.exist?(path_to_check) || File.exist?(path_to_check))
+      # puts "path_to_check is #{path_to_check}"
+      !(Dir.exist?(path_to_check) || File.exist?(path_to_check))
     end
 
     def self.wait_until_port_is_open(port, timeout = 120, ip = '127.0.0.1', continue_exec = nil)
-      time_begin = Time.now           # Current time
-      #puts ">> wait_until_port_is_open IP=#{ip}:#{port} timeout=#{timeout}"
+      time_begin = Time.now # Current time
+      # puts ">> wait_until_port_is_open IP=#{ip}:#{port} timeout=#{timeout}"
       Timeout.timeout(timeout, DynatraceTimeout) do
-        while !self.port_is_open?(ip, port) do
-          sleep(1)
-        end
-        time_end = Time.now           # Current time
+        sleep(1) until port_is_open?(ip, port)
+        time_end = Time.now # Current time
         diff = (time_end - time_begin).ceil
-        #puts ">> wait_until_port_is_open - waited=#{diff} seconds"
+        # puts ">> wait_until_port_is_open - waited=#{diff} seconds"
       end
     rescue DynatraceTimeout
       if continue_exec.nil?
         raise DynatraceNotReady.new("#{ip}:#{port}", timeout)
-      else
-        # puts "!!!!! ERROR:timeout! wait_until_port_is_open IP=#{ip}:#{port} timeout=#{timeout}"
       end
     end
 
@@ -208,66 +201,69 @@ EOH
     rescue DynatraceTimeout
       raise DynatraceNotReady.new(endpoint, timeout)
     end
-    
+
     def self.stop_processes(proc_pattern, proc_user, platform_family, timeout = 15, signal = 'TERM')
-      pids = self.find_pids(proc_pattern, proc_user, platform_family)
+      pids = find_pids(proc_pattern, proc_user, platform_family)
       killed = false
-      if pids.size > 0
+      unless pids.empty?
         Process.kill signal, *pids
+        # TODO! when process does not exit anymore exception is thrown Errno::ESRCH No such process
         begin
           Timeout.timeout(timeout, DynatraceTimeout) do
-            while (true)
-              pids = self.find_pids(proc_pattern, proc_user, platform_family)
-              if pids.size == 0
-                #puts("Process(es) #{pids} terminated")
+            loop do
+              pids = find_pids(proc_pattern, proc_user, platform_family)
+              if pids.empty?
+                # puts("Process(es) #{pids} terminated")
                 killed = true
                 break
               end
-              #puts("Waiting for process(es) #{pids} to finish")
+              # puts("Waiting for process(es) #{pids} to finish")
               sleep 1
-            end            
+            end
           end
         rescue DynatraceTimeout
           raise "Process(es) #{pids} did not stop"
         end
       end
-      return killed      
+      killed
     end
-    
-    private
+
+    # private_class_method
     def self.find_pids(pattern, user, platform_family)
-      pids = Array.new
-      if ['debian', 'fedora', 'rhel'].include? platform_family
+      pids = []
+      if %w(debian fedora rhel).include? platform_family
         pgrep_pattern_opt = !pattern.nil? ? "-f \"#{pattern}\"" : ''
         pgrep_user_opt = !user.nil? ? "-u #{user}" : ''
         search_processes_cmd = "pgrep #{pgrep_pattern_opt} #{pgrep_user_opt}"
 
-        #################################################################                
+        #################################################################
         # code below doesn't work if workstation is on windows
-#        %x[#{search_processes_cmd}].each_line do |pidStr|
-#          if !pidStr.empty?
-#            puts 'pid:' + pidStr
-#            pids << pidStr.to_i
-#          end
-#          return pids
-#        end
+        #        %x[#{search_processes_cmd}].each_line do |pidStr|
+        #          if !pidStr.empty?
+        #            puts 'pid:' + pidStr
+        #            pids << pidStr.to_i
+        #          end
+        #          return pids
+        #        end
         # this part working and fixes code above
-        pidStr = %x[#{search_processes_cmd}]
-        if !pidStr.empty?
-          text = Array.new
+        pidStr = `#{search_processes_cmd}`
+        unless pidStr.empty?
+          text = []
           text << pidStr.lines.map(&:chomp)
-          text.each {|x| 
-            x.each {|y|
-              pids << y.to_i 
-            }
-          }
+          text.each do |x|
+            x.each do |y|
+              pids << y.to_i
+            end
+          end
         end
         #################################################################
-                        
+
       else
-        raise "ERROR: Unsupported platform"
+        raise 'ERROR: Unsupported platform'
       end
-      return pids
+      pids
     end
+
+    private_class_method :port_is_open?, :find_pids
   end
 end

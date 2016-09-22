@@ -19,7 +19,7 @@ action :run do
     only_if { !new_resource.file_name.nil? && run_context.has_cookbook_file_in_cookbook?(cookbook_name, new_resource.file_name) }
   end
 
-  if new_resource.file_url != nil
+  unless new_resource.file_url.nil?
     if new_resource.file_url.start_with?('s3://')
       # Download from S3
       # Example of S3 URL: s3://bucket_name/path/to/filename

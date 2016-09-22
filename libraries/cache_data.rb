@@ -10,32 +10,32 @@ require 'fileutils'
 
 module Dynatrace
   class CacheData
-
     def initialize(cache_id)
       @cache_id = cache_id
     end
 
     def valid?(target_path, etag)
-      if File.file?(target_path) and cache_data_exists? target_path
+      if File.file?(target_path) && cache_data_exists?(target_path)
         cache_data = load_cache_data(target_path)
         mtime = nil
         File.open(target_path) { |f| mtime = f.mtime }
-        if (!etag.to_s.empty? and cache_data['etag'] == etag) \
-            and cache_data['local_mtime'] == mtime
+        if (!etag.to_s.empty? && cache_data['etag'] == etag) \
+            && cache_data['local_mtime'] == mtime
           return true
         end
       end
-      return false
+      false
     end
 
     def save(target_path, etag)
       metadata = { 'etag' => etag }
       # puts "Saving cache data to #{construct_filepath(target_path)}"
       File.open(target_path) { |f| metadata['local_mtime'] = f.mtime }
-      File.open(construct_filepath(target_path), 'wb') { |f| f.write(Marshal.dump(metadata))}
+      File.open(construct_filepath(target_path), 'wb') { |f| f.write(Marshal.dump(metadata)) }
     end
 
     private
+
     def cache_data_exists?(target_path)
       File.file?(construct_filepath(target_path))
     end

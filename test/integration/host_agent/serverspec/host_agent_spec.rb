@@ -19,12 +19,12 @@ describe file('/opt/dynatrace/agent') do
   it { should be_grouped_into 'dynatrace' }
 end
 
-describe file ('/opt/dynatrace/agent/conf/dthostagent.ini') do
+describe file '/opt/dynatrace/agent/conf/dthostagent.ini' do
   its(:content) { should match /^Name myhostagent/ }
   its(:content) { should match /^Server myhostaddr/ }
 end
 
-describe file ('/etc/init.d/dynaTraceHostagent') do
+describe file '/etc/init.d/dynaTraceHostagent' do
   it { should be_owned_by 'root' }
   it { should be_grouped_into 'root' }
 end

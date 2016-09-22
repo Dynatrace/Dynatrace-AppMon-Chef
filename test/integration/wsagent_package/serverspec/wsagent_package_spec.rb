@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-if ['debian', 'redhat', 'ubuntu'].include? os[:family]
+if %w(debian redhat ubuntu).include? os[:family]
   describe user('dynatrace') do
     it { should exist }
     it { should belong_to_group 'dynatrace' }
@@ -17,13 +17,13 @@ if ['debian', 'redhat', 'ubuntu'].include? os[:family]
     it { should be_grouped_into 'dynatrace' }
   end
 
-  describe file ('/opt/dynatrace/agent/conf/dtwsagent.ini') do
+  describe file '/opt/dynatrace/agent/conf/dtwsagent.ini' do
     its(:content) { should match /^Name dtwsagent$/ }
     its(:content) { should match /^Server localhost:9998$/ }
     its(:content) { should match /^Loglevel info$/ }
   end
 
-  describe file ('/etc/init.d/dynaTraceWebServerAgent') do
+  describe file '/etc/init.d/dynaTraceWebServerAgent' do
     it { should be_owned_by 'root' }
     it { should be_grouped_into 'root' }
 
@@ -48,9 +48,9 @@ if ['debian', 'redhat', 'ubuntu'].include? os[:family]
     it { should be_enabled }
 
     if os[:family] == 'debian' || os[:family] == 'ubuntu'
-        it { should be_enabled.with_level(3) }
-        it { should be_enabled.with_level(4) }
-        it { should be_enabled.with_level(5) }
+      it { should be_enabled.with_level(3) }
+      it { should be_enabled.with_level(4) }
+      it { should be_enabled.with_level(5) }
     end
   end
 elsif os[:family] == 'windows'
@@ -62,7 +62,7 @@ elsif os[:family] == 'windows'
     it { should be_directory }
   end
 
-  describe file ('C:\Program Files (x86)\Dynatrace\agent\conf\dtwsagent.ini') do
+  describe file 'C:\Program Files (x86)\Dynatrace\agent\conf\dtwsagent.ini' do
     its(:content) { should match /^Name dtwsagent$/ }
     its(:content) { should match /^Server localhost:9998$/ }
     its(:content) { should match /^Loglevel info$/ }

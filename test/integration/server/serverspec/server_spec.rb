@@ -21,19 +21,19 @@ describe file('/opt/dynatrace/server') do
   it { should be_grouped_into 'dynatrace' }
 end
 
-describe file ('/opt/dynatrace/dtserver.ini') do
+describe file '/opt/dynatrace/dtserver.ini' do
   its(:content) { should match /-memory\nsmall/ }
 end
 
-describe file ('/opt/dynatrace/dtfrontendserver.ini') do
+describe file '/opt/dynatrace/dtfrontendserver.ini' do
   its(:content) { should match /-memory\nsmall/ }
 end
 
-describe file ('/opt/dynatrace/server/conf/server.config.xml') do
+describe file '/opt/dynatrace/server/conf/server.config.xml' do
   its(:content) { should match /externalhostname="myaddr"/ }
 end
 
-describe file ('/etc/init.d/dynaTraceServer') do
+describe file '/etc/init.d/dynaTraceServer' do
   it { should be_owned_by 'root' }
   it { should be_grouped_into 'root' }
 
@@ -65,9 +65,9 @@ describe service('dynaTraceServer') do
   it { should be_enabled }
 
   if os[:family] == 'debian' || os[:family] == 'ubuntu'
-      it { should be_enabled.with_level(3) }
-      it { should be_enabled.with_level(4) }
-      it { should be_enabled.with_level(5) }
+    it { should be_enabled.with_level(3) }
+    it { should be_enabled.with_level(4) }
+    it { should be_enabled.with_level(5) }
   end
 end
 
@@ -99,7 +99,7 @@ describe 'Dynatrace Server Performance Warehouse Configuration' do
     http.use_ssl = true
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 
-    request = Net::HTTP::Get.new(uri, {'Accept' => 'application/json', 'Content-Type' => 'application/json'})
+    request = Net::HTTP::Get.new(uri, 'Accept' => 'application/json', 'Content-Type' => 'application/json')
     request.basic_auth('admin', 'admin')
     response = http.request(request)
 
