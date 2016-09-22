@@ -29,9 +29,10 @@ describe file ('/opt/dynatrace/dtfrontendserver.ini') do
   its(:content) { should match /-memory\nsmall/ }
 end
 
-describe file ('/opt/dynatrace/server/conf/server.config.xml') do
-  its(:content) { should match /externalhostname="myaddr"/ }
-end
+# To be checked only on version 6.5
+# describe file ('/opt/dynatrace/server/conf/server.config.xml') do
+#   its(:content) { should match /externalhostname="myaddr"/ }
+# end
 
 describe file ('/etc/init.d/dynaTraceServer') do
   it { should be_owned_by 'root' }

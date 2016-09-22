@@ -28,18 +28,6 @@ service "#{name}" do
   action       [:stop, :disable]
 end
 
-ruby_block "Stop any running instance of dynatrace service: dtserver" do
-  block do
-    Dynatrace::Helpers.stop_processes('dtserver', nil, node['platform_family'])
-  end
-end
-
-ruby_block "Stop any running instance of dynatrace service: dtfrontendserver" do
-  block do
-    Dynatrace::Helpers.stop_processes('dtfrontendserver', nil, node['platform_family'])
-  end
-end
-
 directory "Delete the installer cache directory #{installer_cache_dir}" do
   path   installer_cache_dir
   recursive true

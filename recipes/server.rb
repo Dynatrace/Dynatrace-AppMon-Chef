@@ -96,8 +96,8 @@ end
 
 service "Stop service #{name}" do
   service_name service
-  supports     :status => true
   action       [:stop]
+  ignore_failure true # fails on Debian 7.8 on clean installation
 end
 
 profiles = "#{installer_prefix_dir}/dynatrace/server/conf/profiles/"
