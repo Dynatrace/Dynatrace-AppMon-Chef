@@ -32,7 +32,6 @@ ruby_block "Remove the #{name} from Apache HTTPD's config file #{apache_config_f
   if not apache_daemon.empty?
     notifies :restart, "service[#{apache_daemon}]", :immediately
   end
-  ignore_failure true
 end
 
 # We only state here that such a daemon already exists. We do this to
