@@ -137,21 +137,26 @@ end
 
 service "#{name}" do
   service_name service
-  supports     :status => true
-  action       [:restart]
+  action       [:start]
 end
 
 ruby_block "Wait to set external host name in #{server_config_xml_file}" do
   block do
-    # for i in 0..60
-    #   #TODO!
-    #   Chef::Log.info "Waiting for file #{server_config_xml_file}..."
-    #   break if ::File.exists? server_config_xml_file
-    #   sleep(1)
-    # end
-
-    # Wait for the server to regenerate server.config.xml
-    sleep(30)
+    found_file = false
+    for i in 0..60
+      Chef::Log.info "Waiting for file #{server_config_xml_file}..."
+      if ::File.exists? server_config_xml_file
+        found_file = true
+        break
+      end
+      sleep 1
+    end
+    if found_file
+      # Leave some extra time for the server to avoid file read/write hazards
+      sleep 10
+    else
+      raise "#{server_config_xml_file} did not appear"
+    end
   end
   only_if { node[:dynatrace][:server][:installation][:is_required] }
 end
@@ -165,7 +170,6 @@ end
 
 service "#{name}" do
   service_name service
-  supports     :status => true
   action       [:restart, :enable]
 end
 
