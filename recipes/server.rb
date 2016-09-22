@@ -127,24 +127,6 @@ dynatrace_configure_init_scripts "#{name}" do
   variables({ :collector_port => collector_port })
 end
 
-service "#{name}" do
-  service_name service
-  supports     :status => true
-  action       [:restart, :enable]
-end
-
-ruby_block "Wait to set memory sizing=#{sizing} in ini file" do
-  block do
-    Chef::Log.info 'Wait to update ini files on clean installation'
-    for i in 0..60
-      Chef::Log.debug "Waiting for file #{server_config_xml_file}..."
-      break if ::File.exists? server_config_xml_file
-      sleep(1)
-    end
-  end
-  only_if { node[:dynatrace][:server][:installation][:is_required] }
-end
-
 dynatrace_configure_ini_files "#{name} sizing=#{sizing}" do
   installer_prefix_dir installer_prefix_dir
   ini_files            ini_files
@@ -153,12 +135,32 @@ dynatrace_configure_ini_files "#{name} sizing=#{sizing}" do
   variables({ :memory => sizing })
 end
 
+service "#{name}" do
+  service_name service
+  supports     :status => true
+  action       [:restart]
+end
+
+ruby_block "Wait to set external host name in #{server_config_xml_file}" do
+  block do
+    # for i in 0..60
+    #   #TODO!
+    #   Chef::Log.info "Waiting for file #{server_config_xml_file}..."
+    #   break if ::File.exists? server_config_xml_file
+    #   sleep(1)
+    # end
+
+    # Wait for the server to regenerate server.config.xml
+    sleep(30)
+  end
+  only_if { node[:dynatrace][:server][:installation][:is_required] }
+end
+
 ruby_block "Set external host name in #{server_config_xml_file}" do
   block do
     Chef::Log.info "External host name is: #{external_hostname}"
     Dynatrace::Helpers.file_replace("#{server_config_xml_file}", " externalhostname=\"[a-zA-Z0-9._-]*\"", " externalhostname=\"#{external_hostname}\"")
   end
-
 end
 
 service "#{name}" do
