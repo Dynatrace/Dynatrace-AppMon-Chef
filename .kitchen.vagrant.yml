@@ -222,6 +222,22 @@ suites:
     excludes:
       - windows-2012r2
 
+  - name: server_update
+    run_list:
+      - recipe[dynatrace::server]
+      - recipe[dynatrace::server_update]
+#    attributes:
+#      dynatrace:
+#        server:
+##          collector_port: 6699 # on version 6.5
+#          linux:
+#            update:
+#              update_file_url: http://172.18.129.150:8000/dynaTrace-6.3.10.1010.zip
+#            installer:
+#              file_url: http://172.18.129.150:8000/dynatrace-server-linux-x86-64.jar
+    excludes:
+      - windows-2012r2
+
   - name: wsagent_package
     run_list:
       - recipe[dynatrace::wsagent_package]
