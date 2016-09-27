@@ -4,8 +4,8 @@
 # Copyright 2016, Dynatrace
 #
 
-require 'json'
 require 'net/https'
+require 'rexml/document'
 
 unless platform_family?('debian', 'fedora', 'rhel')
   raise 'Unsupported platform family.'
@@ -54,8 +54,8 @@ ruby_block "Extract dtf file from #{update_file_zip_path} as #{update_file_path}
   end
 end
 
-package 'curl' do
-  action :install
+chef_gem 'multipart-post' do
+  compile_time false
 end
 
 # A REST URL to update Dynatrace server
@@ -63,23 +63,74 @@ rest_update_url = node['dynatrace']['server']['linux']['update']['rest_update_ur
 user = node['dynatrace']['server']['linux']['update']['user']
 passwd = node['dynatrace']['server']['linux']['update']['passwd']
 
-cmd2exec = "curl --insecure --header 'Content-Type:multipart/form-data' -F file='@#{update_file_path}' -u #{user}:#{passwd} -v '#{rest_update_url}'"
-execute "Update Dynatrace server using #{update_file_path} file" do
-  command cmd2exec
-  live_stream true
-end
-
-service_name = 'dynaTraceServer'
-# Wait for server to prepare the udpate before restarting it
-ruby_block "Wait before restarting service '#{service_name}'" do
+ruby_block "Update Dynatrace server using #{update_file_path} file" do
   block do
-    # TODO: use the REST interface
-    sleep 120
+    require 'net/http/post/multipart'
+    uri = URI(rest_update_url)
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+    File.open(update_file_path) do |update_file|
+      request = Net::HTTP::Post::Multipart.new uri, 'file' => UploadIO.new(update_file, 'application/octet-stream')
+      request.basic_auth(user, passwd)
+      response = http.request(request)
+
+      if response.code.to_s == '201'
+        jobid = response['location'].split(/\//)[-1]
+        node.set['dynatrace']['server']['linux']['update']['jobid'] = jobid
+      else
+        raise "Server responded with error '#{response.code} #{response.message}' when trying to upload file #{update_file_path} through REST"
+      end
+    end
   end
 end
 
-service service_name.to_s do
+ruby_block "Waiting for update installation to finish" do
+  block do
+    begin
+      jobid = node['dynatrace']['server']['linux']['update']['jobid']
+      rest_update_status_url = "#{node['dynatrace']['server']['linux']['update']['rest_update_url']}/#{jobid}"
+      timeout = node['dynatrace']['server']['linux']['update']['update_status_timeout']
+      retry_sleep = node['dynatrace']['server']['linux']['update']['update_status_retry_sleep']
+      Timeout.timeout(timeout) do
+        loop do
+          uri = URI(rest_update_status_url)
+
+          http = Net::HTTP.new(uri.host, uri.port)
+          http.use_ssl = true
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+          request = Net::HTTP::Get.new(uri, 'Accept' => 'application/xml')
+          request.basic_auth(user, passwd)
+          response = http.request(request)
+
+          if response.code == '200'
+            xmldoc = REXML::Document.new(response.body)
+            isfinished = REXML::XPath.first(xmldoc, '//isfinished').first == 'true'
+            if isfinished
+              isrestartrequired = REXML::XPath.first(xmldoc, '//isserverrestartrequired').first == 'true'
+              node.set['dynatrace']['server']['linux']['update']['isrestartrequired'] = isrestartrequired
+              break
+            else
+              Chef::Log.debug "Update not finished. Checking status in #{retry_sleep} seconds..."
+              sleep retry_sleep
+            end
+          else
+            raise "Server responded with error '#{response.code} #{response.message}' when trying to check update status"
+          end
+        end
+      end
+    rescue Timeout::Error
+      raise "Server not updated after #{timeout} seconds"
+    end
+  end
+end
+
+service_name = 'dynaTraceServer'
+service service_name do
   action [:restart]
+  only_if { node['dynatrace']['server']['linux']['update']['isrestartrequired'] }
 end
 
 rest_version_url = node['dynatrace']['server']['linux']['update']['rest_version_url']

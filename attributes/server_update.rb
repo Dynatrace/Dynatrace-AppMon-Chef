@@ -6,7 +6,7 @@
 #
 
 # The file URL of the Dynatrace server update
-default['dynatrace']['server']['linux']['update']['update_file'] = 'https://files.dynatrace.com/downloads/fixpacks/dynaTrace-6.3.10.1010.zip'
+default['dynatrace']['server']['linux']['update']['update_file_url'] = 'https://files.dynatrace.com/downloads/fixpacks/dynaTrace-6.3.10.1010.zip'
 
 # A REST URL to update Dynatrace server
 default['dynatrace']['server']['linux']['update']['rest_update_url'] = 'https://localhost:8021/rest/management/installjobs'
@@ -15,3 +15,12 @@ default['dynatrace']['server']['linux']['update']['rest_version_url'] = 'https:/
 
 default['dynatrace']['server']['linux']['update']['user'] = 'admin'
 default['dynatrace']['server']['linux']['update']['passwd'] = 'admin'
+
+# Max. time to wait for the update to be applied after uploading it to the server (in seconds)
+default['dynatrace']['server']['linux']['update']['update_status_timeout'] = 300
+# Interval between update status checks (in seconds)
+default['dynatrace']['server']['linux']['update']['update_status_retry_sleep'] = 5
+
+# Attributes set internally by the recipe
+default['dynatrace']['server']['linux']['update']['isrestartrequired'] = true
+default['dynatrace']['server']['linux']['update']['jobid'] = nil
