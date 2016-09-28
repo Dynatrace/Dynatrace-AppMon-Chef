@@ -18,12 +18,17 @@ action :run do
 
   delete_cache_path_action = "Delete the installer cache directory #{installer_cache_path}"
   delete_install_path_action = "Delete installation dir by link ''#{installation_path}''"
-  service service_name do
-    action [:stop, :disable]
-    # Defer directory deletion to the end of run list
+
+  unless service_name.to_s.empty?
+    service service_name do
+      action [:stop, :disable]
+    end
+  end
+
+  ruby_block 'Defer directories deletion to the end of run list' do
+    block {}
     notifies :delete, "directory[#{delete_cache_path_action}]"
     notifies :run, "dynatrace_delete_directory_by_link[#{delete_install_path_action}]"
-    not_if { service_name.to_s.empty? }
   end
 
   directory delete_cache_path_action do
