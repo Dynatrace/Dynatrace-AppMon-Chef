@@ -86,7 +86,7 @@ ruby_block "Update Dynatrace server using #{update_file_path} file" do
   end
 end
 
-ruby_block "Waiting for update installation to finish" do
+ruby_block 'Waiting for update installation to finish' do
   block do
     begin
       jobid = node['dynatrace']['server']['linux']['update']['jobid']

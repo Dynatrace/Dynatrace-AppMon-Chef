@@ -10,10 +10,10 @@ include_recipe 'dynatrace::prerequisites'
 include_recipe 'dynatrace::dynatrace_user'
 
 if platform_family?('debian', 'fedora', 'rhel') # platform_family?('rhel') and node_kernel_machine == 'x86_64'
-  installer_prefix_dir = node['dynatrace']['host_agent']['installer']['prefix_dir']
-  installer_file_url   = node['dynatrace']['host_agent']['installer']['file_url']
-  installer_file_name  = node['dynatrace']['host_agent']['installer']['file_name']
-  installer_cache_dir = "#{Chef::Config['file_cache_path']}/host_agent"
+  installer_prefix_dir = node['dynatrace']['host_agent']['linux']['installer']['prefix_dir']
+  installer_file_url   = node['dynatrace']['host_agent']['linux']['installer']['file_url']
+  installer_file_name  = node['dynatrace']['host_agent']['linux']['installer']['file_name']
+  installer_cache_dir = "#{Chef::Config['file_cache_path']}/dynatrace"
   installer_path      = "#{installer_cache_dir}/#{installer_file_name}"
 
   service_name = 'dynaTraceHostagent'

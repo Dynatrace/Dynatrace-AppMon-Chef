@@ -6,23 +6,17 @@
 # Note: this recipe deletes /opt/dynatrace folder!
 #
 
-include_recipe 'dynatrace::prerequisites'
+include_recipe 'dynatrace::node_info'
 
-if platform_family?('debian', 'fedora', 'rhel')
-  installer_prefix_dir = node['dynatrace']['agents_package']['linux']['installer']['prefix_dir']
-  installer_cache_dir = "#{Chef::Config['file_cache_path']}/dynatrace"
-
-  directory "Delete the installer cache directory #{installer_cache_dir}" do
-    path installer_cache_dir
-    recursive true
-    action :delete
-  end
-
-  # NOTE: this may also delete files from other packages!
-  link2del = installer_prefix_dir + '/dynatrace'
-  dynatrace_delete_directory_by_link link2del.to_s do
-    link2delete link2del
-  end
-else
+unless platform_family?('debian', 'fedora', 'rhel')
   raise 'Unsupported platform family.'
+end
+
+installation_path = "#{node['dynatrace']['agents_package']['linux']['installer']['prefix_dir']}/dynatrace"
+installer_cache_dir = "#{Chef::Config['file_cache_path']}/dynatrace"
+
+# NOTE: this may also delete files from other Dynatrace packages that share the same directory (e.g. /opt/dynatrace)!
+dynatrace_uninstall_package 'Uninstall Dynatrace Agents Package' do
+  installation_path installation_path
+  installer_cache_path installer_cache_dir
 end
