@@ -20,6 +20,9 @@ sizing = node['dynatrace']['server']['sizing']
 
 collector_port = node['dynatrace']['server']['collector_port']
 
+rest_user = node['dynatrace']['server']['username']
+rest_pass = node['dynatrace']['server']['password']
+
 do_pwh_connection       = node['dynatrace']['server']['do_pwh_connection']
 pwh_connection_hostname = node['dynatrace']['server']['pwh_connection']['hostname']
 pwh_connection_port     = node['dynatrace']['server']['pwh_connection']['port']
@@ -198,7 +201,7 @@ ruby_block "Establish the #{name}'s Performance Warehouse connection" do
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 
     request = Net::HTTP::Put.new(uri, 'Accept' => 'application/json', 'Content-Type' => 'application/json')
-    request.basic_auth('admin', 'admin')
+    request.basic_auth(rest_user, rest_pass)
     request.body = { :host => pwh_connection_hostname.to_s, :port => pwh_connection_port.to_s, :dbms => pwh_connection_dbms.to_s, :dbname => pwh_connection_database.to_s, :user => pwh_connection_username.to_s, :password => pwh_connection_password.to_s, :usessl => false, :useurl => false, :url => nil }.to_json
 
     http.request(request)

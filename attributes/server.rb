@@ -31,6 +31,10 @@ default['dynatrace']['server']['collector_port'] = '6698'
 # The sizing of the Dynatrace Server (according to https://community.dynatrace.com/community/display/DOCDT62/Sizing+Settings). Use either 'demo', 'small', 'medium', 'large', 'xlarge', or 'xxlarge'.
 default['dynatrace']['server']['sizing'] = 'small'
 
+# The default credentials to communicate with the server (e.g. through REST API)
+default['dynatrace']['server']['username'] = 'admin'
+default['dynatrace']['server']['password'] = 'admin'
+
 # Whether a connection to an existing Performance Warehouse (database) shall be established, or not. Requires Dynatrace >= v6.2.
 default['dynatrace']['server']['do_pwh_connection'] = false
 
