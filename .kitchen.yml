@@ -192,6 +192,19 @@ suites:
 #          installer:
 #            file_url: http://172.18.129.150:8000/dynatrace-hostagent-linux-x86-64.tar
 
+  - name: java_agent
+    run_list:
+      - recipe[dynatrace::java_agent]
+    attributes:
+      dynatrace:
+        java_agent:
+          env_var:
+            file_name: /tmp/environment
+#        agents_package:
+#          linux:
+#            installer:
+#              file_url: http://172.18.129.150:8000/dynatrace-agent-unix.jar
+
   - name: memory_analysis_server
     run_list:
       - recipe[dynatrace::memory_analysis_server]

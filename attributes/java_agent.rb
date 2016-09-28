@@ -5,6 +5,12 @@
 # Copyright 2015, Dynatrace
 #
 
+# The name of the environment variable to be used for Dynatrace Agent injection.
+default['dynatrace']['java_agent']['env_var']['name'] = 'JAVA_OPTS'
+
+# The name of the file to be modified.
+default['dynatrace']['java_agent']['env_var']['file_name'] = nil
+
 # x86 or x86_64
 default['dynatrace']['java_agent']['arch'] = 'x86_64'
 
