@@ -204,20 +204,29 @@ EOH
 
     def self.stop_processes(proc_pattern, proc_user, platform_family, timeout = 15, signal = 'TERM')
       pids = find_pids(proc_pattern, proc_user, platform_family)
+      # puts "Process(es) to kill: #{pids}"
       killed = false
       unless pids.empty?
-        Process.kill signal, *pids
-        # TODO! when process does not exit anymore exception is thrown Errno::ESRCH No such process
+        while !pids.empty? do
+          begin
+            Process.kill signal, *pids
+            break
+          rescue Errno::ESRCH
+            # The process could have terminated by itself. Retry to find processes matching search pattern.
+            # puts "No such process(es): #{pids}. Retrying search pattern..."
+            pids = find_pids(proc_pattern, proc_user, platform_family)
+          end
+        end
         begin
           Timeout.timeout(timeout, DynatraceTimeout) do
             loop do
               pids = find_pids(proc_pattern, proc_user, platform_family)
               if pids.empty?
-                # puts("Process(es) #{pids} terminated")
+                # puts "Terminated process(es)"
                 killed = true
                 break
               end
-              # puts("Waiting for process(es) #{pids} to finish")
+               # puts "Waiting for process(es) #{pids} to finish"
               sleep 1
             end
           end
