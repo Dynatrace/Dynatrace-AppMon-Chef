@@ -145,21 +145,21 @@ end
 
 ruby_block "Wait to set external host name in #{server_config_xml_file}" do
   block do
-    found_file = false
-    for i in 0..60
-      Chef::Log.info "Waiting for file #{server_config_xml_file}..."
-      if ::File.exist? server_config_xml_file
-        found_file = true
-        break
+    begin
+      Timeout.timeout(60) do
+        loop do
+          if ::File.exist? server_config_xml_file
+            break
+          end
+          Chef::Log.info "Waiting for file #{server_config_xml_file} to appear..."
+          sleep 1
+        end
       end
-      sleep 1
-    end
-    if found_file
-      # Leave some extra time for the server to avoid file read/write hazards
-      sleep 10
-    else
+    rescue Timeout::Error
       raise "#{server_config_xml_file} did not appear"
     end
+    # Leave some extra time for the server to avoid file read/write hazards
+    sleep 10
   end
   only_if { node[:dynatrace][:server][:installation][:is_required] }
 end
