@@ -15,6 +15,7 @@ action :run do
       cmd2exec = "rm -rf \"#{::File.dirname(new_resource.link2delete)}/$(readlink #{new_resource.link2delete})\""
       execute "Remove directory content using symlink: #{cmd2exec}" do
         command cmd2exec
+        only_if { ::File.exist?(new_resource.link2delete) }
       end
 
       link new_resource.link2delete do
