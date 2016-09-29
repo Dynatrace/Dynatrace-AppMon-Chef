@@ -4,7 +4,7 @@ This Chef cookbook installs and configures the Dynatrace Application Monitoring 
 
 ## Requirements
 
-Requires Chef 11 or higher.
+Requires Chef 12 or higher.
 
 ## Recipes
 
@@ -20,6 +20,13 @@ This recipe downloads and installs the most recent version of the Dynatrace Agen
 
 **Note:** this recipe merely makes the Dynatrace Agents available, but it does not configure your application to actually load any. See the `java_agent` recipe for an example that does.
 
+### agents_package_uninstall
+
+This recipe uninstalls the Dynatrace Agents package installed by the `agents_package` recipe.
+
+**Note:** this recipe does not delete the user created by the `dynatrace_user` recipe which is included by the `agents_package` recipe.
+**Note:** as part of the uninstallation process the `opt/dynatrace` directory is deleted which is by default shared by other Dynatrace components (e.g. `wsagent_package`).
+
 ### apache_wsagent
 
 *Installs the Dynatrace WebServer Agent for the Apache HTTP Server.*
@@ -28,19 +35,45 @@ This recipe downloads and installs the most recent version of the Dynatrace WebS
 
 **Note:** you will have to restart the web server after placing the agent.
 
+### apache_wsagent_uninstall
+
+This recipe remove the agent from the Apache HTTP Server configuration file and uninstalls the Dynatrace WebServer Agent package installed by the `apache_wsagent` recipe.
+
+**Note:** this recipe does not delete the user created by the `dynatrace_user` recipe which is included by the `apache_wsagent` recipe.
+**Note:** as part of the uninstallation process the `opt/dynatrace` directory is deleted which is by default shared by other Dynatrace components (e.g. `agents_package`).
+
 ### collector
 
 *Installs the Dynatrace Collector.*
 
 This recipe downloads and installs the most recent version of the Dynatrace Collector from [http://downloads.dynatracesaas.com](http://downloads.dynatracesaas.com). The default download link can be overridden via the `node['dynatrace']['collector']['linux']['installer']['file_url']` attribute. Alternatively, you can place the installer artifact as `dynatrace-collector.jar` in the cookbook's `files` directory from where it will be picked up during the installation. Please refer to `attributes/collector.rb` for a list of supported attributes. In order to have the Chef Recipe executed, include `recipe[dynatrace::collector]` in a runlist and override attributes as required.
 
-**Note:** make sure that attributes related to the Collector's memory configuration are set in accordance to the [Memory Configuration](https://community.dynatrace.com/community/display/DOCDT60/Collector+Configuration#CollectorConfiguration-MemoryConfiguration) section of the [Collector Configuration](https://community.dynatrace.com/community/display/DOCDT60/Collector+Configuration) documentation.
+**Note:** make sure that attributes related to the Collector's memory configuration are set in accordance to the [Memory Configuration](https://community.dynatrace.com/community/display/DOCDT63/Collector+Configuration#CollectorConfiguration-MemoryConfiguration) section of the [Collector Configuration](https://community.dynatrace.com/community/display/DOCDT63/Collector+Configuration) documentation.
+
+### collector_uninstall
+
+This recipe uninstalls the Dynatrace Collector package installed by the `collector` recipe.
+
+**Note:** this recipe does not delete the user created by the `dynatrace_user` recipe which is included by `collector` recipe.
 
 ### dotnet_agent
 
 *Installs the Dynatrace .NET Agent.*
 
 This recipe downloads and installs the most recent version of the Dynatrace Agents package from [http://downloads.dynatracesaas.com](http://downloads.dynatracesaas.com). The default download link can be overridden via the `node['dynatrace']['agents_package']['windows']['installer']['file_url']` attribute. Alternatively, you can place the installer artifact as `dynatrace-agent.msi` in the cookbook's `files` directory from where it will be picked up during the installation. Please refer to `attributes/dotnet_agent.rb` and `attributes/agents_package.rb` for a list of supported attributes. In order to have the Chef Recipe executed, include `recipe[dynatrace::dotnet_agent]` in a runlist and override attributes as required.
+
+### host_agent
+
+*Installs the Host Agent package.*
+
+This recipe downloads and installs the most recent version of the Host Agent package from [http://downloads.dynatracesaas.com](http://downloads.dynatracesaas.com). The default download link can #be overridden via the `['dynatrace']['host_agent']['linux']['installer']['file_url']` attribute. Alternatively, you can place the installer artifact as `dynatrace-hostagent.tar` in the cookbook's `files` directory from where it will be picked up during the installation. Please refer to `attributes/host_agent.rb` for a list of supported attributes. In order to have the Chef Recipe executed, include `recipe[dynatrace::host_agent]` in a runlist and override attributes as required.
+
+### host_agent_uninstall
+
+This recipe uninstalls the Dynatrace Host Agent package installed by the `host_package` recipe.
+
+**Note:** this recipe does not delete the user created by the `dynatrace_user` recipe which is included by the `host_package` recipe.
+**Note:** as part of the uninstallation process the `opt/dynatrace` directory is deleted which is by default shared by other Dynatrace components (e.g. `agents_package`).
 
 ### iis_wsagent
 
@@ -54,19 +87,27 @@ This recipe downloads and installs the most recent version of the Dynatrace WebS
 
 This recipe downloads and installs the most recent version of the Dynatrace Agents package from [http://downloads.dynatracesaas.com](http://downloads.dynatracesaas.com) and integrates the agent with a Java process. The default download link can be overridden via the `node['dynatrace']['agents_package']['linux']['installer']['file_url']` attribute. Alternatively, you can place the installer artifact as `dynatrace-agents.jar` in the cookbook's `files` directory from where it will be picked up during the installation. Please refer to `attributes/java_agent.rb` and `attributes/agents_package.rb` for a list of supported attributes. In order to have the Chef Recipe executed, include `recipe[dynatrace::java_agent]` in a runlist and override attributes as required.
 
-**Note:** this recipe makes the Java Agent available to a Java Virtual Machine by injecting an appropriate [-agentpath](https://community.compuwareapm.com/community/display/DOCDT60/Java+Agent+Configuration) option into an environment variable, e.g. `JAVA_OPTS`, inside a file (typically an executable script). It is assumed that this script either executes the Java process directly or is sourced by another script before the Java process gets executed. You will have to restart the application after placing the agent.
+**Note:** this recipe makes the Java Agent available to a Java Virtual Machine by injecting an appropriate [-agentpath](https://community.compuwareapm.com/community/display/DOCDT63/Java+Agent+Configuration) option into an environment variable, e.g. `JAVA_OPTS`, inside a file (typically an executable script). It is assumed that this script either executes the Java process directly or is sourced by another script before the Java process gets executed. You will have to restart the application after placing the agent.
+
+**Note:** it is only possible to inject one agent on one machine using this recipe. To inject more agents it is possible to use the `resources/java_agent.rb` resource which sets the `node['dynatrace']['java_agent']['javaopts'][$agent_name]` with options to be passed to the JVM (e.g. `-agentpath:/opt/dynatrace/agent/lib64/libdtagent.so=name=BusinessBackend_easyTravel,server=dynasprint-collector.dynatracesaas.com:9998`).
 
 ### memory_analysis_server
 
 This recipe downloads and installs the most recent version of the Dynatrace Memory Analysis Server from [http://downloads.dynatracesaas.com](http://downloads.dynatracesaas.com). The default download link can be overridden via the `node['dynatrace']['memory_analysis_server']['linux']['installer']['file_url']` attribute. Alternatively, you can place the installer artifact as `dynatrace-analysisserver.jar` in the cookbook's `files` directory from where it will be picked up during the installation. Please refer to `attributes/memory_analysis_server.rb` for a list of supported attributes. In order to have the Chef Recipe executed, include `recipe[dynatrace::memory_analysis_server]` in a runlist and override attributes as required.
 
-**Note:** make sure that attributes related to the Analysis Server's memory configuration are set in accordance to the [Memory Configuration](https://community.dynatrace.com/community/display/DOCDT62/Memory+Analysis+Server+Configuration#MemoryAnalysisServerConfiguration-MemoryConfiguration) section of the [Memory Analysis Server Configuration](https://community.dynatrace.com/community/display/DOCDT62/Memory+Analysis+Server+Configuration) documentation.
+**Note:** make sure that attributes related to the Analysis Server's memory configuration are set in accordance to the [Memory Configuration](https://community.dynatrace.com/community/display/DOCDT63/Memory+Analysis+Server+Configuration#MemoryAnalysisServerConfiguration-MemoryConfiguration) section of the [Memory Analysis Server Configuration](https://community.dynatrace.com/community/display/DOCDT63/Memory+Analysis+Server+Configuration) documentation.
 
 ### server
 
 *Installs the Dynatrace Server.*
 
 This recipe downloads and installs the most recent version of the Dynatrace Server from [http://downloads.dynatracesaas.com](http://downloads.dynatracesaas.com). The default download link can be overridden via the `node['dynatrace']['server']['linux']['installer']['file_url']` attribute. Alternatively, you can place the installer artifact as `dynatrace-server.jar` in the cookbook's `files` directory from where it will be picked up during the installation. Please refer to `attributes/server.rb` for a list of supported attributes. In order to have the Chef Recipe executed, include `recipe[dynatrace::server]` in a runlist and override attributes as required.
+
+### server_uninstall
+
+This recipe uninstalls the Dynatrace Server package installed by the `server` recipe.
+
+**Note:** this recipe does not delete the user created by the `dynatrace_user` recipe which is included by `server` recipe.
 
 ### server_license
 
@@ -81,6 +122,13 @@ Place the Dynatrace Server License as `dynatrace-license.key` in the cookbook's 
 This recipe downloads and installs the most recent version of the Dynatrace WebServer Agent package from [http://downloads.dynatracesaas.com](http://downloads.dynatracesaas.com). The default download link can be overridden via the `node['dynatrace']['wsagent_package'][$platform]['installer']['file_url']` attribute. Alternatively, you can place the installer artifact as `dynatrace-wsagent.tar` (Linux) or `dynatrace-agent.msi` (Windows) in the cookbook's `files` directory from where it will be picked up during the installation. Please refer to `attributes/wsagent_package.rb` for a list of supported attributes. In order to have the Chef Recipe executed, include `recipe[dynatrace::wsagent_package]` in a runlist and override attributes as required.
 
 **Note:** this recipe merely makes the Dynatrace WebServer Agent available, but it does not configure your web server to actually load it. See the `apache_wsagent` and `iis_agent`recipes for examples.
+
+### wsagent_package_uninstall
+
+This recipe uninstalls the Dynatrace WebServer Agent package installed by the `wsagent_package` recipe.
+
+**Note:** this recipe does not delete the user created by the `dynatrace_user` recipe which is included by the `wsagent_package` recipe.
+**Note:** as part of the uninstallation process the `opt/dynatrace` directory is deleted which is by default shared by other Dynatrace components (e.g. `agents_package`).
 
 ## Testing
 

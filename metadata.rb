@@ -35,12 +35,9 @@ recipe 'dynatrace:server_uninstall', 'Uninstalls the Dynatrace Server.'
 recipe 'dynatrace:wsagent_package', 'Installs the Dynatrace WebServer Agent package.'
 recipe 'dynatrace:wsagent_package_uninstall', 'Uninstalls the Dynatrace WebServer Agent package.'
 
-recipe 'dynatrace:easy_travel', 'Installs the Easy Travel.'
-recipe 'dynatrace:easy_travel_uninstall', 'Uninstalls the Easy Travel.'
-
 recipe 'dynatrace:dotnet_agent', 'Installs the Dynatrace .NET Agent.'
 recipe 'dynatrace:iis_wsagent', 'Installs the Dynatrace WebServer Agent for the Microsoft IIS Server.'
 recipe 'dynatrace:java_agent', 'Installs the Dynatrace Agent Java Agent.'
 recipe 'dynatrace:memory_analysis_server', 'Installs the Dynatrace Memory Analysis Server.'
 recipe 'dynatrace:server_license', 'Installs the Dynatrace Server License.'
-recipe 'dynatrace:upgrade_system', 'Upgrades OS.'
+recipe 'dynatrace:upgrade_system', 'Updates the OS.'
