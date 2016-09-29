@@ -30,6 +30,7 @@ pwh_connection_dbms     = node['dynatrace']['server']['pwh_connection']['dbms']
 pwh_connection_database = node['dynatrace']['server']['pwh_connection']['database']
 pwh_connection_username = node['dynatrace']['server']['pwh_connection']['username']
 pwh_connection_password = node['dynatrace']['server']['pwh_connection']['password']
+
 external_hostname = node['dynatrace']['server']['externalhostname']
 
 dynatrace_owner = node['dynatrace']['owner']
@@ -144,6 +145,7 @@ service name.to_s do
 end
 
 ruby_block "Wait to set external host name in #{server_config_xml_file}" do
+  # TODO: there should be a REST API to check if server is initialized
   block do
     begin
       Timeout.timeout(60) do
