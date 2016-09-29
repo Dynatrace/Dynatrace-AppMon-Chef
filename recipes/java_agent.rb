@@ -28,12 +28,12 @@ template env_var_file_name do
   mode    '0755'
   owner   owner
   group   group
-  variables(lazy {
+  variables(lazy do
     {
       :env_var_name => env_var_name,
-      :java_agent_jvm_opts => node['dynatrace']['java_agent']['javaopts']["#{agent_name}"]
+      :java_agent_jvm_opts => node['dynatrace']['java_agent']['javaopts'][agent_name.to_s]
     }
-  })
+  end)
   action :create
   not_if env_var_file_name.nil?
 end

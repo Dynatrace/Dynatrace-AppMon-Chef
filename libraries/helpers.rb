@@ -207,7 +207,7 @@ EOH
       # puts "Process(es) to kill: #{pids}"
       killed = false
       unless pids.empty?
-        while !pids.empty? do
+        until pids.empty?
           begin
             Process.kill signal, *pids
             break
@@ -226,7 +226,7 @@ EOH
                 killed = true
                 break
               end
-               # puts "Waiting for process(es) #{pids} to finish"
+              # puts "Waiting for process(es) #{pids} to finish"
               sleep 1
             end
           end

@@ -150,9 +150,7 @@ ruby_block "Wait to set external host name in #{server_config_xml_file}" do
     begin
       Timeout.timeout(60) do
         loop do
-          if ::File.exist? server_config_xml_file
-            break
-          end
+          break if ::File.exist? server_config_xml_file
           Chef::Log.info "Waiting for file #{server_config_xml_file} to appear..."
           sleep 1
         end
