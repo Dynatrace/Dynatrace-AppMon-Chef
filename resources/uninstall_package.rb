@@ -11,7 +11,7 @@ default_action :run
 property :name, String, :name_property => true
 property :installation_path, String
 property :installer_cache_path, String
-property :service_name, String, :default => nil
+property :service_name, String, :default => ''
 
 action :run do
   include_recipe 'dynatrace::node_info'
