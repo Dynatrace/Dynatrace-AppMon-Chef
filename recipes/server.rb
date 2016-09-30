@@ -102,7 +102,7 @@ service "Stop service #{name}" do
   service_name service
   # For Debian and Ubuntu distros - to correctly stop our service we need the status support which is disabled by default
   supports :status => true
-  action       [:stop]
+  action [:stop]
   ignore_failure true # fails on Debian 7.8 on clean installation
 end
 
