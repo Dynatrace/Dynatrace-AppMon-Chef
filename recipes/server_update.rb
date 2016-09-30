@@ -129,6 +129,8 @@ end
 
 service_name = 'dynaTraceServer'
 service service_name do
+  # For Debian and Ubuntu distros - to correctly stop our service we need the status support which is disabled by default
+  supports :status => true
   action [:restart]
   only_if { node['dynatrace']['server']['linux']['update']['isrestartrequired'] }
 end

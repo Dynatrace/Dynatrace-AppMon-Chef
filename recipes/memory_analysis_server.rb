@@ -85,6 +85,7 @@ end
 
 service name.to_s do
   service_name service
+  # For Debian and Ubuntu distros - to correctly stop our service we need the status support which is disabled by default
   supports     :status => true
   action       [:start, :enable]
 end

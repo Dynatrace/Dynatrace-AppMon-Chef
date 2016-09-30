@@ -21,6 +21,8 @@ action :run do
 
   unless service_name.to_s.empty?
     service service_name do
+      # For Debian and Ubuntu distros - to correctly stop our service we need the status support which is disabled by default
+      supports :status => true
       action [:stop, :disable]
     end
   end

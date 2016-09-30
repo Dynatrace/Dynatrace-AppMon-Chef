@@ -89,6 +89,7 @@ end
 
 service name.to_s do
   service_name service
+  # For Debian and Ubuntu distros - to correctly stop our service we need the status support which is disabled by default
   supports     :status => true
   action       [:stop, :enable]
   only_if { node[:dynatrace][:collector][:installation][:was_installed] }
@@ -115,6 +116,7 @@ end
 
 service name.to_s do
   service_name service
+  # For Debian and Ubuntu distros - to correctly stop our service we need the status support which is disabled by default
   supports     :status => true
   action       [:restart, :enable]
 end

@@ -76,6 +76,7 @@ end
 
 service name do
   service_name service_name
-  supports :status => true
+  # For Debian and Ubuntu distros - to correctly stop our service we need the status support which is disabled by default
+  supports     :status => true
   action [:enable, :restart]
 end
