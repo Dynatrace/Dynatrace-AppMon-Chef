@@ -80,7 +80,7 @@ if platform_family?('debian', 'fedora', 'rhel')
     source 'wsagent_package/dtwsagent.ini.erb'
     path   "#{installer_prefix_dir}/dynatrace/agent/conf/dtwsagent.ini"
     owner  dynatrace_owner
-    group  dynatrace_owner
+    group  dynatrace_group
     mode   '0644'
     variables(:agent_name => node['dynatrace']['wsagent_package']['agent_name'],
               :collector_hostname => node['dynatrace']['wsagent_package']['collector_hostname'],
