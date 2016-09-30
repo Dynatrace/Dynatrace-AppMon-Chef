@@ -16,7 +16,7 @@ default['dynatrace']['memory_analysis_server']['linux']['installer']['file_name'
 
 # A HTTP, HTTPS or FTP URL to the Dynatrace Memory Analysis Server installer in the form (http|https|ftp)://[user[:pass]]@host.domain[:port]/path.
 # Additionally it is possible to refer to objects stored in S3 e.g. 's3://bucket_name/path/to/filename'.
-default['dynatrace']['memory_analysis_server']['linux']['installer']['file_url'] = 'http://downloads.dynatracesaas.com/6.3/dynatrace-analysisserver-linux-x86.jar'
+default['dynatrace']['memory_analysis_server']['linux']['installer']['file_url'] = 'http://files.dynatrace.com/downloads/OnPrem/dynaTrace/6.5/6.5.0.1289/dynatrace-analysisserver-6.5.0.1289-linux-x86.jar'
 
 # The port where the Dynatrace Memory Analysis Server shall listen for the Dynatrace Server.
 default['dynatrace']['memory_analysis_server']['server']['port'] = '7788'

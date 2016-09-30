@@ -33,7 +33,7 @@ DT_SHUTDOWN_WAIT=60
 
 DT_PIDFILE_DIR=/tmp
 
-DT_PIDFILE=${DT_PIDFILE_DIR}/${DT_BINARY}63.pid
+DT_PIDFILE=${DT_PIDFILE_DIR}/${DT_BINARY}65.pid
 
 OS_TYPE=`uname`
 
@@ -50,7 +50,7 @@ fi
 
 if [ -f "${DT_PIDFILE}" ]; then
   TEST_PID=`cat ${DT_PIDFILE}`
-  ps -e | grep "^\s*${TEST_PID}\s" >/dev/null
+  ps -e | grep "${DT_BINARY}" | awk '{ printf "%s\n", $1 }' | grep "${TEST_PID}" >/dev/null
   if [ $? = 0 ]; then
     PROCESSPID=`cat ${DT_PIDFILE}`
   else

@@ -16,7 +16,7 @@ default['dynatrace']['server']['linux']['installer']['file_name'] = 'dynatrace-s
 
 # A HTTP, HTTPS or FTP URL to the Dynatrace installer in the form (http|https|ftp)://[user[:pass]]@host.domain[:port]/path.
 # Additionally it is possible to refer to objects stored in S3 e.g. 's3://bucket_name/path/to/filename'.
-default['dynatrace']['server']['linux']['installer']['file_url'] = 'http://downloads.dynatracesaas.com/6.3/dynatrace-server-linux-x86.jar'
+default['dynatrace']['server']['linux']['installer']['file_url'] = 'http://files.dynatrace.com/downloads/OnPrem/dynaTrace/6.5/6.5.0.1289/dynatrace-server-6.5.0.1289-linux-x86.jar'
 
 # The file name of the Dynatrace License in the cookbook's files directory.
 default['dynatrace']['server']['license']['file_name'] = nil
@@ -26,7 +26,7 @@ default['dynatrace']['server']['license']['file_name'] = nil
 default['dynatrace']['server']['license']['file_url'] = nil
 
 # The port where the Dynatrace Server shall listen for Collectors. Use either 6698 (non-SSL) or 6699 (SSL).
-default['dynatrace']['server']['collector_port'] = '6698'
+default['dynatrace']['server']['collector_port'] = '6699'
 
 # The sizing of the Dynatrace Server (according to https://community.dynatrace.com/community/display/DOCDT62/Sizing+Settings). Use either 'demo', 'small', 'medium', 'large', 'xlarge', or 'xxlarge'.
 default['dynatrace']['server']['sizing'] = 'small'

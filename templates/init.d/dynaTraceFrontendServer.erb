@@ -35,7 +35,7 @@ DT_SHUTDOWN_WAIT=60
 
 DT_PIDFILE_DIR=/tmp
 
-DT_PIDFILE=${DT_PIDFILE_DIR}/${DT_BINARY}63.pid
+DT_PIDFILE=${DT_PIDFILE_DIR}/${DT_BINARY}65.pid
 
 if [ ! -x "${DT_HOME}/${DT_BINARY}" ]; then
   echo "File not found or not executable: ${DT_HOME}/${DT_BINARY}"
@@ -46,24 +46,18 @@ if [ -f "${DT_PIDFILE}" ]; then
 fi
 if [ -z "${PROCESSPID}" ]; then
   DT_FE_BINARY_GREP=`echo ${DT_BINARY} | cut -c1-8`
-  RPID=`ps -A -o pid,comm | grep ${DT_FE_BINARY_GREP} | awk '{ printf "%s", $1 }'`
-  #RPID=$(ps -C ${DT_BINARY} -o pid --no-headers | awk '{printf "%s|", $0}' | awk '{sub(/\|$/,""); printf $0}')
-  if [ ! -z "$RPID" ]; then
-    PROCESSPID=$(ps -ef | grep ${DT_BINARY} | awk '{{print $2}}' | grep ${RPID})
-  fi
+	PROCESSPID=$(ps -ef | grep -v "instance" | grep -v "grep" | grep ${DT_FE_BINARY_GREP} | grep -v org.eclipse.equinox | awk '{{print $2}}')
 fi
 
 case "$1" in
 'start')
   if [ -z "${PROCESSPID}" ]; then
     if [ -z "${DT_RUNASUSER}" ]; then
-      echo "${DT_HOME}"/${DT_BINARY} -bg ${DT_OPTARGS}
-      "${DT_HOME}"/${DT_BINARY} -bg ${DT_OPTARGS}
-      echo $! >${DT_PIDFILE}
+			echo "${DT_HOME}"/${DT_BINARY} -bg ${DT_OPTARGS} -pidfile ${DT_PIDFILE}
+			"${DT_HOME}"/${DT_BINARY} -bg ${DT_OPTARGS} -pidfile ${DT_PIDFILE}
     else
-      echo "${DT_HOME}"/${DT_BINARY} -bg ${DT_OPTARGS}
-      su -c "${DT_HOME}/${DT_BINARY} -bg ${DT_OPTARGS}" "${DT_RUNASUSER}"
-      echo $! >${DT_PIDFILE}
+			echo "${DT_HOME}"/${DT_BINARY} -bg ${DT_OPTARGS} -pidfile ${DT_PIDFILE}
+			su -c "${DT_HOME}/${DT_BINARY} -bg ${DT_OPTARGS} -pidfile ${DT_PIDFILE}" "${DT_RUNASUSER}"
     fi
   else
     echo "Dynatrace ${DT_PRODUCT} daemon is already running!"

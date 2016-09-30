@@ -217,7 +217,6 @@ suites:
           do_pwh_connection: true
           externalhostname: "myaddr"
           sizing: small
-#          collector_port: 6699 # on version 6.5
 #          linux:
 #            installer:
 #              file_url: http://172.18.129.150:8000/dynatrace-server-linux-x86-64.jar
@@ -233,7 +232,7 @@ suites:
 #        server:
 #          linux:
 #            installer:
-#              file_url: http://172.18.129.150:8000/dynatrace-server-linux-x86-64.jar
+#              file_url: http://172.18.129.150:8000/dynatrace-server-linux-x86.jar
     excludes:
       - windows-2012r2
 
@@ -241,11 +240,16 @@ suites:
     run_list:
       - recipe[dynatrace::server]
       - recipe[dynatrace::server_update]
-#    attributes:
-#      dynatrace:
-#        server:
-##          collector_port: 6699 # on version 6.5
-#          linux:
+    attributes:
+      dynatrace:
+        server:
+          collector_port: 6698 # on version 6.3 (default is 6699 on version 6.5)
+          linux:
+            # TODO: currently no update available on version 6.5 thus testing version 6.3
+            installer:
+              file_url: http://downloads.dynatracesaas.com/6.3/dynatrace-server-linux-x86.jar
+            update:
+              file_url: https://files.dynatrace.com/downloads/fixpacks/dynaTrace-6.3.10.1010.zip
 #            update:
 #              update_file_url: http://172.18.129.150:8000/dynaTrace-6.3.10.1010.zip
 #            installer:

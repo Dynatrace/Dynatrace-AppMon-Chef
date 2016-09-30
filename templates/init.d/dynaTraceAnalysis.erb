@@ -35,7 +35,7 @@ DT_SHUTDOWN_WAIT=60
 
 DT_PIDFILE_DIR=/tmp
 
-DT_PIDFILE=${DT_PIDFILE_DIR}/${DT_BINARY}63.pid
+DT_PIDFILE=${DT_PIDFILE_DIR}/${DT_BINARY}65.pid
 
 if [ ! -x "${DT_HOME}/${DT_BINARY}" ]; then
   echo "File not found or not executable: ${DT_HOME}/${DT_BINARY}"
@@ -56,13 +56,11 @@ case "$1" in
 'start')
   if [ -z "${PROCESSPID}" ]; then
     if [ -z "${DT_RUNASUSER}" ]; then
-      echo "${DT_HOME}"/${DT_BINARY} -bg ${DT_OPTARGS}
-      "${DT_HOME}"/${DT_BINARY} -bg ${DT_OPTARGS}
-      echo $! >${DT_PIDFILE}
+			echo "${DT_HOME}"/${DT_BINARY} -bg ${DT_OPTARGS} -pidfile ${DT_PIDFILE}
+			"${DT_HOME}"/${DT_BINARY} -bg ${DT_OPTARGS} -pidfile ${DT_PIDFILE}
     else  
-      echo "${DT_HOME}"/${DT_BINARY} -bg ${DT_OPTARGS}
-      su -c "${DT_HOME}/${DT_BINARY} -bg ${DT_OPTARGS}" "${DT_RUNASUSER}"
-      echo $! >${DT_PIDFILE}
+			echo "${DT_HOME}"/${DT_BINARY} -bg ${DT_OPTARGS} -pidfile ${DT_PIDFILE}
+			su -c "${DT_HOME}/${DT_BINARY} -bg ${DT_OPTARGS} -pidfile ${DT_PIDFILE}" "${DT_RUNASUSER}"
     fi    
   else
     echo "Dynatrace ${DT_PRODUCT} daemon is already running!"

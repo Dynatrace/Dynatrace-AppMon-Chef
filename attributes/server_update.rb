@@ -6,7 +6,7 @@
 #
 
 # The file URL of the Dynatrace server update
-default['dynatrace']['server']['linux']['update']['update_file_url'] = 'https://files.dynatrace.com/downloads/fixpacks/dynaTrace-6.3.10.1010.zip'
+default['dynatrace']['server']['linux']['update']['update_file_url'] = nil
 
 # A REST URL to update Dynatrace server
 default['dynatrace']['server']['linux']['update']['rest_update_url'] = 'https://localhost:8021/rest/management/installjobs'

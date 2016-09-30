@@ -42,9 +42,9 @@ OS_TYPE=`uname`
 
 DT_PIDFILE_DIR=/tmp
 
-DT_PIDFILE=${DT_PIDFILE_DIR}/${DT_BINARY}63.pid
+DT_PIDFILE=${DT_PIDFILE_DIR}/${DT_BINARY}65.pid
 if [ -n "${DT_INSTANCE}" ]; then
-  DT_PIDFILE=${DT_PIDFILE_DIR}/${DT_BINARY}63_${DT_INSTANCE}.pid
+	DT_PIDFILE=${DT_PIDFILE_DIR}/${DT_BINARY}65_${DT_INSTANCE}.pid
 fi
 if [ ! -x "${DT_HOME}/${DT_BINARY}" ]; then
   echo "File not found or not executable: ${DT_HOME}/${DT_BINARY}"
@@ -55,14 +55,10 @@ if [ -f "${DT_PIDFILE}" ]; then
 fi
 
 if [ -z "${PROCESSPID}" ]; then
-  RPID=`ps -A -o pid,comm | grep ${DT_BINARY} | awk '{ printf "%s", $1 }'`
-# RPID=`ps -C ${DT_BINARY} -o pid --no-headers | awk '{printf "%s|", $0}' | awk '{sub(/\|$/,""); printf $0}'`
-  if [ ! -z "${RPID}" ]; then
     if [ -z "${DT_INSTANCE}" ]; then
-      PROCESSPID=`ps -ef | grep -v "instance" | grep ${DT_BINARY} | awk '{{print $2}}' | grep ${RPID}`
+        PROCESSPID=`ps -ef | grep -v "instance" | grep -v "grep" | grep ${DT_BINARY} | grep -v org.eclipse.equinox | awk '{{print $2}}'`
     else
-      PROCESSPID=`ps -ef | grep ${DT_BINARY} | grep " ${DT_INSTANCE} " | awk '{{print $2}}' | grep ${RPID}`
-    fi
+        PROCESSPID=`ps -ef | grep ${DT_BINARY} | grep " ${DT_INSTANCE} " | grep -v org.eclipse.equinox | awk '{{print $2}}'`
   fi
 fi
 
@@ -71,31 +67,27 @@ case "$1" in
   if [ -z "${PROCESSPID}" ]; then
     if [ -z "${DT_INSTANCE}" ]; then
       if [ -z "${DT_RUNASUSER}" ]; then
-        echo "${DT_HOME}"/${DT_BINARY} -bg ${DT_OPTARGS}
-        "${DT_HOME}"/${DT_BINARY} -bg ${DT_OPTARGS}
-        echo $! >${DT_PIDFILE}
+				echo "${DT_HOME}"/${DT_BINARY} -bg ${DT_OPTARGS} -pidfile ${DT_PIDFILE}
+				"${DT_HOME}"/${DT_BINARY} -bg ${DT_OPTARGS} -pidfile ${DT_PIDFILE}
       else
-        echo "${DT_HOME}"/${DT_BINARY} -bg ${DT_OPTARGS}
+				echo "${DT_HOME}"/${DT_BINARY} -bg "${DT_OPTARGS}" -pidfile ${DT_PIDFILE}
         if [ "$OS_TYPE" = 'SunOS' ]; then
-          su "${DT_RUNASUSER}" -c "${DT_HOME}/${DT_BINARY} -bg ${DT_OPTARGS}"
+					su "${DT_RUNASUSER}" -c "${DT_HOME}/${DT_BINARY} -bg ${DT_OPTARGS} -pidfile ${DT_PIDFILE}"
         else
-          su -c "${DT_HOME}/${DT_BINARY} -bg ${DT_OPTARGS}" "${DT_RUNASUSER}"
-        fi      
-        echo $! >${DT_PIDFILE}
+					su -c "${DT_HOME}/${DT_BINARY} -bg ${DT_OPTARGS} -pidfile ${DT_PIDFILE}" "${DT_RUNASUSER}"
+        fi
       fi  
     else
       if [ -z "${DT_RUNASUSER}" ]; then
-        echo "${DT_HOME}"/${DT_BINARY} -instance "${DT_INSTANCE}" -bg ${DT_OPTARGS}
-        "${DT_HOME}"/${DT_BINARY} -instance "${DT_INSTANCE}" -bg ${DT_OPTARGS}
-        echo $! >${DT_PIDFILE}
+				echo "${DT_HOME}"/${DT_BINARY} -instance "${DT_INSTANCE}" -bg "${DT_OPTARGS}" -pidfile ${DT_PIDFILE}
+				"${DT_HOME}"/${DT_BINARY} -instance "${DT_INSTANCE}" -bg ${DT_OPTARGS} -pidfile ${DT_PIDFILE}
       else        
-        echo "${DT_HOME}"/${DT_BINARY} -instance "${DT_INSTANCE}" -bg ${DT_OPTARGS}
+				echo "${DT_HOME}"/${DT_BINARY} -instance "${DT_INSTANCE}" -bg "${DT_OPTARGS}" -pidfile ${DT_PIDFILE}
         if [ "$OS_TYPE" = 'SunOS' ]; then
-          su "${DT_RUNASUSER}" -c "${DT_HOME}/${DT_BINARY} -instance ${DT_INSTANCE} -bg ${DT_OPTARGS}"
+					su "${DT_RUNASUSER}" -c "${DT_HOME}/${DT_BINARY} -instance ${DT_INSTANCE} -bg ${DT_OPTARGS} -pidfile ${DT_PIDFILE}"
         else
-          su -c "${DT_HOME}/${DT_BINARY} -instance ${DT_INSTANCE} -bg ${DT_OPTARGS}" "${DT_RUNASUSER}"
-        fi    
-        echo $! >${DT_PIDFILE}
+					su -c "${DT_HOME}/${DT_BINARY} -instance ${DT_INSTANCE} -bg ${DT_OPTARGS} -pidfile ${DT_PIDFILE}" "${DT_RUNASUSER}"
+        fi
       fi  
     fi
   else
