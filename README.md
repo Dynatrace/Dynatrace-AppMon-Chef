@@ -1,6 +1,6 @@
 # dynatrace Cookbook
 
-This Chef cookbook installs and configures the Dynatrace Application Monitoring solution.
+This Chef cookbook installs and configures the Dynatrace Application Monitoring 6.5 solution.
 
 ## Requirements
 
