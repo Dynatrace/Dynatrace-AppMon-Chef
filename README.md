@@ -2,6 +2,8 @@
 
 This Chef cookbook installs and configures the Dynatrace Application Monitoring 6.5 solution.
 
+[![Build Status](https://jenkins-01.eastus.cloudapp.azure.com/job/dynatrace-cookbook/badge/icon)](https://jenkins-01.eastus.cloudapp.azure.com/job/dynatrace-cookbook/)
+
 ## Requirements
 
 Requires Chef 12 or higher.
