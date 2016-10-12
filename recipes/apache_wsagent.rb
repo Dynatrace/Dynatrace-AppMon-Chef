@@ -22,7 +22,7 @@ ruby_block "Inject the #{name} into Apache HTTPD's config file #{apache_config_f
   block do
     search_pattern = 'LoadModule dtagent_module'
     line_to_add = "#{search_pattern} \"#{agent_path}\""
-    Dynatrace::Helpers.file_append_or_replace_line(apache_config_file_path, search_pattern, line_to_add)
+    Dynatrace::FileHelpers.file_append_or_replace_line(apache_config_file_path, search_pattern, line_to_add)
   end
   notifies :restart, "service[#{apache_daemon}]" unless apache_daemon.empty?
 end

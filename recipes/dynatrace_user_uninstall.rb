@@ -10,7 +10,7 @@ dynatrace_group = node['dynatrace']['group']
 
 ruby_block "Stop any running processes of user #{dynatrace_owner}" do
   block do
-    Dynatrace::Helpers.stop_processes(nil, dynatrace_owner, node['platform_family'], 5, 'KILL')
+    Dynatrace::ProcessHelpers.stop_processes(nil, dynatrace_owner, node['platform_family'], 5, 'KILL')
   end
 end
 

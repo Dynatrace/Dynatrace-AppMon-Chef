@@ -24,7 +24,7 @@ ruby_block "Remove the #{name} from Apache HTTPD's config file #{apache_config_f
       search_pattern = 'LoadModule dtagent_module'
       line_to_remove = "#{search_pattern} \"#{agent_path}\""
 
-      Dynatrace::Helpers.file_replace_line(file_exists, line_to_remove, '')
+      Dynatrace::FileHelpers.file_replace_line(file_exists, line_to_remove, '')
     end
   end
   unless apache_daemon.empty?

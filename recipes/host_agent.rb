@@ -35,7 +35,7 @@ end
 ruby_block name.to_s do
   block do
     kernel = node['host_agent']['installer']['bitsize']
-    node.set[:dynatrace][:host_agent][:installation][:is_required] = Dynatrace::Helpers.requires_installation?(installer_prefix_dir, installer_path, "agent/lib#{kernel}/dthostagent", type = :tar)
+    node.set[:dynatrace][:host_agent][:installation][:is_required] = Dynatrace::PackageHelpers.requires_installation?(installer_prefix_dir, installer_path, "agent/lib#{kernel}/dthostagent", type = :tar)
   end
 end
 
@@ -59,8 +59,8 @@ host_agent_collector = node['dynatrace']['host_agent']['collector']
 config_path = "#{installer_prefix_dir}/dynatrace/agent/conf/dthostagent.ini"
 ruby_block "Setting the name and collector address in #{config_path}" do
   block do
-    Dynatrace::Helpers.file_replace_line(config_path, '^Name', "Name #{host_agent_name}")
-    Dynatrace::Helpers.file_replace_line(config_path, '^Server', "Server #{host_agent_collector}")
+    Dynatrace::FileHelpers.file_replace_line(config_path, '^Name', "Name #{host_agent_name}")
+    Dynatrace::FileHelpers.file_replace_line(config_path, '^Server', "Server #{host_agent_collector}")
   end
 end
 

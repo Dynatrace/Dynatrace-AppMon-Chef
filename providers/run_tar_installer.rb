@@ -21,7 +21,7 @@ action :run do
 
   ruby_block "Determine the #{new_resource.name}'s installation directory" do
     block do
-      installation_path_part = Dynatrace::Helpers.get_install_dir_from_installer(new_resource.installer_path, :tar)
+      installation_path_part = Dynatrace::PackageHelpers.get_install_dir_from_installer(new_resource.installer_path, :tar)
       installation_path = "#{new_resource.installer_prefix_dir}/#{installation_path_part}"
 
       res = resources("execute[Move the installation directory to #{new_resource.installer_prefix_dir}]")

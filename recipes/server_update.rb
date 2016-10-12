@@ -132,6 +132,6 @@ end
 rest_version_url = node['dynatrace']['server']['linux']['update']['rest_version_url']
 ruby_block "Waiting for endpoint #{rest_version_url}" do
   block do
-    Dynatrace::Helpers.wait_until_rest_endpoint_is_ready!(rest_version_url)
+    Dynatrace::EndpointHelpers.wait_until_rest_endpoint_is_ready!(rest_version_url)
   end
 end

@@ -1,5 +1,6 @@
 #
-# Implements per-object storage of cache control data for S3 objects resources
+# Cookbook Name:: dynatrace
+# Libraries:: cache_data
 #
 # Copyright 2016, Dynatrace
 #
@@ -9,6 +10,7 @@
 require 'fileutils'
 
 module Dynatrace
+  # Implements per-object storage of cache control data for S3 objects resources
   class CacheData
     def initialize(cache_id)
       @cache_id = cache_id

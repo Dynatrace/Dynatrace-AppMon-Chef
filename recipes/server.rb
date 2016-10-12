@@ -56,7 +56,7 @@ end
 
 ruby_block "Check if #{name} already installed #{installer_prefix_dir} #{installer_path}" do
   block do
-    node.set[:dynatrace][:server][:installation][:is_required] = Dynatrace::Helpers.requires_installation?(installer_prefix_dir, installer_path, 'server', type = :jar)
+    node.set[:dynatrace][:server][:installation][:is_required] = Dynatrace::PackageHelpers.requires_installation?(installer_prefix_dir, installer_path, 'server', type = :jar)
   end
 end
 
@@ -151,7 +151,7 @@ end
 ruby_block "Set external host name in #{server_config_xml_file}" do
   block do
     Chef::Log.info "External host name is: #{external_hostname}"
-    Dynatrace::Helpers.file_replace(server_config_xml_file.to_s, ' externalhostname="[a-zA-Z0-9._-]*"', " externalhostname=\"#{external_hostname}\"")
+    Dynatrace::FileHelpers.file_replace(server_config_xml_file.to_s, ' externalhostname="[a-zA-Z0-9._-]*"', " externalhostname=\"#{external_hostname}\"")
   end
 end
 
@@ -167,14 +167,14 @@ end
     block do
       # Set a longer timeout due to the time to open the collector port
       # (see log "[SelfMonitoringLauncher] Waiting for self-monitoring Collector startup (max: 90 seconds)")
-      Dynatrace::Helpers.wait_until_port_is_open(port, 300) # wait 5 minutes
+      Dynatrace::EndpointHelpers.wait_until_port_is_open(port, 300) # wait 5 minutes
     end
   end
 end
 
 ruby_block "Waiting for endpoint '/rest/management/pwhconnection/config'" do
   block do
-    Dynatrace::Helpers.wait_until_rest_endpoint_is_ready!('https://localhost:8021/rest/management/pwhconnection/config')
+    Dynatrace::EndpointHelpers.wait_until_rest_endpoint_is_ready!('https://localhost:8021/rest/management/pwhconnection/config')
   end
   only_if { do_pwh_connection }
 end

@@ -45,7 +45,7 @@ end
 
 ruby_block "Check if #{name} already installed" do
   block do
-    node.set[:dynatrace][:collector][:installation][:was_installed] = Dynatrace::Helpers.requires_installation?(installer_prefix_dir, installer_path, 'collector', type = :jar)
+    node.set[:dynatrace][:collector][:installation][:was_installed] = Dynatrace::PackageHelpers.requires_installation?(installer_prefix_dir, installer_path, 'collector', type = :jar)
     node.set[:dynatrace][:collector][:installation][:is_required] = node[:dynatrace][:collector][:installation][:was_installed]
   end
 end
@@ -121,6 +121,6 @@ end
 
 ruby_block "Waiting for port #{agent_port} to become available" do
   block do
-    Dynatrace::Helpers.wait_until_port_is_open(agent_port, 240, '127.0.0.1', 'yes')
+    Dynatrace::EndpointHelpers.wait_until_port_is_open(agent_port, 240, '127.0.0.1', 'yes')
   end
 end

@@ -15,7 +15,7 @@ action :run do
   end
 
   if new_resource.target_dir.nil?
-    new_resource.target_dir = Dynatrace::Helpers.get_install_dir_from_installer(new_resource.installer_path, :jar)
+    new_resource.target_dir = Dynatrace::PackageHelpers.get_install_dir_from_installer(new_resource.installer_path, :jar)
   end
 
   ruby_block "Determine the #{new_resource.name}'s installation directory" do

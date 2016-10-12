@@ -50,7 +50,7 @@ end
 
 ruby_block name.to_s do
   block do
-    node.set[:dynatrace][:memory_analysis_server][:installation][:is_required] = Dynatrace::Helpers.requires_installation?(installer_prefix_dir, installer_path, 'dtanalysisserver', type = :jar)
+    node.set[:dynatrace][:memory_analysis_server][:installation][:is_required] = Dynatrace::PackageHelpers.requires_installation?(installer_prefix_dir, installer_path, 'dtanalysisserver', type = :jar)
   end
 end
 
@@ -90,6 +90,6 @@ end
 
 ruby_block "Waiting for port #{server_port} to become available" do
   block do
-    Dynatrace::Helpers.wait_until_port_is_open(server_port)
+    Dynatrace::EndpointHelpers.wait_until_port_is_open(server_port)
   end
 end
