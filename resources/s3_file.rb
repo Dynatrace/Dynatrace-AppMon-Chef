@@ -49,6 +49,7 @@ action :create do
     header_resp = s3.head_object(:bucket => bucket, :key => object_name)
     object_exists = true
   rescue
+    Chef::Log.debug "Object #{object_name} does exist on S3"
     # Do nothing
   end
   Chef::Log.debug 'Metadata retrieved'

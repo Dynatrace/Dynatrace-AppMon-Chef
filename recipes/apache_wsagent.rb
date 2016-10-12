@@ -12,13 +12,11 @@ name = 'Dynatrace Apache WebServer Agent'
 apache_config_file_path = node['dynatrace']['apache_wsagent']['apache']['config_file_path']
 apache_daemon = node['dynatrace']['apache_wsagent']['linux']['apache_daemon']
 
-if platform_family?('debian', 'fedora', 'rhel')
-  arch = node['dynatrace']['apache_wsagent']['arch']
-  agent_path = node['dynatrace']['apache_wsagent']['linux'][arch]['agent_path']
-  node.set['dynatrace']['apache_wsagent']['agent_path'] = agent_path
-else
-  raise 'Unsupported platform family.'
-end
+raise 'Unsupported platform family.' unless platform_family?('debian', 'fedora', 'rhel')
+
+arch = node['dynatrace']['apache_wsagent']['arch']
+agent_path = node['dynatrace']['apache_wsagent']['linux'][arch]['agent_path']
+node.set['dynatrace']['apache_wsagent']['agent_path'] = agent_path
 
 ruby_block "Inject the #{name} into Apache HTTPD's config file #{apache_config_file_path}" do
   block do

@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: dynatrace
-# Recipes:: helpers
+# Recipes:: prerequisites
 #
 # Copyright 2016, Dynatrace
 #

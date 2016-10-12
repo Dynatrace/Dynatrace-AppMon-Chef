@@ -211,77 +211,75 @@ EOH
       raise DynatraceNotReady.new(endpoint, timeout)
     end
 
-    def self.stop_processes(proc_pattern, proc_user, platform_family, timeout = 15, signal = 'TERM')
-      pids = find_pids(proc_pattern, proc_user, platform_family)
-      # puts "Process(es) to kill: #{pids}"
-      killed = false
-      unless pids.empty?
-        until pids.empty?
-          begin
-            Process.kill signal, *pids
-            break
-          rescue Errno::ESRCH
-            # The process could have terminated by itself. Retry to find processes matching search pattern.
-            # puts "No such process(es): #{pids}. Retrying search pattern..."
-            pids = find_pids(proc_pattern, proc_user, platform_family)
-          end
-        end
-        begin
-          Timeout.timeout(timeout, DynatraceTimeout) do
-            loop do
-              pids = find_pids(proc_pattern, proc_user, platform_family)
-              if pids.empty?
-                # puts "Terminated process(es)"
-                killed = true
-                break
-              end
-              # puts "Waiting for process(es) #{pids} to finish"
-              sleep 1
-            end
-          end
-        rescue DynatraceTimeout
-          raise "Process(es) #{pids} did not stop"
-        end
-      end
-      killed
-    end
+    # def self.stop_processes(proc_pattern, proc_user, platform_family, timeout = 15, signal = 'TERM')
+    #   pids = find_pids(proc_pattern, proc_user, platform_family)
+    #   # puts "Process(es) to kill: #{pids}"
+    #   killed = false
+    #   unless pids.empty?
+    #     until pids.empty?
+    #       begin
+    #         Process.kill signal, *pids
+    #         break
+    #       rescue Errno::ESRCH
+    #         # The process could have terminated by itself. Retry to find processes matching search pattern.
+    #         # puts "No such process(es): #{pids}. Retrying search pattern..."
+    #         pids = find_pids(proc_pattern, proc_user, platform_family)
+    #       end
+    #     end
+    #     begin
+    #       Timeout.timeout(timeout, DynatraceTimeout) do
+    #         loop do
+    #           pids = find_pids(proc_pattern, proc_user, platform_family)
+    #           if pids.empty?
+    #             # puts "Terminated process(es)"
+    #             killed = true
+    #             break
+    #           end
+    #           # puts "Waiting for process(es) #{pids} to finish"
+    #           sleep 1
+    #         end
+    #       end
+    #     rescue DynatraceTimeout
+    #       raise "Process(es) #{pids} did not stop"
+    #     end
+    #   end
+    #   killed
+    # end
+    #
+    # # private_class_method
+    # def self.find_pids(pattern, user, platform_family)
+    #   pids = []
+    #   raise 'ERROR: Unsupported platform' unless %w(debian fedora rhel).include? platform_family
+    #
+    #   pgrep_pattern_opt = !pattern.nil? ? "-f \"#{pattern}\"" : ''
+    #   pgrep_user_opt = !user.nil? ? "-u #{user}" : ''
+    #   search_processes_cmd = "pgrep #{pgrep_pattern_opt} #{pgrep_user_opt}"
+    #
+    #   #################################################################
+    #   # code below doesn't work if workstation is on windows
+    #   #        %x[#{search_processes_cmd}].each_line do |pid_str|
+    #   #          if !pid_str.empty?
+    #   #            puts 'pid:' + pid_str
+    #   #            pids << pid_str.to_i
+    #   #          end
+    #   #          return pids
+    #   #        end
+    #   # this part working and fixes code above
+    #   pid_str = `#{search_processes_cmd}`
+    #   unless pid_str.empty?
+    #     text = []
+    #     text << pid_str.lines.map(&:chomp)
+    #     text.each do |x|
+    #       x.each do |y|
+    #         pids << y.to_i
+    #       end
+    #     end
+    #   end
+    #   #################################################################
+    #
+    #   pids
+    # end
 
-    # private_class_method
-    def self.find_pids(pattern, user, platform_family)
-      pids = []
-      if %w(debian fedora rhel).include? platform_family
-        pgrep_pattern_opt = !pattern.nil? ? "-f \"#{pattern}\"" : ''
-        pgrep_user_opt = !user.nil? ? "-u #{user}" : ''
-        search_processes_cmd = "pgrep #{pgrep_pattern_opt} #{pgrep_user_opt}"
-
-        #################################################################
-        # code below doesn't work if workstation is on windows
-        #        %x[#{search_processes_cmd}].each_line do |pidStr|
-        #          if !pidStr.empty?
-        #            puts 'pid:' + pidStr
-        #            pids << pidStr.to_i
-        #          end
-        #          return pids
-        #        end
-        # this part working and fixes code above
-        pidStr = `#{search_processes_cmd}`
-        unless pidStr.empty?
-          text = []
-          text << pidStr.lines.map(&:chomp)
-          text.each do |x|
-            x.each do |y|
-              pids << y.to_i
-            end
-          end
-        end
-        #################################################################
-
-      else
-        raise 'ERROR: Unsupported platform'
-      end
-      pids
-    end
-
-    private_class_method :port_is_open?, :find_pids
+    private_class_method :port_is_open?, :find_pids, :get_version_from_manifest
   end
 end

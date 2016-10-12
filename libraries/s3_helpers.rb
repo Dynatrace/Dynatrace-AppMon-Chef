@@ -1,4 +1,12 @@
+#
+# Cookbook Name:: dynatrace
+# Libraries:: s3_helpers
+#
+# Copyright 2016, Dynatrace
+#
+
 module Dynatrace
+  # A helper class to initialize a connection to the AWS S3 service
   module S3Helpers
     # NOTE: a "require 'aws-sdk'" should be placed before calling this method
     def self.init_s3_client(region, access_key_id, secret_access_key)
