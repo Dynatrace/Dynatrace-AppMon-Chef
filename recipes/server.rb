@@ -35,7 +35,6 @@ external_hostname = node['dynatrace']['server']['externalhostname']
 
 dynatrace_owner = node['dynatrace']['owner']
 dynatrace_group = node['dynatrace']['group']
-easyTravelProfile = node['dynatrace']['server']['linux']['installer']['easyTravelProfile']
 
 raise 'Unsupported platform family.' unless platform_family?('debian', 'fedora', 'rhel')
 
@@ -102,23 +101,6 @@ service "Stop service #{name}" do
   supports :status => true
   action [:stop]
   ignore_failure true # fails on Debian 7.8 on clean installation
-end
-
-profiles = "#{installer_prefix_dir}/dynatrace/server/conf/profiles/"
-directory "Create profiles directory #{profiles}" do
-  path      profiles
-  owner     dynatrace_owner unless ::File.exist?(profiles)
-  group     dynatrace_group unless ::File.exist?(profiles)
-  recursive true
-  action    :create
-end
-
-dynatrace_copy_or_download_file 'easyTravel.profile.xml' do
-  file_name       'easyTravel.profile.xml'
-  file_url        easyTravelProfile
-  path            "#{profiles}easyTravel.profile.xml"
-  dynatrace_owner dynatrace_owner
-  dynatrace_group dynatrace_group
 end
 
 server_config_xml_file = "#{installer_prefix_dir}/dynatrace/server/conf/server.config.xml"

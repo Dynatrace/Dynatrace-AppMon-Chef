@@ -51,6 +51,4 @@ default['dynatrace']['server']['pwh_connection']['database'] = 'dynatrace-pwh'
 default['dynatrace']['server']['pwh_connection']['username'] = 'dynatrace'
 default['dynatrace']['server']['pwh_connection']['password'] = 'dynatrace'
 
-default['dynatrace']['server']['linux']['installer']['easyTravelProfile'] = 'https://s3.amazonaws.com/downloads.dynasprint/easytravel/easyTravel.profile.xml'
-
 default['dynatrace']['server']['externalhostname'] = 'localhost'
