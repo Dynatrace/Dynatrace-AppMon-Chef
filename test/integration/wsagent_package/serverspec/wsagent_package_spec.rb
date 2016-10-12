@@ -18,9 +18,9 @@ if %w(debian redhat ubuntu).include? os[:family]
   end
 
   describe file '/opt/dynatrace/agent/conf/dtwsagent.ini' do
-    its(:content) { should match /^Name dtwsagent$/ }
-    its(:content) { should match /^Server localhost:9998$/ }
-    its(:content) { should match /^Loglevel info$/ }
+    its(:content) { should match(/^Name dtwsagent$/) }
+    its(:content) { should match(/^Server localhost:9998$/) }
+    its(:content) { should match(/^Loglevel info$/) }
   end
 
   describe file '/etc/init.d/dynaTraceWebServerAgent' do
@@ -28,15 +28,15 @@ if %w(debian redhat ubuntu).include? os[:family]
     it { should be_grouped_into 'root' }
 
     if os[:family] == 'debian' || os[:family] == 'ubuntu'
-      its(:content) { should match /^\# Default-Start: 2 3 4 5$/ }
-      its(:content) { should match /^\# Default-Stop: 0 1 6$/ }
+      its(:content) { should match(/^\# Default-Start: 2 3 4 5$/) }
+      its(:content) { should match(/^\# Default-Stop: 0 1 6$/) }
     elsif os[:family] == 'redhat'
-      its(:content) { should match /^\# Default-Start: 3 5$/ }
-      its(:content) { should match /^\# Default-Stop: 0 1 2 6$/ }
+      its(:content) { should match(/^\# Default-Start: 3 5$/) }
+      its(:content) { should match(/^\# Default-Stop: 0 1 2 6$/) }
     end
 
-    its(:content) { should match /^DT_HOME=\/opt\/dynatrace$/ }
-    its(:content) { should match /^DT_RUNASUSER=dynatrace$/ }
+    its(:content) { should match(%r{^DT_HOME=\/opt\/dynatrace$}) }
+    its(:content) { should match(/^DT_RUNASUSER=dynatrace$/) }
   end
 
   describe process('dtwsagent') do
@@ -63,9 +63,9 @@ elsif os[:family] == 'windows'
   end
 
   describe file 'C:\Program Files (x86)\Dynatrace\agent\conf\dtwsagent.ini' do
-    its(:content) { should match /^Name dtwsagent$/ }
-    its(:content) { should match /^Server localhost:9998$/ }
-    its(:content) { should match /^Loglevel info$/ }
+    its(:content) { should match(/^Name dtwsagent$/) }
+    its(:content) { should match(/^Server localhost:9998$/) }
+    its(:content) { should match(/^Loglevel info$/) }
   end
 
   describe service('Dynatrace Webserver Agent') do

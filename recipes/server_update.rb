@@ -76,12 +76,9 @@ ruby_block "Update Dynatrace server using #{update_file_path} file" do
       request.basic_auth(user, passwd)
       response = http.request(request)
 
-      if response.code.to_s == '201'
-        jobid = response['location'].split(/\//)[-1]
-        node.set['dynatrace']['server']['linux']['update']['jobid'] = jobid
-      else
-        raise "Server responded with error '#{response.code} #{response.message}' when trying to upload file #{update_file_path} through REST"
-      end
+      raise "Server responded with error '#{response.code} #{response.message}' when trying to upload file #{update_file_path} through REST" unless response.code.to_s == '201'
+      jobid = response['location'].split(%r{/})[-1]
+      node.set['dynatrace']['server']['linux']['update']['jobid'] = jobid
     end
   end
 end
@@ -105,19 +102,16 @@ ruby_block 'Waiting for update installation to finish' do
           request.basic_auth(user, passwd)
           response = http.request(request)
 
-          if response.code == '200'
-            xmldoc = REXML::Document.new(response.body)
-            isfinished = REXML::XPath.first(xmldoc, '//isfinished').first == 'true'
-            if isfinished
-              isrestartrequired = REXML::XPath.first(xmldoc, '//isserverrestartrequired').first == 'true'
-              node.set['dynatrace']['server']['linux']['update']['isrestartrequired'] = isrestartrequired
-              break
-            else
-              Chef::Log.debug "Update not finished. Checking status in #{retry_sleep} seconds..."
-              sleep retry_sleep
-            end
+          raise "Server responded with error '#{response.code} #{response.message}' when trying to check update status" unless response.code == '200'
+          xmldoc = REXML::Document.new(response.body)
+          isfinished = REXML::XPath.first(xmldoc, '//isfinished').first == 'true'
+          if isfinished
+            isrestartrequired = REXML::XPath.first(xmldoc, '//isserverrestartrequired').first == 'true'
+            node.set['dynatrace']['server']['linux']['update']['isrestartrequired'] = isrestartrequired
+            break
           else
-            raise "Server responded with error '#{response.code} #{response.message}' when trying to check update status"
+            Chef::Log.debug "Update not finished. Checking status in #{retry_sleep} seconds..."
+            sleep retry_sleep
           end
         end
       end

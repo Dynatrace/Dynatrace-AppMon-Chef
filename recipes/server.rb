@@ -37,20 +37,18 @@ dynatrace_owner = node['dynatrace']['owner']
 dynatrace_group = node['dynatrace']['group']
 easyTravelProfile = node['dynatrace']['server']['linux']['installer']['easyTravelProfile']
 
-if platform_family?('debian', 'fedora', 'rhel')
-  installer_prefix_dir = node['dynatrace']['server']['linux']['installer']['prefix_dir']
-  installer_file_name  = node['dynatrace']['server']['linux']['installer']['file_name']
-  installer_file_url   = node['dynatrace']['server']['linux']['installer']['file_url']
+raise 'Unsupported platform family.' unless platform_family?('debian', 'fedora', 'rhel')
 
-  installer_cache_dir = "#{Chef::Config['file_cache_path']}/dynatrace"
-  installer_path      = "#{installer_cache_dir}/#{installer_file_name}"
+installer_prefix_dir = node['dynatrace']['server']['linux']['installer']['prefix_dir']
+installer_file_name  = node['dynatrace']['server']['linux']['installer']['file_name']
+installer_file_url   = node['dynatrace']['server']['linux']['installer']['file_url']
 
-  service      = 'dynaTraceServer'
-  ini_files    = ['dtserver.ini', 'dtfrontendserver.ini']
-  init_scripts = ['dynaTraceBackendServer', 'dynaTraceFrontendServer', service]
-else
-  raise 'Unsupported platform family.'
-end
+installer_cache_dir = "#{Chef::Config['file_cache_path']}/dynatrace"
+installer_path      = "#{installer_cache_dir}/#{installer_file_name}"
+
+service      = 'dynaTraceServer'
+ini_files    = ['dtserver.ini', 'dtfrontendserver.ini']
+init_scripts = ['dynaTraceBackendServer', 'dynaTraceFrontendServer', service]
 
 directory 'Create the installer cache directory' do
   path   installer_cache_dir
@@ -208,7 +206,15 @@ ruby_block "Establish the #{name}'s Performance Warehouse connection" do
 
     request = Net::HTTP::Put.new(uri, 'Accept' => 'application/json', 'Content-Type' => 'application/json')
     request.basic_auth(rest_user, rest_pass)
-    request.body = { :host => pwh_connection_hostname.to_s, :port => pwh_connection_port.to_s, :dbms => pwh_connection_dbms.to_s, :dbname => pwh_connection_database.to_s, :user => pwh_connection_username.to_s, :password => pwh_connection_password.to_s, :usessl => false, :useurl => false, :url => nil }.to_json
+    request.body = { :host => pwh_connection_hostname.to_s,
+                     :port => pwh_connection_port.to_s,
+                     :dbms => pwh_connection_dbms.to_s,
+                     :dbname => pwh_connection_database.to_s,
+                     :user => pwh_connection_username.to_s,
+                     :password => pwh_connection_password.to_s,
+                     :usessl => false,
+                     :useurl => false,
+                     :url => nil }.to_json
 
     http.request(request)
   end

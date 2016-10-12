@@ -22,15 +22,15 @@ describe file('/opt/dynatrace/server') do
 end
 
 describe file '/opt/dynatrace/dtserver.ini' do
-  its(:content) { should match /-memory\nsmall/ }
+  its(:content) { should match(/-memory\nsmall/) }
 end
 
 describe file '/opt/dynatrace/dtfrontendserver.ini' do
-  its(:content) { should match /-memory\nsmall/ }
+  its(:content) { should match(/-memory\nsmall/) }
 end
 
 describe file '/opt/dynatrace/server/conf/server.config.xml' do
-  its(:content) { should match /externalhostname="myaddr"/ }
+  its(:content) { should match(/externalhostname="myaddr"/) }
 end
 
 describe file '/etc/init.d/dynaTraceServer' do
@@ -38,16 +38,16 @@ describe file '/etc/init.d/dynaTraceServer' do
   it { should be_grouped_into 'root' }
 
   if os[:family] == 'debian' || os[:family] == 'ubuntu'
-    its(:content) { should match /^\# Default-Start: 2 3 4 5$/ }
-    its(:content) { should match /^\# Default-Stop: 0 1 6$/ }
+    its(:content) { should match(/^\# Default-Start: 2 3 4 5$/) }
+    its(:content) { should match(/^\# Default-Stop: 0 1 6$/) }
   elsif os[:family] == 'redhat'
-    its(:content) { should match /^\# Default-Start: 3 5$/ }
-    its(:content) { should match /^\# Default-Stop: 0 1 2 6$/ }
+    its(:content) { should match(/^\# Default-Start: 3 5$/) }
+    its(:content) { should match(/^\# Default-Stop: 0 1 2 6$/) }
   end
 
-  its(:content) { should match /^DT_HOME=\/opt\/dynatrace$/ }
-  its(:content) { should match /^DT_OPTARGS="-listen 6699"$/ }
-  its(:content) { should match /^DT_RUNASUSER=dynatrace$/ }
+  its(:content) { should match(%r{^DT_HOME=/opt/dynatrace$}) }
+  its(:content) { should match(/^DT_OPTARGS="-listen 6699"$/) }
+  its(:content) { should match(/^DT_RUNASUSER=dynatrace$/) }
 end
 
 describe process('dtfrontendserver') do
@@ -58,7 +58,7 @@ end
 describe process('dtserver') do
   it { should be_running }
   its(:user) { should eq 'dynatrace' }
-  its(:args) { should match /-listen 6699/ }
+  its(:args) { should match(/-listen 6699/) }
 end
 
 describe service('dynaTraceServer') do

@@ -24,27 +24,27 @@ describe file '/etc/init.d/dynaTraceAnalysis' do
   it { should be_grouped_into 'root' }
 
   if os[:family] == 'debian' || os[:family] == 'ubuntu'
-    its(:content) { should match /^\# Default-Start: 2 3 4 5$/ }
-    its(:content) { should match /^\# Default-Stop: 0 1 6$/ }
+    its(:content) { should match(/^\# Default-Start: 2 3 4 5$/) }
+    its(:content) { should match(/^\# Default-Stop: 0 1 6$/) }
   elsif os[:family] == 'redhat'
-    its(:content) { should match /^\# Default-Start: 3 5$/ }
-    its(:content) { should match /^\# Default-Stop: 0 1 2 6$/ }
+    its(:content) { should match(/^\# Default-Start: 3 5$/) }
+    its(:content) { should match(/^\# Default-Stop: 0 1 2 6$/) }
   end
 
-  its(:content) { should match /^DT_HOME=\/opt\/dynatrace$/ }
-  its(:content) { should match /^DT_OPTARGS="-Dcom.dynatrace.diagnostics.listen=:7788 -Xms256M -Xmx1024M -XX:PermSize=256m -XX:MaxPermSize=384m"$/ }
-  its(:content) { should match /^DT_RUNASUSER=dynatrace$/ }
+  its(:content) { should match(%r{^DT_HOME=/opt/dynatrace$}) }
+  its(:content) { should match(/^DT_OPTARGS="-Dcom.dynatrace.diagnostics.listen=:7788 -Xms256M -Xmx1024M -XX:PermSize=256m -XX:MaxPermSize=384m"$/) }
+  its(:content) { should match(/^DT_RUNASUSER=dynatrace$/) }
 end
 
 describe process('java') do
   it { should be_running }
   its(:user) { should eq 'dynatrace' }
-  its(:args) { should match /-name dtanalysisserver/ }
-  its(:args) { should match /-Dcom.dynatrace.diagnostics.listen=:7788/ }
-  its(:args) { should match /-Xms256M/ }
-  its(:args) { should match /-Xmx1024M/ }
-  its(:args) { should match /-XX:PermSize=256m/ }
-  its(:args) { should match /-XX:MaxPermSize=384m/ }
+  its(:args) { should match(/-name dtanalysisserver/) }
+  its(:args) { should match(/-Dcom.dynatrace.diagnostics.listen=:7788/) }
+  its(:args) { should match(/-Xms256M/) }
+  its(:args) { should match(/-Xmx1024M/) }
+  its(:args) { should match(/-XX:PermSize=256m/) }
+  its(:args) { should match(/-XX:MaxPermSize=384m/) }
 end
 
 describe service('dynaTraceAnalysis') do

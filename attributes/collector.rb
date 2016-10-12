@@ -8,7 +8,10 @@
 # 32 or 64
 default['dynatrace']['collector']['installer']['bitsize'] = '64'
 
-# The Dynatrace Collector will be installed into the directory node['dynatrace']['collector']['linux']['installer']['prefix_dir']/dynatrace-$major-$minor-$rev, where $major, $minor and $rev are given by the installer. A symbolic link to the actual installation directory will be created in node['dynatrace']['collector']['linux']['installer']['prefix_dir']/dynatrace.
+# The Dynatrace Collector will be installed into the directory
+# node['dynatrace']['collector']['linux']['installer']['prefix_dir']/dynatrace-$major-$minor-$rev,
+# where $major, $minor and $rev are given by the installer. A symbolic link to the actual installation directory will be
+# created in node['dynatrace']['collector']['linux']['installer']['prefix_dir']/dynatrace.
 default['dynatrace']['collector']['linux']['installer']['prefix_dir'] = '/opt'
 
 # The file name of the Dynatrace Collector installer in the cookbook's files directory.

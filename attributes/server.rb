@@ -8,7 +8,10 @@
 # 32 or 64
 default['dynatrace']['server']['installer']['bitsize'] = '64'
 
-# The Dynatrace Server will be installed into the directory node['dynatrace']['server']['linux']['installer']['prefix_dir']/dynatrace-$major-$minor-$rev, where $major, $minor and $rev are given by the installer. A symbolic link to the actual installation directory will be created in node['dynatrace']['server']['linux']['installer']['prefix_dir']/dynatrace.
+# The Dynatrace Server will be installed into the directory
+# node['dynatrace']['server']['linux']['installer']['prefix_dir']/dynatrace-$major-$minor-$rev,
+# where $major, $minor and $rev are given by the installer. A symbolic link to the actual installation directory will be
+# created in node['dynatrace']['server']['linux']['installer']['prefix_dir']/dynatrace.
 default['dynatrace']['server']['linux']['installer']['prefix_dir'] = '/opt'
 
 # The file name of the Dynatrace installer in the cookbook's files directory.

@@ -20,8 +20,8 @@ describe file('/opt/dynatrace/agent') do
 end
 
 describe file '/opt/dynatrace/agent/conf/dthostagent.ini' do
-  its(:content) { should match /^Name myhostagent/ }
-  its(:content) { should match /^Server myhostaddr/ }
+  its(:content) { should match(/^Name myhostagent/) }
+  its(:content) { should match(/^Server myhostaddr/) }
 end
 
 describe file '/etc/init.d/dynaTraceHostagent' do
