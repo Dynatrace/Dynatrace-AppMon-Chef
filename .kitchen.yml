@@ -257,11 +257,11 @@ suites:
             installer:
               file_url: http://downloads.dynatracesaas.com/6.3/dynatrace-server-linux-x86.jar
             update:
-              file_url: https://files.dynatrace.com/downloads/fixpacks/dynaTrace-6.3.10.1010.zip
-#            update:
-#              update_file_url: http://172.18.129.150:8000/dynaTrace-6.3.10.1010.zip
+              update_file_url: https://files.dynatrace.com/downloads/fixpacks/dynaTrace-6.3.10.1010.zip
 #            installer:
 #              file_url: http://172.18.129.150:8000/dynatrace-server-linux-x86.jar
+#            update:
+#              update_file_url: http://172.18.129.150:8000/dynaTrace-6.3.10.1010.zip
 
   - name: wsagent_package
     run_list:
