@@ -14,6 +14,11 @@ ruby_block "Stop any running processes of user #{dynatrace_owner}" do
   end
 end
 
+if platform_family?('debian', 'fedora', 'rhel')
+  # Sometimes processes leave PID files in /tmp...
+  execute "find /tmp -maxdepth 1 -user #{dynatrace_owner} | xargs rm -rf"
+end
+
 user "Delete user '#{dynatrace_owner}'" do
   username dynatrace_owner
   action   :remove
