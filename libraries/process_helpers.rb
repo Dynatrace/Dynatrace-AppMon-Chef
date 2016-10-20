@@ -30,7 +30,7 @@ module Dynatrace
           end
         end
         begin
-          Timeout.timeout(timeout, DynatraceTimeout) do
+          Timeout.timeout(timeout, Timeout::Error) do
             loop do
               pids = find_pids(proc_pattern, proc_user, platform_family)
               if pids.empty?
@@ -42,7 +42,7 @@ module Dynatrace
               sleep 1
             end
           end
-        rescue DynatraceTimeout
+        rescue Timeout::Error
           raise "Process(es) #{pids} did not stop"
         end
       end
