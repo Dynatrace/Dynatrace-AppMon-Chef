@@ -12,12 +12,12 @@ action :run do
   ruby_block "Remove a directory using symbolic link: #{new_resource.link2delete}" do
     block do
       # remove directory using symlink (Chef directory resource does not work in this case)
-      cmd2exec = "rm -rf \"#{::File.dirname(new_resource.link2delete)}/$(readlink #{new_resource.link2delete})\""
+      cmd2exec = "rm -rf \"$(readlink #{new_resource.link2delete})\""
       execute "Remove directory content using symlink: #{cmd2exec}" do
         command cmd2exec
         only_if { ::File.exist?(new_resource.link2delete) }
       end
-
+      
       link new_resource.link2delete do
         action :delete
       end

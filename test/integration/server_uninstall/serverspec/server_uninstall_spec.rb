@@ -7,6 +7,10 @@ describe file('/opt/dynatrace') do
   it { should_not exist }
 end
 
+describe file('/opt/dynatrace-6.5') do
+  it { should_not exist }
+end
+
 describe file '/etc/init.d/dynaTraceServer' do
   it { should_not exist }
 end
