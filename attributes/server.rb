@@ -41,6 +41,7 @@ default['dynatrace']['server']['password'] = 'admin'
 # Whether a connection to an existing Performance Warehouse (database) shall be established, or not. Requires Dynatrace >= v6.2.
 default['dynatrace']['server']['do_pwh_connection'] = false
 
+# The PWH connection configuration attribute values are just given as an example.
 default['dynatrace']['server']['pwh_connection']['hostname'] = 'localhost'
 default['dynatrace']['server']['pwh_connection']['port'] = '5432'
 

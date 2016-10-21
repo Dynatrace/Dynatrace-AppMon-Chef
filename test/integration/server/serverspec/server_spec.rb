@@ -113,5 +113,8 @@ describe 'Dynatrace Server Performance Warehouse Configuration' do
     expect(data['pwhconnectionconfiguration']['user']).to eq('dynatrace')
     expect(data['pwhconnectionconfiguration']['password']).to eq('*********')
     expect(data['pwhconnectionconfiguration']['usessl']).to eq(false)
+
+    # We do not check PWH connection status as the configuration is fake. Furthermore license key is required before
+    # trying to enable the connection.
   end
 end

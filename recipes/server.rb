@@ -20,17 +20,6 @@ sizing = node['dynatrace']['server']['sizing']
 
 collector_port = node['dynatrace']['server']['collector_port']
 
-rest_user = node['dynatrace']['server']['username']
-rest_pass = node['dynatrace']['server']['password']
-
-do_pwh_connection       = node['dynatrace']['server']['do_pwh_connection']
-pwh_connection_hostname = node['dynatrace']['server']['pwh_connection']['hostname']
-pwh_connection_port     = node['dynatrace']['server']['pwh_connection']['port']
-pwh_connection_dbms     = node['dynatrace']['server']['pwh_connection']['dbms']
-pwh_connection_database = node['dynatrace']['server']['pwh_connection']['database']
-pwh_connection_username = node['dynatrace']['server']['pwh_connection']['username']
-pwh_connection_password = node['dynatrace']['server']['pwh_connection']['password']
-
 external_hostname = node['dynatrace']['server']['externalhostname']
 
 dynatrace_owner = node['dynatrace']['owner']
@@ -170,35 +159,4 @@ end
       Dynatrace::EndpointHelpers.wait_until_port_is_open(port, 300) # wait 5 minutes
     end
   end
-end
-
-ruby_block "Waiting for endpoint '/rest/management/pwhconnection/config'" do
-  block do
-    Dynatrace::EndpointHelpers.wait_until_rest_endpoint_is_ready!('https://localhost:8021/rest/management/pwhconnection/config')
-  end
-  only_if { do_pwh_connection }
-end
-
-ruby_block "Establish the #{name}'s Performance Warehouse connection" do
-  block do
-    uri = URI('http://localhost:8021/rest/management/pwhconnection/config')
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-
-    request = Net::HTTP::Put.new(uri, 'Accept' => 'application/json', 'Content-Type' => 'application/json')
-    request.basic_auth(rest_user, rest_pass)
-    request.body = { :host => pwh_connection_hostname.to_s,
-                     :port => pwh_connection_port.to_s,
-                     :dbms => pwh_connection_dbms.to_s,
-                     :dbname => pwh_connection_database.to_s,
-                     :user => pwh_connection_username.to_s,
-                     :password => pwh_connection_password.to_s,
-                     :usessl => false,
-                     :useurl => false,
-                     :url => nil }.to_json
-
-    http.request(request)
-  end
-  only_if { do_pwh_connection }
 end

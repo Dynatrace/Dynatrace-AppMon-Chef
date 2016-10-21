@@ -223,6 +223,7 @@ suites:
   - name: server
     run_list:
       - recipe[dynatrace::server]
+      - recipe[dynatrace::server_pwh_connection]
     attributes:
       dynatrace:
         server:

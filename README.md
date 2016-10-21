@@ -117,6 +117,14 @@ This recipe uninstalls the Dynatrace Server package installed by the `server` re
 
 Place the Dynatrace Server License as `dynatrace-license.key` in the cookbook's `files` directory. Alternatively, you can make the license available as an *HTTP* or *FTP* resource and point the Chef Recipe to the right location via the `node['dynatrace']['server']['license']['file_url']` attribute. Please refer to `attributes/server.rb` for a list of supported attributes. In order to have the Chef Recipe executed, include `recipe[dynatrace::server_license]` in a runlist.
 
+### server_pwh_connection
+
+*Sets connection to the Performance Warehouse.*
+
+This recipe sets the connection to the Performance Warehouse on the Dynatrace Server.
+
+**Note:** This recipe will work after installing the Server License (see `server_license` recipe).
+
 ### wsagent_package
 
 *Installs the Dynatrace WebServer Agent package.*
