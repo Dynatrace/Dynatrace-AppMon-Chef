@@ -5,9 +5,6 @@
 # Copyright 2016, Dynatrace
 #
 
-rest_user = node['dynatrace']['server']['username']
-rest_pass = node['dynatrace']['server']['password']
-
 do_pwh_connection       = node['dynatrace']['server']['do_pwh_connection']
 pwh_connection_hostname = node['dynatrace']['server']['pwh_connection']['hostname']
 pwh_connection_port     = node['dynatrace']['server']['pwh_connection']['port']
@@ -31,6 +28,8 @@ ruby_block 'Establish the Performance Warehouse connection' do
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 
     request = Net::HTTP::Put.new(uri, 'Accept' => 'application/json', 'Content-Type' => 'application/json')
+    rest_user = node['dynatrace']['server']['username']
+    rest_pass = node['dynatrace']['server']['password']
     request.basic_auth(rest_user, rest_pass)
     request.body = { :host => pwh_connection_hostname.to_s,
                      :port => pwh_connection_port.to_s,
