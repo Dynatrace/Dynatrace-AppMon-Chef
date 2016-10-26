@@ -129,9 +129,10 @@ service service_name do
   only_if { node['dynatrace']['server']['linux']['update']['isrestartrequired'] }
 end
 
+max_boot_time = node['dynatrace']['server']['max_boot_time']
 rest_version_url = node['dynatrace']['server']['linux']['update']['rest_version_url']
 ruby_block "Waiting for endpoint #{rest_version_url}" do
   block do
-    Dynatrace::EndpointHelpers.wait_until_rest_endpoint_is_ready!(rest_version_url)
+    Dynatrace::EndpointHelpers.wait_until_rest_endpoint_is_ready!(rest_version_url, max_boot_time)
   end
 end
