@@ -23,6 +23,11 @@ ruby_block "Waiting for endpoint '/rest/management/pwhconnection/config'" do
 end
 
 ruby_block 'Establish the Performance Warehouse connection' do
+  # TODO: use a more consistent API to check if server is ready to set PWH connection.
+  # Sometimes after restarting the server we got a Net::ReadTimeout error. Checking if REST endpoint is ready (as above)
+  # seems to be not enough thus the non-zero retry counter.
+  retries 1
+  retry_delay 30
   block do
     uri = URI('http://localhost:8021/rest/management/pwhconnection/config')
     http = Net::HTTP.new(uri.host, uri.port)
