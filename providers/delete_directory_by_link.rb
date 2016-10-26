@@ -17,7 +17,7 @@ action :run do
         command cmd2exec
         only_if { ::File.exist?(new_resource.link2delete) }
       end
-      
+
       link new_resource.link2delete do
         action :delete
       end
