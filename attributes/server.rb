@@ -53,3 +53,7 @@ default['dynatrace']['server']['pwh_connection']['username'] = 'dynatrace'
 default['dynatrace']['server']['pwh_connection']['password'] = 'dynatrace'
 
 default['dynatrace']['server']['externalhostname'] = 'localhost'
+
+# Set a longer boot timeout due to the time to open the collector port
+# (see log "[SelfMonitoringLauncher] Waiting for self-monitoring Collector startup (max: 90 seconds)")
+default['dynatrace']['server']['max_boot_time'] = 300 # in seconds

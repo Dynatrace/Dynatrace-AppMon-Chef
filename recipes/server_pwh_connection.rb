@@ -13,9 +13,11 @@ pwh_connection_database = node['dynatrace']['server']['pwh_connection']['databas
 pwh_connection_username = node['dynatrace']['server']['pwh_connection']['username']
 pwh_connection_password = node['dynatrace']['server']['pwh_connection']['password']
 
+max_boot_time = node['dynatrace']['server']['max_boot_time']
+
 ruby_block "Waiting for endpoint '/rest/management/pwhconnection/config'" do
   block do
-    Dynatrace::EndpointHelpers.wait_until_rest_endpoint_is_ready!('https://localhost:8021/rest/management/pwhconnection/config')
+    Dynatrace::EndpointHelpers.wait_until_rest_endpoint_is_ready!('https://localhost:8021/rest/management/pwhconnection/config', max_boot_time)
   end
   only_if { do_pwh_connection }
 end

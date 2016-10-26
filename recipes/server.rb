@@ -151,12 +151,11 @@ service name.to_s do
   action       [:restart, :enable]
 end
 
+max_boot_time = node['dynatrace']['server']['max_boot_time']
 [collector_port, 2021, 8021, 9911].each do |port|
   ruby_block "Waiting for port #{port} to become available" do
     block do
-      # Set a longer timeout due to the time to open the collector port
-      # (see log "[SelfMonitoringLauncher] Waiting for self-monitoring Collector startup (max: 90 seconds)")
-      Dynatrace::EndpointHelpers.wait_until_port_is_open(port, 300) # wait 5 minutes
+      Dynatrace::EndpointHelpers.wait_until_port_is_open(port, max_boot_time)
     end
   end
 end
