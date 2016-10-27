@@ -49,9 +49,6 @@ if [ -z "${PROCESSPID}" ]; then
   PROCESSPID=`ps -e | grep ${GREPARG} | awk '{{print $1}}'`
 fi
 
-# Workaround for problem with 'service dynaTraceAnalysis start' command (see JLT-162244)
-[ -f /etc/profile.d/jdk.sh ] && . /etc/profile.d/jdk.sh
-
 case "$1" in
 'start')
   if [ -z "${PROCESSPID}" ]; then
