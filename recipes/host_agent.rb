@@ -7,6 +7,7 @@
 
 name = 'Host Agent'
 include_recipe 'dynatrace::prerequisites'
+include_recipe 'dynatrace::java'
 include_recipe 'dynatrace::dynatrace_user'
 
 raise 'Unsupported platform family.' unless platform_family?('debian', 'fedora', 'rhel') # platform_family?('rhel') and node_kernel_machine == 'x86_64'

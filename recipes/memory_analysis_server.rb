@@ -7,6 +7,7 @@
 
 include_recipe 'dynatrace::node_info'
 include_recipe 'dynatrace::prerequisites'
+include_recipe 'dynatrace::java'
 include_recipe 'dynatrace::dynatrace_user'
 
 name = 'Dynatrace Memory Analysis Server'

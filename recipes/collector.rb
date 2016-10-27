@@ -6,7 +6,7 @@
 #
 
 include_recipe 'dynatrace::prerequisites'
-include_recipe 'java'
+include_recipe 'dynatrace::java'
 include_recipe 'dynatrace::dynatrace_user'
 
 name = 'Dynatrace Collector'

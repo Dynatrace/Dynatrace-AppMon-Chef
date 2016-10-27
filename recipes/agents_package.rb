@@ -6,6 +6,7 @@
 #
 
 include_recipe 'dynatrace::prerequisites'
+include_recipe 'dynatrace::java'
 
 name = 'Dynatrace Agents Package'
 
