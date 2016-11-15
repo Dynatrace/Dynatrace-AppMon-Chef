@@ -9,6 +9,9 @@
 use_inline_resources
 
 action :run do
+  if !new_resource.file_name.nil? && run_context.has_cookbook_file_in_cookbook?(cookbook_name, new_resource.file_name) && !new_resource.file_url.nil?
+    raise "There are file name(#{new_resource.file_name}) and file url(#{new_resource.file_url}) specified. Specify one of them to use locally provided file or to download file using url."
+  end
   cookbook_file "Copy file #{new_resource.file_name} to #{new_resource.path}" do
     source new_resource.file_name
     path   new_resource.path
