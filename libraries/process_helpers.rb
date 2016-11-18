@@ -10,6 +10,7 @@ require 'net/http'
 require 'open-uri'
 require 'socket'
 require 'timeout'
+require 'English' # $CHILD_STATUS.pid
 
 module Dynatrace
   # Helper methods related to handling system processes
@@ -69,12 +70,13 @@ module Dynatrace
       #        end
       # this part working and fixes code above
       pid_str = `#{search_processes_cmd}`
+      pgrep_pid = $CHILD_STATUS.pid
       unless pid_str.empty?
         text = []
         text << pid_str.lines.map(&:chomp)
         text.each do |x|
           x.each do |y|
-            pids << y.to_i
+            pids << y.to_i unless y.to_i == pgrep_pid
           end
         end
       end
