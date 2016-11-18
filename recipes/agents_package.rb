@@ -38,21 +38,33 @@ directory 'Create the installer cache directory' do
   action :create
 end
 
+ruby_block name.to_s do
+  block do
+    kernel = node['kernel']['machine'].include?('64') ? '64' : ''
+    node.set[:dynatrace][:agents_package][:installation][:is_required] = Dynatrace::PackageHelpers.requires_installation?(installer_prefix_dir, installer_path, "agent/lib#{kernel}/libdtagent.so", type = :jar)
+    not_if { platform_family?('windows') }
+  end
+end
+
+fresh_installer_action = "#{name} installer changed"
 dynatrace_copy_or_download_file name.to_s do
   file_name       installer_file_name
   file_url        installer_file_url
   path            installer_path
   dynatrace_owner dynatrace_owner
   dynatrace_group dynatrace_group
+  notifies :run, "ruby_block[#{fresh_installer_action}]", :immediately
+end
+
+ruby_block fresh_installer_action.to_s do
+  block do
+    raise "The downloaded installer package would overwrite existing installation of the #{name}."
+  end
+  action :nothing
+  not_if { node[:dynatrace][:agents_package][:installation][:is_required] || platform_family?('windows') }
 end
 
 if platform_family?('debian', 'fedora', 'rhel')
-  ruby_block name.to_s do
-    block do
-      kernel = node['kernel']['machine'].include?('64') ? '64' : ''
-      node.set[:dynatrace][:agents_package][:installation][:is_required] = Dynatrace::PackageHelpers.requires_installation?(installer_prefix_dir, installer_path, "agent/lib#{kernel}/libdtagent.so", type = :jar)
-    end
-  end
 
   directory "Create the installation directory #{installer_prefix_dir}" do
     path      installer_prefix_dir

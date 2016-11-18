@@ -41,6 +41,13 @@ directory 'Create the installer cache directory' do
   action :create
 end
 
+ruby_block name.to_s do
+  block do
+    node.set[:dynatrace][:memory_analysis_server][:installation][:is_required] = Dynatrace::PackageHelpers.requires_installation?(installer_prefix_dir, installer_path, 'dtanalysisserver', type = :jar)
+  end
+end
+
+fresh_installer_action = "#{name} installer changed"
 dynatrace_copy_or_download_file name.to_s do
   file_name       installer_file_name
   file_url        installer_file_url
@@ -49,10 +56,12 @@ dynatrace_copy_or_download_file name.to_s do
   dynatrace_group dynatrace_group
 end
 
-ruby_block name.to_s do
+ruby_block fresh_installer_action.to_s do
   block do
-    node.set[:dynatrace][:memory_analysis_server][:installation][:is_required] = Dynatrace::PackageHelpers.requires_installation?(installer_prefix_dir, installer_path, 'dtanalysisserver', type = :jar)
+    raise "The downloaded installer package would overwrite existing installation of the #{name}."
   end
+  action :nothing
+  not_if { node[:dynatrace][:memory_analysis_server][:installation][:is_required] }
 end
 
 directory "Create the installation directory #{installer_prefix_dir}" do
@@ -61,7 +70,6 @@ directory "Create the installation directory #{installer_prefix_dir}" do
   group     dynatrace_group unless ::File.exist?(installer_prefix_dir)
   recursive true
   action    :create
-  only_if { node[:dynatrace][:memory_analysis_server][:installation][:is_required] }
 end
 
 dynatrace_run_jar_installer name.to_s do
@@ -73,13 +81,22 @@ dynatrace_run_jar_installer name.to_s do
   only_if { node[:dynatrace][:memory_analysis_server][:installation][:is_required] }
 end
 
+config_changed_action = "#{name} config changed"
 dynatrace_configure_init_scripts name.to_s do
   installer_prefix_dir installer_prefix_dir
   scripts              init_scripts
   dynatrace_owner      dynatrace_owner
   dynatrace_group      dynatrace_group
   variables(:server_port => server_port, :jvm_xmx => memory_analysis_server_jvm_xmx, :jvm_xms => memory_analysis_server_jvm_xms, :jvm_perm_size => memory_analysis_server_jvm_perm_size, :jvm_max_perm_size => memory_analysis_server_jvm_max_perm_size)
+  notifies :run, "ruby_block[#{config_changed_action}]", :immediately
+end
+
+# A trick to not restart the server on first install
+ruby_block config_changed_action do
+  block {}
   notifies :restart, "service[#{name}]", :immediately
+  action :nothing
+  not_if { node[:dynatrace][:memory_analysis_server][:installation][:is_required] }
 end
 
 service name.to_s do
@@ -91,6 +108,6 @@ end
 
 ruby_block "Waiting for port #{server_port} to become available" do
   block do
-    Dynatrace::EndpointHelpers.wait_until_port_is_open(server_port)
+    Dynatrace::EndpointHelpers.wait_until_port_is_open(server_port, 180)
   end
 end

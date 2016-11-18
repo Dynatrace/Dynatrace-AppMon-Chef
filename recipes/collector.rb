@@ -45,8 +45,7 @@ end
 
 ruby_block "Check if #{name} already installed" do
   block do
-    node.set[:dynatrace][:collector][:installation][:was_installed] = Dynatrace::PackageHelpers.requires_installation?(installer_prefix_dir, installer_path, 'collector', type = :jar)
-    node.set[:dynatrace][:collector][:installation][:is_required] = node[:dynatrace][:collector][:installation][:was_installed]
+    node.set[:dynatrace][:collector][:installation][:is_required] = Dynatrace::PackageHelpers.requires_installation?(installer_prefix_dir, installer_path, 'collector', type=:jar)
   end
 end
 
@@ -62,9 +61,10 @@ end
 
 ruby_block fresh_installer_action.to_s do
   block do
-    node.set[:dynatrace][:collector][:installation][:is_required] = true
+    raise "The downloaded installer package would overwrite existing installation of the #{name}."
   end
   action :nothing
+  not_if { node[:dynatrace][:collector][:installation][:is_required] }
 end
 
 directory "Create the installation directory #{installer_prefix_dir}" do
@@ -73,7 +73,6 @@ directory "Create the installation directory #{installer_prefix_dir}" do
   group     dynatrace_group unless ::File.exist?(installer_prefix_dir)
   recursive true
   action    :create
-  only_if { node[:dynatrace][:collector][:installation][:is_required] }
 end
 
 dynatrace_run_jar_installer name.to_s do
@@ -85,14 +84,7 @@ dynatrace_run_jar_installer name.to_s do
   only_if { node[:dynatrace][:collector][:installation][:is_required] }
 end
 
-service name.to_s do
-  service_name service
-  # For Debian and Ubuntu distros - to correctly stop our service we need the status support which is disabled by default
-  supports     :status => true
-  action       [:stop, :enable]
-  only_if { node[:dynatrace][:collector][:installation][:was_installed] }
-end
-
+config_changed_action = "#{name} config changed"
 dynatrace_configure_init_scripts name.to_s do
   installer_prefix_dir installer_prefix_dir
   scripts              init_scripts
@@ -105,22 +97,26 @@ dynatrace_configure_init_scripts name.to_s do
             :jvm_xms => collector_jvm_xms,
             :jvm_perm_size => collector_jvm_perm_size,
             :jvm_max_perm_size => collector_jvm_max_perm_size)
+  notifies :run, "ruby_block[#{config_changed_action}]", :immediately
 end
 
-file "#{installer_prefix_dir}/dynatrace/collector/conf/collector.config.xml" do
-  action :delete
-  ignore_failure true
+# A trick to not restart the server on first install
+ruby_block config_changed_action do
+  block {}
+  notifies :restart, "service[#{name}]", :immediately
+  action :nothing
+  not_if { node[:dynatrace][:collector][:installation][:is_required] }
 end
 
 service name.to_s do
   service_name service
   # For Debian and Ubuntu distros - to correctly stop our service we need the status support which is disabled by default
   supports     :status => true
-  action       [:restart, :enable]
+  action       [:start, :enable]
 end
 
 ruby_block "Waiting for port #{agent_port} to become available" do
   block do
-    Dynatrace::EndpointHelpers.wait_until_port_is_open(agent_port, 240, '127.0.0.1', 'yes')
+    Dynatrace::EndpointHelpers.wait_until_port_is_open(agent_port, 240)
   end
 end

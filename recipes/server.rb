@@ -20,8 +20,6 @@ sizing = node['dynatrace']['server']['sizing']
 
 collector_port = node['dynatrace']['server']['collector_port']
 
-external_hostname = node['dynatrace']['server']['externalhostname']
-
 dynatrace_owner = node['dynatrace']['owner']
 dynatrace_group = node['dynatrace']['group']
 
@@ -61,9 +59,10 @@ end
 
 ruby_block fresh_installer_action.to_s do
   block do
-    node.set[:dynatrace][:server][:installation][:is_required] = true
+    raise "The downloaded installer package would overwrite existing installation of the #{name}."
   end
   action :nothing
+  not_if { node[:dynatrace][:server][:installation][:is_required] }
 end
 
 directory "Create the installation directory #{installer_prefix_dir}" do
@@ -72,7 +71,6 @@ directory "Create the installation directory #{installer_prefix_dir}" do
   group     dynatrace_group unless ::File.exist?(installer_prefix_dir)
   recursive true
   action    :create
-  only_if { node[:dynatrace][:server][:installation][:is_required] }
 end
 
 dynatrace_run_jar_installer name.to_s do
@@ -84,22 +82,14 @@ dynatrace_run_jar_installer name.to_s do
   only_if { node[:dynatrace][:server][:installation][:is_required] }
 end
 
-service "Stop service #{name}" do
-  service_name service
-  # For Debian and Ubuntu distros - to correctly stop our service we need the status support which is disabled by default
-  supports :status => true
-  action [:stop]
-  ignore_failure true # fails on Debian 7.8 on clean installation
-end
-
-server_config_xml_file = "#{installer_prefix_dir}/dynatrace/server/conf/server.config.xml"
-
+config_changed_action = "#{name} config changed"
 dynatrace_configure_init_scripts name.to_s do
   installer_prefix_dir installer_prefix_dir
   scripts              init_scripts
   dynatrace_owner      dynatrace_owner
   dynatrace_group      dynatrace_group
   variables(:collector_port => collector_port)
+  notifies :run, "ruby_block[#{config_changed_action}]", :immediately
 end
 
 dynatrace_configure_ini_files "#{name} sizing=#{sizing}" do
@@ -108,47 +98,22 @@ dynatrace_configure_ini_files "#{name} sizing=#{sizing}" do
   dynatrace_owner      dynatrace_owner
   dynatrace_group      dynatrace_group
   variables(:memory => sizing)
+  notifies :run, "ruby_block[#{config_changed_action}]", :immediately
+end
+
+# A trick to not restart the server on first install
+ruby_block config_changed_action do
+  block {}
+  notifies :restart, "service[#{name}]", :immediately
+  action :nothing
+  not_if { node[:dynatrace][:server][:installation][:is_required] }
 end
 
 service name.to_s do
   service_name service
   # For Debian and Ubuntu distros - to correctly stop our service we need the status support which is disabled by default
   supports     :status => true
-  action       [:start]
-end
-
-ruby_block "Wait to set external host name in #{server_config_xml_file}" do
-  # TODO: there should be a REST API to check if server is initialized
-  block do
-    begin
-      Timeout.timeout(60) do
-        loop do
-          break if ::File.exist? server_config_xml_file
-          Chef::Log.info "Waiting for file #{server_config_xml_file} to appear..."
-          sleep 1
-        end
-      end
-    rescue Timeout::Error
-      raise "#{server_config_xml_file} did not appear"
-    end
-    # Leave some extra time for the server to avoid file read/write hazards
-    sleep 10
-  end
-  only_if { node[:dynatrace][:server][:installation][:is_required] }
-end
-
-ruby_block "Set external host name in #{server_config_xml_file}" do
-  block do
-    Chef::Log.info "External host name is: #{external_hostname}"
-    Dynatrace::FileHelpers.file_replace(server_config_xml_file.to_s, ' externalhostname="[a-zA-Z0-9._-]*"', " externalhostname=\"#{external_hostname}\"")
-  end
-end
-
-service name.to_s do
-  service_name service
-  # For Debian and Ubuntu distros - to correctly stop our service we need the status support which is disabled by default
-  supports     :status => true
-  action       [:restart, :enable]
+  action       [:start, :enable]
 end
 
 max_boot_time = node['dynatrace']['server']['max_boot_time']

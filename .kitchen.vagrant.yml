@@ -215,7 +215,6 @@ suites:
       dynatrace:
         server:
           do_pwh_connection: true
-          externalhostname: "myaddr"
           sizing: small
 #          linux:
 #            installer:

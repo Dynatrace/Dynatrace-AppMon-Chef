@@ -81,8 +81,10 @@ module Dynatrace
       "#{installer_prefix_dir}/#{shell.stdout}"
     end
 
+    # This method returns true if an package installer exists and a specific path to the installed package is present in
+    # the filesystem. 
     def self.requires_installation?(installer_prefix_dir, installer_path, component_path_part = '', type = :jar)
-      return false unless File.exist?(installer_path)
+      return true unless File.exist?(installer_path)
       install_dir = get_install_dir_from_installer(installer_path, type)
       # puts "install_dir is #{install_dir}"
       path_to_check = "#{installer_prefix_dir}/#{install_dir}/#{component_path_part}"
