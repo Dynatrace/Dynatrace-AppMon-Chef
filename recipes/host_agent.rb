@@ -29,6 +29,7 @@ ruby_block name.to_s do
   block do
     kernel = node['host_agent']['installer']['bitsize']
     node.set[:dynatrace][:host_agent][:installation][:is_required] = Dynatrace::PackageHelpers.requires_installation?(installer_prefix_dir, installer_path, "agent/lib#{kernel}/dthostagent", type = :tar)
+    node.set[:dynatrace][:host_agent][:config_changed] = false
   end
 end
 
@@ -81,13 +82,6 @@ ruby_block "Setting the name and collector address in #{config_path}" do
   end
 end
 
-# A workaround to an issue with ruby_block which always fire notifications
-ruby_block "Fire service restart notification if '#{config_path}' has changed" do
-  block {}
-  notifies :run, "ruby_block[#{config_changed_action}]", :immediately
-  only_if { node[:dynatrace][:host_agent][:config_changed] }
-end
-
 init_scripts = [service_name]
 dynatrace_configure_init_scripts name.to_s do
   installer_prefix_dir installer_prefix_dir
@@ -97,12 +91,18 @@ dynatrace_configure_init_scripts name.to_s do
   notifies :run, "ruby_block[#{config_changed_action}]", :immediately
 end
 
-# A trick to not restart the server on first install
+# A trick to restart server only once on configuration change
 ruby_block config_changed_action do
-  block {}
+  block do
+    node.set[:dynatrace][:host_agent][:config_changed] = true
+  end
   action :nothing
+end
+
+ruby_block "Restart #{name}" do
+  block {}
   notifies :restart, "service[#{name}]", :immediately
-  not_if { node[:dynatrace][:host_agent][:installation][:is_required] }
+  only_if { node[:dynatrace][:host_agent][:config_changed] && !node[:dynatrace][:host_agent][:installation][:is_required] }
 end
 
 service name do

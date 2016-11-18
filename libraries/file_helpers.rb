@@ -49,12 +49,7 @@ module Dynatrace
       FileUtils.touch(path) unless ::File.exist?(path)
       File.open(path, 'r') do |f|
         f.each_line do |line|
-          if (line =~ /#{cond_regex}/)
-            puts "matched line '#{line}'"
-            return false
-            else
-            puts "non matched line '#{line}' '#{cond_regex}'"
-          end
+          return false if line =~ /#{cond_regex}/
         end
       end
 

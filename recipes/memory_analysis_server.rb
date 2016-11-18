@@ -88,15 +88,7 @@ dynatrace_configure_init_scripts name.to_s do
   dynatrace_owner      dynatrace_owner
   dynatrace_group      dynatrace_group
   variables(:server_port => server_port, :jvm_xmx => memory_analysis_server_jvm_xmx, :jvm_xms => memory_analysis_server_jvm_xms, :jvm_perm_size => memory_analysis_server_jvm_perm_size, :jvm_max_perm_size => memory_analysis_server_jvm_max_perm_size)
-  notifies :run, "ruby_block[#{config_changed_action}]", :immediately
-end
-
-# A trick to not restart the server on first install
-ruby_block config_changed_action do
-  block {}
   notifies :restart, "service[#{name}]", :immediately
-  action :nothing
-  not_if { node[:dynatrace][:memory_analysis_server][:installation][:is_required] }
 end
 
 service name.to_s do

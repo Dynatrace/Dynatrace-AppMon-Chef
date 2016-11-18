@@ -84,7 +84,6 @@ dynatrace_run_jar_installer name.to_s do
   only_if { node[:dynatrace][:collector][:installation][:is_required] }
 end
 
-config_changed_action = "#{name} config changed"
 dynatrace_configure_init_scripts name.to_s do
   installer_prefix_dir installer_prefix_dir
   scripts              init_scripts
@@ -97,15 +96,7 @@ dynatrace_configure_init_scripts name.to_s do
             :jvm_xms => collector_jvm_xms,
             :jvm_perm_size => collector_jvm_perm_size,
             :jvm_max_perm_size => collector_jvm_max_perm_size)
-  notifies :run, "ruby_block[#{config_changed_action}]", :immediately
-end
-
-# A trick to not restart the server on first install
-ruby_block config_changed_action do
-  block {}
   notifies :restart, "service[#{name}]", :immediately
-  action :nothing
-  not_if { node[:dynatrace][:collector][:installation][:is_required] }
 end
 
 service name.to_s do

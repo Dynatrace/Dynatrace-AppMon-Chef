@@ -44,6 +44,7 @@ end
 ruby_block "Check if #{name} already installed #{installer_prefix_dir} #{installer_path}" do
   block do
     node.set[:dynatrace][:server][:installation][:is_required] = Dynatrace::PackageHelpers.requires_installation?(installer_prefix_dir, installer_path, 'server', type = :jar)
+    node.set[:dynatrace][:server][:config_changed] = false
   end
 end
 
@@ -101,12 +102,18 @@ dynatrace_configure_ini_files "#{name} sizing=#{sizing}" do
   notifies :run, "ruby_block[#{config_changed_action}]", :immediately
 end
 
-# A trick to not restart the server on first install
+# A trick to server only once on configuration change
 ruby_block config_changed_action do
+  block do
+    node.set[:dynatrace][:server][:config_changed] = true
+  end
+  action :nothing
+end
+
+ruby_block "Restart #{name}" do
   block {}
   notifies :restart, "service[#{name}]", :immediately
-  action :nothing
-  not_if { node[:dynatrace][:server][:installation][:is_required] }
+  only_if { node[:dynatrace][:server][:config_changed] && !node[:dynatrace][:server][:installation][:is_required] }
 end
 
 service name.to_s do
