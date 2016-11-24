@@ -107,10 +107,41 @@ describe 'Dynatrace Server Performance Warehouse Configuration' do
     expect(data['pwhconnectionconfiguration']['dbms']).to eq('postgresql')
     expect(data['pwhconnectionconfiguration']['dbname']).to eq('dynatrace-pwh')
     expect(data['pwhconnectionconfiguration']['user']).to eq('dynatrace')
-    expect(data['pwhconnectionconfiguration']['password']).to eq('*********')
+    expect(data['pwhconnectionconfiguration']['password']).to match(/\*+/)
     expect(data['pwhconnectionconfiguration']['usessl']).to eq(false)
 
     # We do not check PWH connection status as the configuration is fake. Furthermore license key is required before
     # trying to enable the connection.
+  end
+end
+
+describe 'Dynatrace Server LDAP Configuration' do
+  it 'server should respond with correct LDAP configuration' do
+    uri = URI('https://localhost:8021/api/v2/usermanagement/ldap')
+
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+    request = Net::HTTP::Get.new(uri, 'Accept' => 'application/json', 'Content-Type' => 'application/json')
+    request.basic_auth('admin', 'admin')
+    response = http.request(request)
+
+    expect(response.code).to eq('200')
+
+    data = JSON.parse(response.body)
+    expect(data['host']).to eq('localhost')
+    expect(data['port']).to eq(1234)
+    expect(data['usessl']).to eq(true)
+    expect(data['bindpassword']).to match(/\*+/)
+    expect(data['binddn']).to eq('LDAP_Dynasprint')
+    expect(data['useraccountattribute']).to eq('sAMAccountName')
+    expect(data['usernameattribute']).to eq('name')
+    expect(data['useremailattribute']).to eq('mail')
+    expect(data['memberattribute']).to eq('memberOf')
+    expect(data['groupobjectclass']).to eq('group')
+    expect(data['groupdescriptionattribute']).to eq('description')
+
+    # We do not check LDAP connection status as the configuration is fake.
   end
 end

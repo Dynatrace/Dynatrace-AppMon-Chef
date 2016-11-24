@@ -55,3 +55,10 @@ default['dynatrace']['server']['pwh_connection']['password'] = 'dynatrace'
 # Set a longer boot timeout due to the time to open the collector port
 # (see log "[SelfMonitoringLauncher] Waiting for self-monitoring Collector startup (max: 90 seconds)")
 default['dynatrace']['server']['max_boot_time'] = 300 # in seconds
+
+# LDAP configuration
+default['dynatrace']['server']['ldap']['addr'] = nil
+default['dynatrace']['server']['ldap']['port'] = nil
+default['dynatrace']['server']['ldap']['binddn'] = nil
+default['dynatrace']['server']['ldap']['bindpassword'] = nil
+default['dynatrace']['server']['ldap']['basedn'] = nil
