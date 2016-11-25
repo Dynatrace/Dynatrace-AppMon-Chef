@@ -61,11 +61,20 @@ if platform_family?('debian', 'fedora', 'rhel')
     action    :create
   end
 
+  ruby_block "Check if #{name} already installed" do
+    block do
+      kernel = node['kernel']['machine'].include?('64') ? '64' : ''
+      node.set[:dynatrace][:wsagent_package][:installation][:is_required] = \
+      Dynatrace::PackageHelpers.requires_installation?(installer_prefix_dir, installer_path, "agent/lib#{kernel}/dtwsagent", type=:tar)
+    end
+  end
+
   dynatrace_run_tar_installer name.to_s do
     installer_path       installer_path
     installer_prefix_dir installer_prefix_dir
     dynatrace_owner      dynatrace_owner
     dynatrace_group      dynatrace_group
+    only_if { node[:dynatrace][:wsagent_package][:installation][:is_required] }
   end
 
   dynatrace_configure_init_scripts name.to_s do
