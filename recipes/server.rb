@@ -41,7 +41,7 @@ directory 'Create the installer cache directory' do
   action :create
 end
 
-ruby_block "Check if #{name} already installed #{installer_prefix_dir} #{installer_path}" do
+ruby_block "Check if #{name} already installed" do
   block do
     node.set[:dynatrace][:server][:installation][:is_required] = Dynatrace::PackageHelpers.requires_installation?(installer_prefix_dir, installer_path, 'server', type = :jar)
     node.set[:dynatrace][:server][:config_changed] = false
