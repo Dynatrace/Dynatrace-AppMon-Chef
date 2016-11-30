@@ -4,6 +4,7 @@ metadata
 
 cookbook 'apt'
 cookbook 'java'
+cookbook 'line'
 
 group :integration do
   cookbook 'apache2'

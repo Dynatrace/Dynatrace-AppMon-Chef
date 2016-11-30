@@ -6,6 +6,7 @@
 #
 
 include_recipe 'dynatrace::wsagent_package'
+include_recipe 'line'
 
 name = 'Dynatrace Apache WebServer Agent'
 
@@ -18,12 +19,12 @@ arch = node['dynatrace']['apache_wsagent']['arch']
 agent_path = node['dynatrace']['apache_wsagent']['linux'][arch]['agent_path']
 node.set['dynatrace']['apache_wsagent']['agent_path'] = agent_path
 
-ruby_block "Inject the #{name} into Apache HTTPD's config file #{apache_config_file_path}" do
-  block do
-    search_pattern = 'LoadModule dtagent_module'
-    line_to_add = "#{search_pattern} \"#{agent_path}\""
-    Dynatrace::FileHelpers.file_append_or_replace_line(apache_config_file_path, search_pattern, line_to_add)
-  end
+search_pattern = '^LoadModule\s+dtagent_module\b'
+line_to_add = "LoadModule dtagent_module \"#{agent_path}\""
+replace_or_add "Inject the #{name} into Apache HTTPD's config file #{apache_config_file_path}" do
+  path apache_config_file_path
+  pattern search_pattern
+  line line_to_add
   notifies :restart, "service[#{apache_daemon}]" unless apache_daemon.empty?
 end
 
