@@ -14,6 +14,7 @@ end
 
 depends 'apache2'
 depends 'java'
+depends 'line', '>= 0.6.3'
 
 recipe 'dynatrace', 'Installs the Dynatrace Server and Agents package.'
 

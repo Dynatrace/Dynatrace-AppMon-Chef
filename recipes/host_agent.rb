@@ -9,6 +9,7 @@ name = 'Host Agent'
 include_recipe 'dynatrace::prerequisites'
 include_recipe 'dynatrace::java'
 include_recipe 'dynatrace::dynatrace_user'
+include_recipe 'line'
 
 raise 'Unsupported platform family.' unless platform_family?('debian', 'fedora', 'rhel') # platform_family?('rhel') and node_kernel_machine == 'x86_64'
 
@@ -71,14 +72,19 @@ config_changed_action = "#{name} config changed"
 host_agent_name = node['dynatrace']['host_agent']['host_agent_name']
 host_agent_collector = node['dynatrace']['host_agent']['collector']
 config_path = "#{installer_prefix_dir}/dynatrace/agent/conf/dthostagent.ini"
-ruby_block "Setting the name and collector address in #{config_path}" do
-  block do
-    updated = false
-    agent_name_line = "Name #{host_agent_name}"
-    updated = Dynatrace::FileHelpers.file_cond_replace_line(config_path, '^Name', agent_name_line, "#{agent_name_line}\\b") || updated
-    collector_addr_line = "Server #{host_agent_collector}"
-    updated = Dynatrace::FileHelpers.file_cond_replace_line(config_path, '^Server', collector_addr_line, "#{collector_addr_line}\\b") || updated
-    node.set[:dynatrace][:host_agent][:config_changed] = updated
+
+lines_to_patch = []
+agent_name_line = "Name #{host_agent_name}"
+lines_to_patch << ['^Name\b', agent_name_line]
+collector_addr_line = "Server #{host_agent_collector}"
+lines_to_patch << ['^Server\b', collector_addr_line]
+
+lines_to_patch.each do |patch_params|
+  replace_or_add "Ensuring '#{patch_params[1]}' line is present in #{config_path}" do
+    path config_path
+    pattern patch_params[0]
+    line patch_params[1]
+    notifies :run, "ruby_block[#{config_changed_action}]", :immediately
   end
 end
 

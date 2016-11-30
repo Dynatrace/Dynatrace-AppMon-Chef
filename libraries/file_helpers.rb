@@ -10,6 +10,7 @@ require 'fileutils'
 module Dynatrace
   # File helper methods
   module FileHelpers
+    # TODO: to be removed (not used anymore)
     def self.file_append_or_replace_line(path, regex, line)
       file = Chef::Util::FileEdit.new(path)
       unless file.insert_line_if_no_match(/#{regex}/, line)
@@ -36,27 +37,13 @@ module Dynatrace
       true
     end
 
+    # TODO: to be removed (not used anymore)
     def self.file_replace_line(path, regex, replace)
       FileUtils.touch(path) unless ::File.exist?(path)
       file = Chef::Util::FileEdit.new(path)
       updated = file.search_file_replace_line(/#{regex}/, replace)
       file.write_file
       updated
-    end
-
-    def self.file_cond_replace_line(path, regex, replace, cond_regex = nil)
-      cond_regex = replace if cond_regex.nil?
-      FileUtils.touch(path) unless ::File.exist?(path)
-      File.open(path, 'r') do |f|
-        f.each_line do |line|
-          return false if line =~ /#{cond_regex}/
-        end
-      end
-
-      file = Chef::Util::FileEdit.new(path)
-      file.search_file_replace_line(/#{regex}/, replace)
-      file.write_file
-      true
     end
   end
 end
