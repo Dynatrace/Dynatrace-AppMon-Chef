@@ -125,6 +125,12 @@ This recipe sets the connection to the Performance Warehouse on the Dynatrace Se
 
 **Note:** This recipe will work after installing the Server License (see `server_license` recipe).
 
+### server_users
+
+*Configures server user accounts.*
+
+This recipe creates/updates Dynatrace Server user accounts. The user account configuration is passed as node attributes. Please refer to the `.kitchen.yml` file for details.
+
 ### wsagent_package
 
 *Installs the Dynatrace WebServer Agent package.*
