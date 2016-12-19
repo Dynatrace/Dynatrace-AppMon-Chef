@@ -35,21 +35,14 @@ node['dynatrace']['server']['user_config']['groups'].to_hash.each do |group_id, 
       rest_user = node['dynatrace']['server']['username']
       rest_pass = node['dynatrace']['server']['password']
 
-      uri = URI(URI.escape("#{rest_group_config_url}/#{group_id}"))
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true
-      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      response = Dynatrace::EndpointHelpers.rest_put(URI.escape("#{rest_group_config_url}/#{group_id}"),
+                                                     rest_user,
+                                                     rest_pass,
+                                                     JSON.dump(group_descr),
+                                                     :success_codes => %w(201 204 403))
 
-      request = Net::HTTP::Put.new(uri, 'Accept' => 'application/json', 'Content-Type' => 'application/json')
-      request.basic_auth(rest_user, rest_pass)
-      request.body = JSON.dump(group_descr)
-
-      response = http.request(request)
-
-      # Pass over attempts to modify a group (error 403)
-      raise "ERROR: #{response.body}" unless %w(201 204 403).include?(response.code)
+      # Pass over attempts to modify a group (error 403) - it is normal for some predefined groups
       Chef::Log.warn "Could not modify group '#{group_id}': #{response.body}" if response.code == '403'
     end
   end
 end
-

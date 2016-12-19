@@ -92,17 +92,8 @@ ruby_block 'Waiting for update installation to finish' do
       retry_sleep = node['dynatrace']['server']['linux']['update']['update_status_retry_sleep']
       Timeout.timeout(timeout) do
         loop do
-          uri = URI(rest_update_status_url)
+          response = Dynatrace::EndpointHelpers.rest_get(rest_update_status_url, user, passwd, :accept => 'application/xml')
 
-          http = Net::HTTP.new(uri.host, uri.port)
-          http.use_ssl = true
-          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-
-          request = Net::HTTP::Get.new(uri, 'Accept' => 'application/xml')
-          request.basic_auth(user, passwd)
-          response = http.request(request)
-
-          raise "Server responded with error '#{response.code} #{response.message}' when trying to check update status" unless response.code == '200'
           xmldoc = REXML::Document.new(response.body)
           isfinished = REXML::XPath.first(xmldoc, '//isfinished').first == 'true'
           if isfinished

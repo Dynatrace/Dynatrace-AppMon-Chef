@@ -30,18 +30,11 @@ node['dynatrace']['server']['user_config']['users'].to_hash.each do |user_id, us
       rest_user = node['dynatrace']['server']['username']
       rest_pass = node['dynatrace']['server']['password']
 
-      uri = URI("#{rest_user_config_url}/#{user_id}")
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true
-      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-
-      request = Net::HTTP::Put.new(uri, 'Accept' => 'application/json', 'Content-Type' => 'application/json')
-      request.basic_auth(rest_user, rest_pass)
-      request.body = JSON.dump(user_descr)
-
-      response = http.request(request)
-
-      raise "ERROR: #{response.body}" unless %w(201 204).include?(response.code)
+      Dynatrace::EndpointHelpers.rest_put(URI.escape("#{rest_user_config_url}/#{user_id}"),
+                                          rest_user,
+                                          rest_pass,
+                                          JSON.dump(user_descr),
+                                          :success_codes => %w(201 204))
     end
   end
 end

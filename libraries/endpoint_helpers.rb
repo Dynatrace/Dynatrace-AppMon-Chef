@@ -88,30 +88,36 @@ EOH
       raise DynatraceNotReady.new(endpoint, timeout)
     end
 
-    def self.rest_get(endpoint, user, pass)
+    def self.rest_get(endpoint, user, pass, options = {})
+      options[:accept] = options.fetch(:accept, 'application/json')
+      options[:success_codes] = options.fetch(:success_codes, %w(200))
+
       uri = URI(endpoint)
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 
-      request = Net::HTTP::Get.new(uri, 'Accept' => 'application/json', 'Content-Type' => 'application/json')
+      request = Net::HTTP::Get.new(uri, 'Accept' => options[:accept], 'Content-Type' => 'application/json')
       request.basic_auth(user, pass)
       response = http.request(request)
-      raise "ERROR: #{response.body}" unless response.code == '200'
+      raise "ERROR: code: #{response.code}, message: #{response.body}" unless options[:success_codes].include?(response.code)
       response
     end
 
-    def self.rest_put(endpoint, user, pass, body, success_codes = ['200'])
+    def self.rest_put(endpoint, user, pass, body, options = {})
+      options[:accept] = options.fetch(:accept, 'application/json')
+      options[:success_codes] = options.fetch(:success_codes, %w(200))
+
       uri = URI(endpoint)
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 
-      request = Net::HTTP::Put.new(uri, 'Accept' => 'application/json', 'Content-Type' => 'application/json')
+      request = Net::HTTP::Put.new(uri, 'Accept' => options[:accept], 'Content-Type' => 'application/json')
       request.basic_auth(user, pass)
       request.body = body
       response = http.request(request)
-      raise "ERROR: #{response.body}" unless success_codes.include?(response.code)
+      raise "ERROR: code: #{response.code}, message: #{response.body}" unless options[:success_codes].include?(response.code)
       response
     end
 

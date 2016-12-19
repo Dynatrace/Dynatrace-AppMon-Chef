@@ -2,6 +2,8 @@
 # Cookbook Name:: dynatrace
 # Recipes:: server_ldap_config
 #
+# NOTE: Works on Dynatrace 7.x onwards
+#
 # Copyright 2016, Dynatrace
 #
 
@@ -23,28 +25,25 @@ basedn = node['dynatrace']['server']['ldap']['basedn']
 
 ruby_block 'Configure LDAP' do
   block do
-    uri = URI(rest_ldap_config_url)
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-
-    request = Net::HTTP::Put.new(uri, 'Accept' => 'application/json', 'Content-Type' => 'application/json')
     rest_user = node['dynatrace']['server']['username']
     rest_pass = node['dynatrace']['server']['password']
-    request.basic_auth(rest_user, rest_pass)
-    request.body = { :host => ldap_addr.to_s,
-                     :port => ldap_port.to_i,
-                     :usessl => true,
-                     :binddn => binddn.to_s,
-                     :bindpassword => bindpassword.to_s,
-                     :basedn => basedn.to_s,
-                     :useraccountattribute => 'sAMAccountName',
-                     :usernameattribute => 'name',
-                     :useremailattribute => 'mail',
-                     :memberattribute => 'memberOf',
-                     :groupobjectclass => 'group',
-                     :groupdescriptionattribute => 'description' }.to_json
+    body = { :host => ldap_addr.to_s,
+             :port => ldap_port.to_i,
+             :usessl => true,
+             :binddn => binddn.to_s,
+             :bindpassword => bindpassword.to_s,
+             :basedn => basedn.to_s,
+             :useraccountattribute => 'sAMAccountName',
+             :usernameattribute => 'name',
+             :useremailattribute => 'mail',
+             :memberattribute => 'memberOf',
+             :groupobjectclass => 'group',
+             :groupdescriptionattribute => 'description' }.to_json
 
-    http.request(request)
+    Dynatrace::EndpointHelpers.rest_put(rest_ldap_config_url,
+                                        rest_user,
+                                        rest_pass,
+                                        body,
+                                        :success_codes => %w(204))
   end
 end

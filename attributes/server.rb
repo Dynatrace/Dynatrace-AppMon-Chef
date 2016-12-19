@@ -38,9 +38,6 @@ default['dynatrace']['server']['sizing'] = 'small'
 default['dynatrace']['server']['username'] = 'admin'
 default['dynatrace']['server']['password'] = 'admin'
 
-# Whether a connection to an existing Performance Warehouse (database) shall be established, or not. Requires Dynatrace >= v6.2.
-default['dynatrace']['server']['do_pwh_connection'] = false
-
 # The PWH connection configuration attribute values are just given as an example.
 default['dynatrace']['server']['pwh_connection']['hostname'] = 'localhost'
 default['dynatrace']['server']['pwh_connection']['port'] = '5432'
@@ -51,6 +48,9 @@ default['dynatrace']['server']['pwh_connection']['dbms'] = 'postgresql'
 default['dynatrace']['server']['pwh_connection']['database'] = 'dynatrace-pwh'
 default['dynatrace']['server']['pwh_connection']['username'] = 'dynatrace'
 default['dynatrace']['server']['pwh_connection']['password'] = 'dynatrace'
+
+# Accepted HTTP return codes when setting PWH connection. Used mainly for integration tests
+default['dynatrace']['server']['pwh_connection']['success_codes'] = %w(200)
 
 # Set a longer boot timeout due to the time to open the collector port
 # (see log "[SelfMonitoringLauncher] Waiting for self-monitoring Collector startup (max: 90 seconds)")

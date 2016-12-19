@@ -1,6 +1,6 @@
 # dynatrace Cookbook
 
-This Chef cookbook installs and configures the Dynatrace Application Monitoring 6.5 solution.
+This Chef cookbook installs and configures the Dynatrace Application Monitoring 7.0 solution.
 
 [![Build Status](https://jenkins-01.eastus.cloudapp.azure.com/job/dynatrace-cookbook/badge/icon)](https://jenkins-01.eastus.cloudapp.azure.com/job/dynatrace-cookbook/)
 
@@ -121,21 +121,27 @@ Place the Dynatrace Server License as `dynatrace-license.key` in the cookbook's 
 
 *Sets connection to the Performance Warehouse.*
 
-This recipe sets the connection to the Performance Warehouse on the Dynatrace Server.
+This recipe sets the connection to the Performance Warehouse on the Dynatrace Server. This recipe assumes the Dynatrace Server is up and running. Please refer to the `.kitchen.yml` file for example of usage.
 
 **Note:** This recipe will work after installing the Server License (see `server_license` recipe).
+
+### server_ldap_config
+
+*Configures LDAP connection.*
+
+This recipe configures connection to LDAP through RESTful API. This recipe assumes the Dynatrace Server is up and running. Please refer to the `.kitchen.yml` file for example of usage.
 
 ### server_users
 
 *Configures server user accounts.*
 
-This recipe creates/updates Dynatrace Server user accounts. The user account configuration is passed as node attributes. Please refer to the `.kitchen.yml` file for details.
+This recipe creates/updates Dynatrace Server user accounts through RESTful API. This recipe assumes the Dynatrace Server is up and running. The user account configuration is passed as node attributes. Please refer to the `.kitchen.yml` file for example of usage.
 
 ### server_user_groups
 
 *Configures server groups.*
 
-This recipe creates/updates Dynatrace Server groups. The group configuration is passed as node attributes. Please refer to the `.kitchen.yml` file for details.
+This recipe creates/updates Dynatrace Server groupsthrough RESTful API. This recipe assumes the Dynatrace Server is up and running. The group configuration is passed as node attributes. Please refer to the `.kitchen.yml` file for example of usage.
 
 ### wsagent_package
 
