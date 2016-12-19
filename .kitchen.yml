@@ -225,6 +225,12 @@ suites:
         server:
           do_pwh_connection: true
           sizing: small
+          user_config:
+            users:
+              newuserid:
+                fullname: 'New User'
+                email: new@user.com
+                password: SecretPassword
           ldap:
             addr: 'localhost'
             port: 1234
