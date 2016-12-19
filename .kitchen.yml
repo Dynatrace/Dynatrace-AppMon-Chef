@@ -219,6 +219,7 @@ suites:
       - recipe[dynatrace::server]
       - recipe[dynatrace::server_pwh_connection]
       - recipe[dynatrace::server_ldap_config]
+      - recipe[dynatrace::server_user_groups]
       - recipe[dynatrace::server_users]
     attributes:
       dynatrace:
@@ -226,6 +227,15 @@ suites:
           do_pwh_connection: true
           sizing: small
           user_config:
+            groups:
+              group1:
+                description: 'some description 1'
+                managementrole: 'Guest'
+                ldapgroup: false
+              group2 :
+                description: 'some description 2'
+                managementrole: 'Administrator'
+                ldapgroup: true
             users:
               newuserid:
                 fullname: 'New User'

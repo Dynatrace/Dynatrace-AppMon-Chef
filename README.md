@@ -131,6 +131,12 @@ This recipe sets the connection to the Performance Warehouse on the Dynatrace Se
 
 This recipe creates/updates Dynatrace Server user accounts. The user account configuration is passed as node attributes. Please refer to the `.kitchen.yml` file for details.
 
+### server_user_groups
+
+*Configures server groups.*
+
+This recipe creates/updates Dynatrace Server groups. The group configuration is passed as node attributes. Please refer to the `.kitchen.yml` file for details.
+
 ### wsagent_package
 
 *Installs the Dynatrace WebServer Agent package.*

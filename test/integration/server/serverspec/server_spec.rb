@@ -146,6 +146,51 @@ describe 'Dynatrace Server LDAP Configuration' do
   end
 end
 
+describe 'Dynatrace Server Group Configuration' do
+  it 'server should respond with correct group configuration' do
+    groups_uri = URI('https://localhost:8021/api/v2/usermanagement/groups')
+    http = Net::HTTP.new(groups_uri.host, groups_uri.port)
+    http.use_ssl = true
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+    # 1. Get the list of all groups
+    request = Net::HTTP::Get.new(groups_uri, 'Accept' => 'application/json', 'Content-Type' => 'application/json')
+    request.basic_auth('admin', 'admin')
+    response = http.request(request)
+
+    expect(response.code).to eq('200')
+    data = JSON.parse(response.body)
+    groups = {}
+    data['groups'].each { |g| groups[g['id']] = g['href'] }
+    expect(groups).to have_key('group1')
+    group1_details_url = groups['group1']
+    expect(groups).to have_key('group2')
+    group2_details_url = groups['group2']
+
+    # 2. Get group1 details
+    request = Net::HTTP::Get.new(URI(group1_details_url), 'Accept' => 'application/json', 'Content-Type' => 'application/json')
+    request.basic_auth('admin', 'admin')
+    group1_resp = http.request(request)
+
+    expect(group1_resp.code).to eq('200')
+    group1_details = JSON.parse(group1_resp.body)
+    expect(group1_details['description']).to eq('some description 1')
+    expect(group1_details['managementrole']['id']).to eq('Guest')
+    expect(group1_details['ldapgroup']).to eq(false)
+
+    # 3. Get group2 details
+    request = Net::HTTP::Get.new(URI(group2_details_url), 'Accept' => 'application/json', 'Content-Type' => 'application/json')
+    request.basic_auth('admin', 'admin')
+    group2_resp = http.request(request)
+
+    expect(group2_resp.code).to eq('200')
+    group2_details = JSON.parse(group2_resp.body)
+    expect(group2_details['description']).to eq('some description 2')
+    expect(group2_details['managementrole']['id']).to eq('Administrator')
+    expect(group2_details['ldapgroup']).to eq(true)
+  end
+end
+
 describe 'Dynatrace Server User Configuration' do
   it 'server should respond with correct user configuration' do
     user_uri = URI('https://localhost:8021/api/v2/usermanagement/users/newuserid')
