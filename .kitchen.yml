@@ -219,6 +219,7 @@ suites:
       - recipe[dynatrace::server]
       - recipe[dynatrace::server_pwh_connection]
       - recipe[dynatrace::server_ldap_config]
+      - recipe[dynatrace::server_users]
     attributes:
       dynatrace:
         server:

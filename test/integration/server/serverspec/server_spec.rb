@@ -145,3 +145,24 @@ describe 'Dynatrace Server LDAP Configuration' do
     # We do not check LDAP connection status as the configuration is fake.
   end
 end
+
+describe 'Dynatrace Server User Configuration' do
+  it 'server should respond with correct user configuration' do
+    user_uri = URI('https://localhost:8021/api/v2/usermanagement/users/newuserid')
+    http = Net::HTTP.new(user_uri.host, user_uri.port)
+    http.use_ssl = true
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+    request = Net::HTTP::Get.new(user_uri, 'Accept' => 'application/json', 'Content-Type' => 'application/json')
+    request.basic_auth('admin', 'admin')
+    response = http.request(request)
+
+    expect(response.code).to eq('200')
+    data = JSON.parse(response.body)
+
+    expect(data['userid']).to eq('newuserid')
+    expect(data['fullname']).to eq('New User')
+    expect(data['email']).to eq('new@user.com')
+    # NOTE: The 'ldapuser' property cannot be validated
+  end
+end
