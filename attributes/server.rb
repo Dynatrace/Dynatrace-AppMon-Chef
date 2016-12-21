@@ -65,6 +65,8 @@ default['dynatrace']['server']['ldap']['basedn'] = nil
 
 # Attributes to configure server groups
 default['dynatrace']['server']['user_config']['groups'] = nil
+default['dynatrace']['server']['user_config']['saved_groups_file_path'] = nil
 
 # Attributes to configure server users
 default['dynatrace']['server']['user_config']['users'] = nil
+default['dynatrace']['server']['user_config']['saved_users_file_path'] = nil

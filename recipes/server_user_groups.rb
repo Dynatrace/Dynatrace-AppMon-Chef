@@ -19,6 +19,15 @@ ruby_block "Waiting for endpoint '#{rest_group_config_url}'" do
   end
 end
 
+groups_file_path = node['dynatrace']['server']['user_config']['saved_groups_file_path']
+
+ruby_block "Load groups from file '#{groups_file_path}'" do
+  block do
+    node.set['dynatrace']['server']['user_config']['groups'] = JSON.parse(File.read(groups_file_path))
+  end
+  only_if { ::File.exist?(groups_file_path.to_s) }
+end
+
 # Format of a 'groups' node:
 # group1:
 #   description: 'some description 1'
@@ -29,19 +38,21 @@ end
 #   managementrole: 'Administrator'
 #   ldapgroup: true
 #
-node['dynatrace']['server']['user_config']['groups'].to_hash.each do |group_id, group_descr|
-  ruby_block "Configuring group '#{group_id}'" do
-    block do
-      rest_user = node['dynatrace']['server']['username']
-      rest_pass = node['dynatrace']['server']['password']
 
+ruby_block 'Configuring groups' do
+  block do
+    rest_user = node['dynatrace']['server']['username']
+    rest_pass = node['dynatrace']['server']['password']
+    node['dynatrace']['server']['user_config']['groups'].to_hash.each do |group_id, group_descr|
+      Chef::Log.info "Configuring group '#{group_id}'"
       response = Dynatrace::EndpointHelpers.rest_put(URI.escape("#{rest_group_config_url}/#{group_id}"),
                                                      rest_user,
                                                      rest_pass,
                                                      JSON.dump(group_descr),
                                                      :success_codes => %w(201 204 403))
 
-      # Pass over attempts to modify a group (error 403) - it is normal for some predefined groups
+      # Pass over erroneous attempts to modify a group (error 403) - it is normal for some predefined groups
+      # e.g. 'Personal System Profile Access' group
       Chef::Log.warn "Could not modify group '#{group_id}': #{response.body}" if response.code == '403'
     end
   end

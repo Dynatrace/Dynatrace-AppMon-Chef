@@ -19,17 +19,27 @@ ruby_block "Waiting for endpoint '#{rest_user_config_url}'" do
   end
 end
 
+users_file_path = node['dynatrace']['server']['user_config']['saved_users_file_path']
+
+ruby_block "Load users from file '#{users_file_path}'" do
+  block do
+    node.set['dynatrace']['server']['user_config']['users'] = JSON.parse(File.read(users_file_path))
+  end
+  only_if { ::File.exist?(users_file_path) }
+end
+
 # Format of a 'users' node:
 # newuserid:
 #   fullname: 'New User'
 #   email: new@user.com
 #   password: SecretPassword
-node['dynatrace']['server']['user_config']['users'].to_hash.each do |user_id, user_descr|
-  ruby_block "Configuring user '#{user_id}'" do
-    block do
-      rest_user = node['dynatrace']['server']['username']
-      rest_pass = node['dynatrace']['server']['password']
+ruby_block 'Configuring users' do
+  block do
+    rest_user = node['dynatrace']['server']['username']
+    rest_pass = node['dynatrace']['server']['password']
 
+    node['dynatrace']['server']['user_config']['users'].to_hash.each do |user_id, user_descr|
+      Chef::Log.info "Configuring user #{user_id}"
       Dynatrace::EndpointHelpers.rest_put(URI.escape("#{rest_user_config_url}/#{user_id}"),
                                           rest_user,
                                           rest_pass,
