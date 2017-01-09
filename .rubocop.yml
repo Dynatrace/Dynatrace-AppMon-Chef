@@ -21,3 +21,6 @@ MethodLength:
 
 Metrics/AbcSize:
   Enabled: false
+
+EndOfLine:
+  Enabled: false
