@@ -56,4 +56,10 @@ ruby_block 'Configuring groups' do
       Chef::Log.warn "Could not modify group '#{group_id}': #{response.body}" if response.code == '403'
     end
   end
+  only_if { node['dynatrace']['server']['user_config']['groups'] }
+end
+
+log 'No user groups configuration provided' do
+  level :warn
+  not_if{ node['dynatrace']['server']['user_config']['groups'] }
 end

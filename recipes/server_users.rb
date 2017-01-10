@@ -47,4 +47,11 @@ ruby_block 'Configuring users' do
                                           :success_codes => %w(201 204))
     end
   end
+  only_if { node['dynatrace']['server']['user_config']['users'] }
 end
+
+log 'No user configuration provided' do
+  level :warn
+  not_if{ node['dynatrace']['server']['user_config']['users'] }
+end
+
