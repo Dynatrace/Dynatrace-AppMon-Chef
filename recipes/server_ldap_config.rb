@@ -22,6 +22,7 @@ ldap_port = node['dynatrace']['server']['ldap']['port']
 binddn = node['dynatrace']['server']['ldap']['binddn']
 bindpassword = node['dynatrace']['server']['ldap']['bindpassword']
 basedn = node['dynatrace']['server']['ldap']['basedn']
+certmd5 = node['dynatrace']['server']['ldap']['certificatefingerprint']
 
 ruby_block 'Configure LDAP' do
   block do
@@ -38,7 +39,8 @@ ruby_block 'Configure LDAP' do
              :useremailattribute => 'mail',
              :memberattribute => 'memberOf',
              :groupobjectclass => 'group',
-             :groupdescriptionattribute => 'description' }.to_json
+             :groupdescriptionattribute => 'description',
+             :certificatefingerprint => certmd5 }.to_json
 
     Dynatrace::EndpointHelpers.rest_put(rest_ldap_config_url,
                                         rest_user,
