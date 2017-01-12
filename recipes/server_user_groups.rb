@@ -61,5 +61,5 @@ end
 
 log 'No user groups configuration provided' do
   level :warn
-  not_if{ node['dynatrace']['server']['user_config']['groups'] }
+  not_if { node['dynatrace']['server']['user_config']['groups'] }
 end

@@ -52,6 +52,5 @@ end
 
 log 'No user configuration provided' do
   level :warn
-  not_if{ node['dynatrace']['server']['user_config']['users'] }
+  not_if { node['dynatrace']['server']['user_config']['users'] }
 end
-
