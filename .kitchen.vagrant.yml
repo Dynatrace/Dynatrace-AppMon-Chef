@@ -20,24 +20,16 @@ platforms:
           apache:
             config_file_path: /etc/httpd/conf/httpd.conf
             init_script_path: /etc/init.d/httpd
-      java:
-        jdk_version: 7
 
   - name: debian-7.4
     run_list:
       - recipe[apt]
       - recipe[java]
-    attributes:
-      java:
-        jdk_version: 7
 
   - name: ubuntu-12.04
     run_list:
       - recipe[apt]
       - recipe[java]
-    attributes:
-      java:
-        jdk_version: 7
 
   - name: windows-2012r2
     driver:
