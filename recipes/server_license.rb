@@ -17,7 +17,7 @@ dynatrace_group = node['dynatrace']['group']
 
 raise 'Unsupported platform family.' unless platform_family?('debian', 'fedora', 'rhel')
 installer_prefix_dir = node['dynatrace']['server']['linux']['installer']['prefix_dir']
-license_path = "#{installer_prefix_dir}/dynatrace/server/conf/dtlicense.key"
+license_path = "#{installer_prefix_dir}/dynatrace/server/conf/dtlicense.lic"
 
 dynatrace_copy_or_download_file name.to_s do
   file_name       license_file_name
