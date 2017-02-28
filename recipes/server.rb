@@ -89,7 +89,6 @@ dynatrace_configure_init_scripts name.to_s do
   scripts              init_scripts
   dynatrace_owner      dynatrace_owner
   dynatrace_group      dynatrace_group
-  variables(:collector_port => collector_port)
   notifies :run, "ruby_block[#{config_changed_action}]", :immediately
 end
 
