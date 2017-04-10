@@ -40,6 +40,9 @@ action :run do
   end
 
   dynatrace_delete_directory_by_link delete_install_path_action do
+    #TODO: After "service stop" command exits some files may still be created...
+    retries 2
+    retry_delay 10
     link2delete installation_path
     action :nothing
   end
