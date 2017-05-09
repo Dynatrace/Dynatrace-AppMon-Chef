@@ -1,6 +1,7 @@
 ---
 provisioner:
   name: chef_zero
+  require_chef_omnibus: 12.19.36
 
 driver:
   name: vagrant
@@ -49,7 +50,7 @@ suites:
 #        wsagent_package:
 #          linux:
 #            installer:
-#              file_url:  http://172.18.129.150:8000/dynatrace-wsagent-linux-x86-64.tar
+#              file_url:  http://192.168.1.2:8000/dynatrace-wsagent-linux-x86-64.tar
     excludes:
       - windows-2012r2
 
@@ -67,7 +68,7 @@ suites:
 #        wsagent_package:
 #          linux:
 #            installer:
-#              file_url:  http://172.18.129.150:8000/dynatrace-wsagent-linux-x86-64.tar
+#              file_url:  http://192.168.1.2:8000/dynatrace-wsagent-linux-x86-64.tar
     excludes:
       - windows-2012r2
 
@@ -79,10 +80,10 @@ suites:
 #        agents_package:
 #          linux:
 #            installer:
-#              file_url: http://172.18.129.150:8000/dynatrace-agent-unix.jar
+#              file_url: http://192.168.1.2:8000/dynatrace-agent-unix.jar
 #          windows:
 #            installer:
-#              file_url: http://172.18.129.150:8000/dynatrace-agent-x86.msi
+#              file_url: http://192.168.1.2:8000/dynatrace-agent-x86.msi
 
   - name: agents_package_uninstall
     run_list:
@@ -93,9 +94,22 @@ suites:
 #        agents_package:
 #          linux:
 #            installer:
-#              file_url: http://172.18.129.150:8000/dynatrace-agent-unix.jar
+#              file_url: http://192.168.1.2:8000/dynatrace-agent-unix.jar
     excludes:
       - windows-2012r2
+
+  - name: one_agent
+    run_list:
+      - recipe[dynatrace::one_agent]
+#    attributes:
+#      dynatrace:
+#        one_agent:
+#          linux:
+#            installer:
+#              file_url: http://192.168.1.2:8000/dynatrace-one-agent-linux-x86.tgz
+#          windows:
+#            installer:
+#              file_url: http://192.168.1.2:8000/dynatrace-one-agent-x86.msi
 
   - name: collector
     run_list:
@@ -110,7 +124,7 @@ suites:
             max_perm_size: 384m
 #          linux:
 #            installer:
-#              file_url: http://172.18.129.150:8000/dynatrace-collector.jar
+#              file_url: http://192.168.1.2:8000/dynatrace-collector.jar
     excludes:
       - windows-2012r2
 
@@ -123,7 +137,7 @@ suites:
         collector:
 #          linux:
 #            installer:
-#              file_url: http://172.18.129.150:8000/dynatrace-collector-linux-x86.jar
+#              file_url: http://192.168.1.2:8000/dynatrace-collector-linux-x86.jar
     excludes:
       - windows-2012r2
 
@@ -135,7 +149,7 @@ suites:
 #        agents_package:
 #          windows:
 #            installer:
-#              file_url: http://172.18.129.150:8000/dynatrace-agent-x86.msi
+#              file_url: http://192.168.1.2:8000/dynatrace-agent-x86.msi
         dotnet_agent:
           process_list: [w3wp.exe -ap myApp]
     includes:
@@ -161,7 +175,7 @@ suites:
           collector:
             myhostaddr
 #          installer:
-#            file_url: http://172.18.129.150:8000/dynatrace-hostagent-linux-x86-64.tar
+#            file_url: http://192.168.1.2:8000/dynatrace-hostagent-linux-x86-64.tar
 
   - name: host_agent_uninstall
     run_list:
@@ -171,7 +185,7 @@ suites:
 #      dynatrace:
 #        host_agent:
 #          installer:
-#            file_url: http://172.18.129.150:8000/dynatrace-hostagent-linux-x86-64.tar
+#            file_url: http://192.168.1.2:8000/dynatrace-hostagent-linux-x86-64.tar
 
   - name: iis_wsagent
     run_list:
@@ -181,7 +195,7 @@ suites:
 #        wsagent_package:
 #          windows:
 #            installer:
-#              file_url: http://172.18.129.150:8000/dynatrace-agent-x86.msi
+#              file_url: http://192.168.1.2:8000/dynatrace-agent-x86.msi
     includes:
       - windows-2012r2
 
@@ -196,7 +210,7 @@ suites:
 #        agents_package:
 #          linux:
 #            installer:
-#              file_url: http://172.18.129.150:8000/dynatrace-agent-unix.jar
+#              file_url: http://192.168.1.2:8000/dynatrace-agent-unix.jar
     excludes:
       - windows-2012r2
 
@@ -212,7 +226,7 @@ suites:
           sizing: small
 #          linux:
 #            installer:
-#              file_url: http://172.18.129.150:8000/dynatrace-server-linux-x86-64.jar
+#              file_url: http://192.168.1.2:8000/dynatrace-server-linux-x86-64.jar
     excludes:
       - windows-2012r2
 
@@ -225,7 +239,7 @@ suites:
 #        server:
 #          linux:
 #            installer:
-#              file_url: http://172.18.129.150:8000/dynatrace-server-linux-x86.jar
+#              file_url: http://192.168.1.2:8000/dynatrace-server-linux-x86.jar
     excludes:
       - windows-2012r2
 
@@ -244,9 +258,9 @@ suites:
             update:
               file_url: https://files.dynatrace.com/downloads/fixpacks/dynaTrace-6.3.10.1010.zip
 #            update:
-#              update_file_url: http://172.18.129.150:8000/dynaTrace-6.3.10.1010.zip
+#              update_file_url: http://192.168.1.2:8000/dynaTrace-6.3.10.1010.zip
 #            installer:
-#              file_url: http://172.18.129.150:8000/dynatrace-server-linux-x86-64.jar
+#              file_url: http://192.168.1.2:8000/dynatrace-server-linux-x86-64.jar
     excludes:
       - windows-2012r2
 
@@ -258,10 +272,10 @@ suites:
 #        wsagent_package:
 #          linux:
 #            installer:
-#              file_url: http://172.18.129.150:8000/dynatrace-wsagent-linux-x86-64.tar
+#              file_url: http://192.168.1.2:8000/dynatrace-wsagent-linux-x86-64.tar
 #          windows:
 #            installer:
-#              file_url: http://172.18.129.150:8000/dynatrace-agent-x86.msi
+#              file_url: http://192.168.1.2:8000/dynatrace-agent-x86.msi
 
   - name: wsagent_package_uninstall
     run_list:
@@ -272,6 +286,6 @@ suites:
 #        wsagent_package:
 #          linux:
 #            installer:
-#              file_url: http://172.18.129.150:8000/dynatrace-wsagent-linux-x86-64.tar
+#              file_url: http://192.168.1.2:8000/dynatrace-wsagent-linux-x86-64.tar
     excludes:
       - windows-2012r2
