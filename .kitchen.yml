@@ -208,6 +208,10 @@ suites:
 #            installer:
 #              file_url: http://172.18.129.150:8000/dynatrace-analysisserver-linux-x86.jar
 
+  - name: one_agent
+    run_list:
+      - recipe[dynatrace::one_agent]
+
   - name: server
     run_list:
       - recipe[dynatrace::server]

@@ -30,7 +30,7 @@ action :run do
       res = resources('execute[Change ownership of the installation directory]')
       res.command get_chown_recursively_cmd(installation_path, new_resource.dynatrace_owner, new_resource.dynatrace_group)
 
-      res = resources("link[Create a symlink of the #{new_resource.name} installation to #{new_resource.installer_prefix_dir}/dynatrace]")
+      res = resources("link[Create a symlink of the #{new_resource.name} installation to #{new_resource.installer_prefix_dir}/#{new_resource.symlink_name}]")
       res.to installation_path
     end
   end
@@ -43,19 +43,14 @@ action :run do
     command nil
   end
 
-  link "Create a symlink of the #{new_resource.name} installation to #{new_resource.installer_prefix_dir}/dynatrace" do
-    target_file "#{new_resource.installer_prefix_dir}/dynatrace"
+  link "Create a symlink of the #{new_resource.name} installation to #{new_resource.installer_prefix_dir}/#{new_resource.symlink_name}" do
+    target_file "#{new_resource.installer_prefix_dir}/#{new_resource.symlink_name}"
     to nil
   end
 
   execute "Remove the #{new_resource.name} installer" do
     command 'rm -f dynatrace-*.sh'
     cwd     new_resource.installer_prefix_dir
-  end
-
-  file "Remove the #{new_resource.name} tarball" do
-    path 'new_resource.installer_path'
-    action :delete
   end
 end
 
