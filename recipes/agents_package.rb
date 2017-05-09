@@ -61,7 +61,7 @@ ruby_block fresh_installer_action.to_s do
     raise "The downloaded installer package would overwrite existing installation of the #{name}."
   end
   action :nothing
-  not_if { node[:dynatrace][:agents_package][:installation][:is_required] || platform_family?('windows') }
+  not_if { platform_family?('windows') || node[:dynatrace][:agents_package][:installation][:is_required] }
 end
 
 if platform_family?('debian', 'fedora', 'rhel')
