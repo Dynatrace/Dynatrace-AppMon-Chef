@@ -14,7 +14,7 @@ module Dynatrace
       # extract the dynatrace.x.y.z directory name from the contained installer shell script
       install_dir = nil
       Dir.mktmpdir do |tmpdir|
-        install_dir = Mixlib::ShellOut.new("tar -xf #{installer_path} -C #{tmpdir} && cd #{tmpdir} && head -n 10 dynatrace*.sh | grep mkdir | cut -d ' ' -f 2", :cwd => File.dirname(installer_path)).run_command.stdout.strip
+        install_dir = Mixlib::ShellOut.new("tar -xf #{installer_path} -C #{tmpdir} && cd #{tmpdir} && head -n 10 dynatrace*.sh | grep mkdir | awk -F' ' '{print $2}'", :cwd => File.dirname(installer_path)).run_command.stdout.strip
         if install_dir.empty?
           Dir.chdir
           dynatrace_dirs = Dir["#{tmpdir}/dynatrace*"]
