@@ -18,7 +18,3 @@ end
 describe process('dtcollector') do
   it { should_not be_running }
 end
-
-describe service('dynaTraceCollector') do
-  it { should_not be_enabled }
-end

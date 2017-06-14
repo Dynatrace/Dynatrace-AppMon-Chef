@@ -15,12 +15,12 @@ driver:
 # * Uncomment and update the file_url attributes in the 'suites' section
 
 platforms:
-  - name: centos-6
+  - name: centos-7
     driver_config:
-      image: centos-6-chef
+      #image: centos-7-chef
       provision_command:
         - yum update -y
-        - yum install -y net-tools tar
+        - yum install -y net-tools tar initscripts #initscipts - needed to manage services
     attributes:
       dynatrace:
         apache_wsagent:
@@ -28,10 +28,13 @@ platforms:
             config_file_path: /etc/httpd/conf/httpd.conf
             init_script_path: /etc/init.d/httpd
 
-  - name: debian-7.8
+  - name: debian-8.8
     driver_config:
-      image: debian-7.8-chef
+     #image: debian-8.8-chef
       provision_command:
+        - apt-get update
+        - apt-get install -y net-tools tar
+        - echo "deb http://ftp.de.debian.org/debian jessie-backports main" >> /etc/apt/sources.list # needed to install java 8
         - apt-get update
         - apt-get install -y net-tools tar
     run_list:
@@ -44,9 +47,9 @@ platforms:
           linux:
             apache_daemon: 'apache2'
 
-  - name: ubuntu-12.04
+  - name: ubuntu-16.04
     driver_config:
-      image: ubuntu-12.04-chef
+      image: ubuntu-16.04-chef
       provision_command:
         - apt-get update
         - apt-get install -y net-tools tar
@@ -75,6 +78,8 @@ suites:
 #          linux:
 #            installer:
 #              file_url:  http://192.168.1.2:8000/dynatrace-wsagent-linux-x86-64.tar
+    ecxludes:
+      - centos-7   #ecxluded because of problems with cookbook apache2 (only for centos-7 distribution)
 
   - name: apache_wsagent_uninstall
     run_list:
@@ -91,6 +96,8 @@ suites:
 #          linux:
 #            installer:
 #              file_url:  http://192.168.1.2:8000/dynatrace-wsagent-linux-x86-64.tar
+    ecxludes:
+      - centos-7   #ecxluded because of problems with cookbook apache2 (only for centos-7 distribution)
 
   - name: agents_package
     run_list:
@@ -301,6 +308,23 @@ suites:
 #          linux:
 #            installer:
 #              file_url: http://192.168.1.2:8000/dynatrace-wsagent-linux-x86-64.tar
+   excludes:
+      - ubuntu-16.04    # excluded due to error with enabling server using chef resource - service.
+                        # Possible workarounds for this distribution:
+                        #         - enable server using execute resource:
+                        #             execute 'enable dtWsAgent do
+                        #                  command 'sudo systemctl enable dynaTraceWebServerAgent'
+                        #             end
+
+                        #         - enable server using service resource with systemd provider (in fact there will be used sysv - systemd is not support in docker containers)
+                        #             service name.to_s do
+                        #               service_name service
+                        #                provider     Chef::Provider::Service::Systemd
+                        #                supports     :status => true
+                        #                action       [:enable]
+                        #             end
+                        #         - Chef::Provider::Service::Systemd provider does not handle starting service, it can be used only for enabling/disabling service (also for checking if service is enable)
+
 
   - name: wsagent_package_uninstall
     run_list:
@@ -312,3 +336,5 @@ suites:
 #          linux:
 #            installer:
 #              file_url: http://192.168.1.2:8000/dynatrace-wsagent-linux-x86-64.tar
+   excludes:
+      - ubuntu-16.04

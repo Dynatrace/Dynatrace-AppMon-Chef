@@ -16,8 +16,4 @@ if %w(debian redhat ubuntu).include? os[:family]
   describe process('dtwsagent') do
     it { should_not be_running }
   end
-
-  describe service('dynaTraceWebServerAgent') do
-    it { should_not be_enabled }
-  end
 end

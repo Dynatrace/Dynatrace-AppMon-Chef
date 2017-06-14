@@ -22,7 +22,3 @@ end
 describe process('dtserver') do
   it { should_not be_running }
 end
-
-describe service('dynaTraceServer') do
-  it { should_not be_enabled }
-end
