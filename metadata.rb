@@ -1,12 +1,12 @@
-name 'dynatrace'
+name 'dynatrace-appmon'
 maintainer 'Martin Etmajer'
 maintainer_email 'martin.etmajer@dynatrace.com'
 license 'MIT'
 description 'Installs the Dynatrace Application Monitoring solution.'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version '1.0.7'
-source_url 'https://github.com/Dynatrace/Dynatrace-Chef'
-issues_url 'https://github.com/Dynatrace/Dynatrace-Chef/issues'
+version '1.0.8'
+source_url 'https://github.com/Dynatrace/Dynatrace-AppMon-Chef'
+issues_url 'https://github.com/Dynatrace/Dynatrace-AppMon-Chef/issues'
 
 %w( debian ubuntu redhat centos fedora amazon windows ).each do |os|
   supports os
