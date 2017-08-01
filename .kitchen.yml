@@ -78,8 +78,8 @@ suites:
 #          linux:
 #            installer:
 #              file_url:  http://192.168.1.2:8000/dynatrace-wsagent-linux-x86-64.tar
-    ecxludes:
-      - centos-7   #ecxluded because of problems with cookbook apache2 (only for centos-7 distribution)
+    excludes:
+      - centos-7   #excluded because of problems with cookbook apache2 (only for centos-7 distribution)
 
   - name: apache_wsagent_uninstall
     run_list:
@@ -96,8 +96,8 @@ suites:
 #          linux:
 #            installer:
 #              file_url:  http://192.168.1.2:8000/dynatrace-wsagent-linux-x86-64.tar
-    ecxludes:
-      - centos-7   #ecxluded because of problems with cookbook apache2 (only for centos-7 distribution)
+    excludes:
+      - centos-7   #excluded because of problems with cookbook apache2 (only for centos-7 distribution)
 
   - name: agents_package
     run_list:
@@ -308,7 +308,7 @@ suites:
 #          linux:
 #            installer:
 #              file_url: http://192.168.1.2:8000/dynatrace-wsagent-linux-x86-64.tar
-   excludes:
+    excludes:
       - ubuntu-16.04    # excluded due to error with enabling server using chef resource - service.
                         # Possible workarounds for this distribution:
                         #         - enable server using execute resource:
@@ -336,5 +336,5 @@ suites:
 #          linux:
 #            installer:
 #              file_url: http://192.168.1.2:8000/dynatrace-wsagent-linux-x86-64.tar
-   excludes:
+    excludes:
       - ubuntu-16.04
