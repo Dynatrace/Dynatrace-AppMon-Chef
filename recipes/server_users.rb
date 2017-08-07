@@ -7,7 +7,7 @@
 # Copyright 2016, Dynatrace
 #
 
-include_recipe 'dynatrace::node_info'
+include_recipe 'dynatrace-appmon::node_info'
 
 max_boot_time = node['dynatrace']['server']['max_boot_time']
 # See docs: https://localhost:8021/api-docs/current/index.html#!/User_Management/getUser

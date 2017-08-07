@@ -6,9 +6,9 @@
 #
 
 name = 'Host Agent'
-include_recipe 'dynatrace::prerequisites'
-include_recipe 'dynatrace::java'
-include_recipe 'dynatrace::dynatrace_user'
+include_recipe 'dynatrace-appmon::prerequisites'
+include_recipe 'dynatrace-appmon::java'
+include_recipe 'dynatrace-appmon::dynatrace_user'
 include_recipe 'line'
 
 raise 'Unsupported platform family.' unless platform_family?('debian', 'fedora', 'rhel') # platform_family?('rhel') and node_kernel_machine == 'x86_64'
@@ -29,8 +29,8 @@ end
 ruby_block name.to_s do
   block do
     kernel = node['host_agent']['installer']['bitsize']
-    node.set[:dynatrace][:host_agent][:installation][:is_required] = Dynatrace::PackageHelpers.requires_installation?(installer_prefix_dir, installer_path, "agent/lib#{kernel}/dthostagent", type = :tar)
-    node.set[:dynatrace][:host_agent][:config_changed] = false
+    node.set['dynatrace']['host_agent']['installation']['is_required'] = Dynatrace::PackageHelpers.requires_installation?(installer_prefix_dir, installer_path, "agent/lib#{kernel}/dthostagent", type = :tar)
+    node.set['dynatrace']['host_agent']['config_changed'] = false
   end
 end
 
@@ -49,7 +49,7 @@ ruby_block fresh_installer_action.to_s do
     raise "The downloaded installer package would overwrite existing installation of the #{name}."
   end
   action :nothing
-  not_if { node[:dynatrace][:host_agent][:installation][:is_required] }
+  not_if { node['dynatrace']['host_agent']['installation']['is_required'] }
 end
 
 directory "Create the installation directory #{installer_prefix_dir}" do
@@ -65,7 +65,7 @@ dynatrace_run_tar_installer name.to_s do
   installer_prefix_dir installer_prefix_dir
   dynatrace_owner      dynatrace_owner
   dynatrace_group      dynatrace_group
-  only_if { node[:dynatrace][:host_agent][:installation][:is_required] }
+  only_if { node['dynatrace']['host_agent']['installation']['is_required'] }
 end
 
 config_changed_action = "#{name} config changed"
@@ -100,7 +100,7 @@ end
 # A trick to restart server only once on configuration change
 ruby_block config_changed_action do
   block do
-    node.set[:dynatrace][:host_agent][:config_changed] = true
+    node.set['dynatrace']['host_agent']['config_changed'] = true
   end
   action :nothing
 end
@@ -108,7 +108,7 @@ end
 ruby_block "Restart #{name}" do
   block {}
   notifies :restart, "service[#{name}]", :immediately
-  only_if { node[:dynatrace][:host_agent][:config_changed] && !node[:dynatrace][:host_agent][:installation][:is_required] }
+  only_if { node['dynatrace']['host_agent']['config_changed'] && !node['dynatrace']['host_agent']['installation']['is_required'] }
 end
 
 service name do

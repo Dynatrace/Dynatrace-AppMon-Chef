@@ -5,7 +5,7 @@
 # Copyright 2016, Dynatrace
 #
 
-include_recipe 'dynatrace::wsagent_package'
+include_recipe 'dynatrace-appmon::wsagent_package'
 include_recipe 'line'
 
 name = 'Dynatrace Apache WebServer Agent'

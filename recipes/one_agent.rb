@@ -5,8 +5,8 @@
 # Copyright 2017, Dynatrace
 #
 
-include_recipe 'dynatrace::prerequisites'
-include_recipe 'dynatrace::dynatrace_user'
+include_recipe 'dynatrace-appmon::prerequisites'
+include_recipe 'dynatrace-appmon::dynatrace_user'
 
 name = 'Dynatrace One Agent'
 
@@ -33,7 +33,7 @@ end
 
 ruby_block "Check if #{name} already installed" do
   block do
-    node.set[:dynatrace][:one_agent][:installation][:is_required] = Dynatrace::PackageHelpers.requires_installation?(installer_prefix_dir, installer_file_path, 'agent/bin/linux-x86-32/liboneagentloader.so', type = :tar)
+    node.set['dynatrace']['one_agent']['installation']['is_required'] = Dynatrace::PackageHelpers.requires_installation?(installer_prefix_dir, installer_file_path, 'agent/bin/linux-x86-32/liboneagentloader.so', type = :tar)
   end
   not_if { platform_family?('windows') }
 end
@@ -56,7 +56,7 @@ ruby_block fresh_installer_action.to_s do
     raise "The downloaded installer package would overwrite existing installation of the #{name}."
   end
   action :nothing
-  not_if { platform_family?('windows') || node[:dynatrace][:one_agent][:installation][:is_required] }
+  not_if { platform_family?('windows') || node['dynatrace']['one_agent']['installation']['is_required'] }
 end
 
 if platform_family?('debian', 'fedora', 'rhel')
@@ -77,7 +77,7 @@ if platform_family?('debian', 'fedora', 'rhel')
     symlink_name         symlink_name
     dynatrace_owner      dynatrace_owner
     dynatrace_group      dynatrace_group
-    only_if { node[:dynatrace][:one_agent][:installation][:is_required] }
+    only_if { node['dynatrace']['one_agent']['installation']['is_required'] }
   end
 
 elsif platform_family?('windows')

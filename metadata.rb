@@ -7,6 +7,7 @@ long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version '1.0.8'
 source_url 'https://github.com/Dynatrace/Dynatrace-AppMon-Chef'
 issues_url 'https://github.com/Dynatrace/Dynatrace-AppMon-Chef/issues'
+chef_version '>= 12.1'
 
 %w( debian ubuntu redhat centos fedora amazon windows ).each do |os|
   supports os

@@ -40,4 +40,4 @@ unless apache_daemon.empty?
   end
 end
 
-include_recipe 'dynatrace::wsagent_package_uninstall'
+include_recipe 'dynatrace-appmon::wsagent_package_uninstall'

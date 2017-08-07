@@ -6,6 +6,7 @@
 #
 
 action :run do
+  use_inline_resources
   install_base_dir_func = -> { ::File.dirname(new_resource.installer_path) }
 
   execute "Extract the tar installer #{new_resource.name}" do

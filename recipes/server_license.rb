@@ -5,7 +5,7 @@
 # Copyright 2015-2016, Dynatrace
 #
 
-include_recipe 'dynatrace::dynatrace_user'
+include_recipe 'dynatrace-appmon::dynatrace_user'
 
 name = 'Dynatrace Server License'
 

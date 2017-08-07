@@ -4,7 +4,7 @@
 # will update system
 # Copyright 2016, dynatrace
 #
-include_recipe 'dynatrace::node_info'
+include_recipe 'dynatrace-appmon::node_info'
 
 upgrade_system = node['upgrade']['system']
 

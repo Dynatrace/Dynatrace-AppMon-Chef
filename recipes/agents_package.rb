@@ -5,8 +5,8 @@
 # Copyright 2015-2016, Dynatrace
 #
 
-include_recipe 'dynatrace::prerequisites'
-include_recipe 'dynatrace::java'
+include_recipe 'dynatrace-appmon::prerequisites'
+include_recipe 'dynatrace-appmon::java'
 
 name = 'Dynatrace Agents Package'
 
@@ -31,7 +31,7 @@ else
   raise 'Unsupported platform family.'
 end
 
-include_recipe 'dynatrace::dynatrace_user'
+include_recipe 'dynatrace-appmon::dynatrace_user'
 
 directory 'Create the installer cache directory' do
   path   installer_cache_dir
@@ -41,7 +41,7 @@ end
 ruby_block name.to_s do
   block do
     kernel = node['kernel']['machine'].include?('64') ? '64' : ''
-    node.set[:dynatrace][:agents_package][:installation][:is_required] = Dynatrace::PackageHelpers.requires_installation?(installer_prefix_dir, installer_path, "agent/lib#{kernel}/libdtagent.so", type = :jar)
+    node.set['dynatrace']['agents_package']['installation']['is_required'] = Dynatrace::PackageHelpers.requires_installation?(installer_prefix_dir, installer_path, "agent/lib#{kernel}/libdtagent.so", type = :jar)
     not_if { platform_family?('windows') }
   end
 end
@@ -61,7 +61,7 @@ ruby_block fresh_installer_action.to_s do
     raise "The downloaded installer package would overwrite existing installation of the #{name}."
   end
   action :nothing
-  not_if { platform_family?('windows') || node[:dynatrace][:agents_package][:installation][:is_required] }
+  not_if { platform_family?('windows') || node['dynatrace']['agents_package']['installation']['is_required'] }
 end
 
 if platform_family?('debian', 'fedora', 'rhel')
@@ -79,7 +79,7 @@ if platform_family?('debian', 'fedora', 'rhel')
     installer_prefix_dir installer_prefix_dir
     dynatrace_owner      dynatrace_owner
     dynatrace_group      dynatrace_group
-    only_if { node[:dynatrace][:agents_package][:installation][:is_required] }
+    only_if { node['dynatrace']['agents_package']['installation']['is_required'] }
   end
 elsif platform_family?('windows')
   dynatrace_powershell_scripts_project = "#{installer_cache_dir}\\Dynatrace-Powershell"

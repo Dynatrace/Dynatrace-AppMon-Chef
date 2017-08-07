@@ -5,4 +5,4 @@
 # Copyright 2015, Dynatrace
 #
 
-include_recipe 'dynatrace::server'
+include_recipe 'dynatrace-appmon::server'

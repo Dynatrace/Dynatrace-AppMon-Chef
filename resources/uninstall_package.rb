@@ -14,7 +14,7 @@ property :installer_cache_path, String
 property :service_name, String, :default => ''
 
 action :run do
-  include_recipe 'dynatrace::node_info'
+  include_recipe 'dynatrace-appmon::node_info'
 
   delete_cache_path_action = "Delete the installer cache directory #{installer_cache_path}"
   delete_install_path_action = "Delete installation dir by link ''#{installation_path}''"

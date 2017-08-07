@@ -17,7 +17,7 @@ installer_cache_dir = "#{Chef::Config['file_cache_path']}\\dynatrace"
 dynatrace_powershell_scripts_project = "#{installer_cache_dir}\\Dynatrace-Powershell"
 dynatrace_powershell_scripts         = "#{dynatrace_powershell_scripts_project}\\scripts"
 
-include_recipe 'dynatrace::wsagent_package'
+include_recipe 'dynatrace-appmon::wsagent_package'
 
 remote_directory "Copy Dynatrace PowerShell scripts to #{dynatrace_powershell_scripts_project}" do
   source 'Dynatrace-Powershell'

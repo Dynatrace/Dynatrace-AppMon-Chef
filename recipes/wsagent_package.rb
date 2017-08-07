@@ -7,7 +7,7 @@
 
 require 'json'
 
-include_recipe 'dynatrace::prerequisites'
+include_recipe 'dynatrace-appmon::prerequisites'
 
 name = 'Dynatrace WebServer Agent'
 
@@ -36,7 +36,7 @@ else
 end
 
 if platform_family?('debian', 'fedora', 'rhel')
-  include_recipe 'dynatrace::dynatrace_user'
+  include_recipe 'dynatrace-appmon::dynatrace_user'
 end
 
 directory 'Create the installer cache directory' do
@@ -64,7 +64,7 @@ if platform_family?('debian', 'fedora', 'rhel')
   ruby_block "Check if #{name} already installed" do
     block do
       kernel = node['kernel']['machine'].include?('64') ? '64' : ''
-      node.set[:dynatrace][:wsagent_package][:installation][:is_required] = \
+      node.set['dynatrace']['wsagent_package']['installation']['is_required'] = \
         Dynatrace::PackageHelpers.requires_installation?(installer_prefix_dir, installer_path, "agent/lib#{kernel}/dtwsagent", type = :tar)
     end
   end
@@ -74,7 +74,7 @@ if platform_family?('debian', 'fedora', 'rhel')
     installer_prefix_dir installer_prefix_dir
     dynatrace_owner      dynatrace_owner
     dynatrace_group      dynatrace_group
-    only_if { node[:dynatrace][:wsagent_package][:installation][:is_required] }
+    only_if { node['dynatrace']['wsagent_package']['installation']['is_required'] }
   end
 
   dynatrace_configure_init_scripts name.to_s do
@@ -87,6 +87,7 @@ if platform_family?('debian', 'fedora', 'rhel')
 
   template "Configure and copy the #{name}'s 'dtwsagent.ini' file" do
     source 'wsagent_package/dtwsagent.ini.erb'
+    cookbook 'dynatrace'
     path   "#{installer_prefix_dir}/dynatrace/agent/conf/dtwsagent.ini"
     owner  dynatrace_owner
     group  dynatrace_group

@@ -5,10 +5,10 @@
 # Copyright 2015-2016, Dynatrace
 #
 
-include_recipe 'dynatrace::node_info'
-include_recipe 'dynatrace::prerequisites'
-include_recipe 'dynatrace::java'
-include_recipe 'dynatrace::dynatrace_user'
+include_recipe 'dynatrace-appmon::node_info'
+include_recipe 'dynatrace-appmon::prerequisites'
+include_recipe 'dynatrace-appmon::java'
+include_recipe 'dynatrace-appmon::dynatrace_user'
 
 name = 'Dynatrace Memory Analysis Server'
 
@@ -43,7 +43,7 @@ end
 
 ruby_block name.to_s do
   block do
-    node.set[:dynatrace][:memory_analysis_server][:installation][:is_required] = Dynatrace::PackageHelpers.requires_installation?(installer_prefix_dir, installer_path, 'dtanalysisserver', type = :jar)
+    node.set['dynatrace']['memory_analysis_server']['installation']['is_required'] = Dynatrace::PackageHelpers.requires_installation?(installer_prefix_dir, installer_path, 'dtanalysisserver', type = :jar)
   end
 end
 
@@ -61,7 +61,7 @@ ruby_block fresh_installer_action.to_s do
     raise "The downloaded installer package would overwrite existing installation of the #{name}."
   end
   action :nothing
-  not_if { node[:dynatrace][:memory_analysis_server][:installation][:is_required] }
+  not_if { node['dynatrace']['memory_analysis_server']['installation']['is_required'] }
 end
 
 directory "Create the installation directory #{installer_prefix_dir}" do
@@ -78,7 +78,7 @@ dynatrace_run_jar_installer name.to_s do
   jar_input_sequence   "#{installer_bitsize}\\nY\\nY\\nY"
   dynatrace_owner      dynatrace_owner
   dynatrace_group      dynatrace_group
-  only_if { node[:dynatrace][:memory_analysis_server][:installation][:is_required] }
+  only_if { node['dynatrace']['memory_analysis_server']['installation']['is_required'] }
 end
 
 config_changed_action = "#{name} config changed"

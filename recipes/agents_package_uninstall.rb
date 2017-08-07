@@ -6,7 +6,7 @@
 # Note: this recipe deletes /opt/dynatrace folder!
 #
 
-include_recipe 'dynatrace::node_info'
+include_recipe 'dynatrace-appmon::node_info'
 
 unless platform_family?('debian', 'fedora', 'rhel')
   raise 'Unsupported platform family.'

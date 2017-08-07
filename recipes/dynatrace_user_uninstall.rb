@@ -19,7 +19,7 @@ if platform_family?('debian', 'fedora', 'rhel')
   execute "find /tmp -maxdepth 1 -user #{dynatrace_owner} | xargs rm -rf"
 end
 
-user "Delete user '#{dynatrace_owner}'" do
+user "Delete user #{dynatrace_owner}" do
   username dynatrace_owner
   supports :manage_home => true
   action   :remove

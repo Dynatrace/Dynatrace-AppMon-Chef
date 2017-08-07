@@ -6,6 +6,7 @@
 #
 
 action :run do
+  use_inline_resources
   jar_cmd = !new_resource.jar_input_sequence.nil? ? "echo -e '#{new_resource.jar_input_sequence}'" : 'yes'
   jar_cmd << " | java -jar #{new_resource.installer_path}"
 

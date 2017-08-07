@@ -7,6 +7,7 @@
 
 action :run do
   update_status = false
+  use_inline_resources
   new_resource.ini_files.each do |ini_file|
     next if new_resource.variables[:memory].nil?
     ini_file_path = "#{new_resource.installer_prefix_dir}/dynatrace/#{ini_file}"

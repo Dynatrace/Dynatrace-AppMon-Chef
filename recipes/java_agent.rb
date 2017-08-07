@@ -5,7 +5,7 @@
 # Copyright 2015-2016, Dynatrace
 #
 
-include_recipe 'dynatrace::agents_package'
+include_recipe 'dynatrace-appmon::agents_package'
 
 unless platform_family?('debian', 'fedora', 'rhel')
   raise 'Unsupported platform family.'
@@ -25,6 +25,7 @@ group = node['dynatrace']['group']
 
 template env_var_file_name do
   source  'java_agent/javaopts.sh.erb'
+  cookbook 'dynatrace'
   mode    '0755'
   owner   owner
   group   group
