@@ -23,7 +23,7 @@ groups_file_path = node['dynatrace']['server']['user_config']['saved_groups_file
 
 ruby_block "Load groups from file '#{groups_file_path}'" do
   block do
-    node.set['dynatrace']['server']['user_config']['groups'] = JSON.parse(File.read(groups_file_path))
+    node.normal['dynatrace']['server']['user_config']['groups'] = JSON.parse(File.read(groups_file_path))
   end
   only_if { ::File.exist?(groups_file_path.to_s) }
 end

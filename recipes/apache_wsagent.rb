@@ -17,7 +17,7 @@ raise 'Unsupported platform family.' unless platform_family?('debian', 'fedora',
 
 arch = node['dynatrace']['apache_wsagent']['arch']
 agent_path = node['dynatrace']['apache_wsagent']['linux'][arch]['agent_path']
-node.set['dynatrace']['apache_wsagent']['agent_path'] = agent_path
+node.normal['dynatrace']['apache_wsagent']['agent_path'] = agent_path
 
 search_pattern = '^LoadModule\s+dtagent_module\b'
 line_to_add = "LoadModule dtagent_module \"#{agent_path}\""

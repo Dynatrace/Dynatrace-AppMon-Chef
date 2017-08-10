@@ -9,8 +9,7 @@ dynatrace_owner = node['dynatrace']['owner']
 dynatrace_group = node['dynatrace']['group']
 
 user "Create system user #{dynatrace_owner}" do
-  username dynatrace_owner
-  supports :manage_home => true
+  username [dynatrace_owner]
   action   :create
 end
 

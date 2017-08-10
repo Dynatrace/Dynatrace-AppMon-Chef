@@ -29,8 +29,8 @@ end
 ruby_block name.to_s do
   block do
     kernel = node['host_agent']['installer']['bitsize']
-    node.set['dynatrace']['host_agent']['installation']['is_required'] = Dynatrace::PackageHelpers.requires_installation?(installer_prefix_dir, installer_path, "agent/lib#{kernel}/dthostagent", type = :tar)
-    node.set['dynatrace']['host_agent']['config_changed'] = false
+    node.normal['dynatrace']['host_agent']['installation']['is_required'] = Dynatrace::PackageHelpers.requires_installation?(installer_prefix_dir, installer_path, "agent/lib#{kernel}/dthostagent", type = :tar)
+    node.normal['dynatrace']['host_agent']['config_changed'] = false
   end
 end
 
@@ -100,7 +100,7 @@ end
 # A trick to restart server only once on configuration change
 ruby_block config_changed_action do
   block do
-    node.set['dynatrace']['host_agent']['config_changed'] = true
+    node.normal['dynatrace']['host_agent']['config_changed'] = true
   end
   action :nothing
 end

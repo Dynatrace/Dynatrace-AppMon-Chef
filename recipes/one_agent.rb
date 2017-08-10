@@ -33,7 +33,7 @@ end
 
 ruby_block "Check if #{name} already installed" do
   block do
-    node.set['dynatrace']['one_agent']['installation']['is_required'] = Dynatrace::PackageHelpers.requires_installation?(installer_prefix_dir, installer_file_path, 'agent/bin/linux-x86-32/liboneagentloader.so', type = :tar)
+    node.normal['dynatrace']['one_agent']['installation']['is_required'] = Dynatrace::PackageHelpers.requires_installation?(installer_prefix_dir, installer_file_path, 'agent/bin/linux-x86-32/liboneagentloader.so', type = :tar)
   end
   not_if { platform_family?('windows') }
 end

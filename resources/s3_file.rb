@@ -8,7 +8,6 @@
 require 'fileutils'
 require 'scanf'
 
-actions :create
 default_action :create
 
 property :target, String, :name_property => true
@@ -19,6 +18,8 @@ property :secret_access_key, String
 property :owner, String
 property :group, String
 property :mode, String
+
+use_inline_resources
 
 action :create do
   require 'aws-sdk'
@@ -87,6 +88,4 @@ action :create do
 
   Chef::Log.info "#{target} up to date" unless updated
 
-  # Setting the right status is important when using the Chef notification mechanism
-  new_resource.updated_by_last_action(updated)
 end

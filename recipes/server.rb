@@ -43,8 +43,8 @@ end
 
 ruby_block "Check if #{name} already installed" do
   block do
-    node.set['dynatrace']['server']['installation']['is_required'] = Dynatrace::PackageHelpers.requires_installation?(installer_prefix_dir, installer_path, 'server', type = :jar)
-    node.set['dynatrace']['server']['config_changed'] = false
+    node.normal['dynatrace']['server']['installation']['is_required'] = Dynatrace::PackageHelpers.requires_installation?(installer_prefix_dir, installer_path, 'server', type = :jar)
+    node.normal['dynatrace']['server']['config_changed'] = false
   end
 end
 
@@ -104,7 +104,7 @@ end
 # A trick to server only once on configuration change
 ruby_block config_changed_action do
   block do
-    node.set['dynatrace']['server']['config_changed'] = true
+    node.normal['dynatrace']['server']['config_changed'] = true
   end
   action :nothing
 end

@@ -41,7 +41,7 @@ end
 ruby_block name.to_s do
   block do
     kernel = node['kernel']['machine'].include?('64') ? '64' : ''
-    node.set['dynatrace']['agents_package']['installation']['is_required'] = Dynatrace::PackageHelpers.requires_installation?(installer_prefix_dir, installer_path, "agent/lib#{kernel}/libdtagent.so", type = :jar)
+    node.normal['dynatrace']['agents_package']['installation']['is_required'] = Dynatrace::PackageHelpers.requires_installation?(installer_prefix_dir, installer_path, "agent/lib#{kernel}/libdtagent.so", type = :jar)
     not_if { platform_family?('windows') }
   end
 end

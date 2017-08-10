@@ -78,7 +78,7 @@ ruby_block "Update Dynatrace server using #{update_file_path} file" do
 
       raise "Server responded with error '#{response.code} #{response.message}' when trying to upload file #{update_file_path} through REST" unless response.code.to_s == '201'
       jobid = response['location'].split(%r{/})[-1]
-      node.set['dynatrace']['server']['linux']['update']['jobid'] = jobid
+      node.normal['dynatrace']['server']['linux']['update']['jobid'] = jobid
     end
   end
 end
@@ -98,7 +98,7 @@ ruby_block 'Waiting for update installation to finish' do
           isfinished = REXML::XPath.first(xmldoc, '//isfinished').first == 'true'
           if isfinished
             isrestartrequired = REXML::XPath.first(xmldoc, '//isserverrestartrequired').first == 'true'
-            node.set['dynatrace']['server']['linux']['update']['isrestartrequired'] = isrestartrequired
+            node.normal['dynatrace']['server']['linux']['update']['isrestartrequired'] = isrestartrequired
             break
           else
             Chef::Log.debug "Update not finished. Checking status in #{retry_sleep} seconds..."

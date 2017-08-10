@@ -45,7 +45,7 @@ end
 
 ruby_block "Check if #{name} already installed" do
   block do
-    node.set['dynatrace']['collector']['installation']['is_required'] = Dynatrace::PackageHelpers.requires_installation?(installer_prefix_dir, installer_path, 'collector', type = :jar)
+    node.normal['dynatrace']['collector']['installation']['is_required'] = Dynatrace::PackageHelpers.requires_installation?(installer_prefix_dir, installer_path, 'collector', type = :jar)
   end
 end
 

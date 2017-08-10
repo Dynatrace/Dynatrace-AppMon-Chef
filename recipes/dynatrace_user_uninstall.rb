@@ -21,7 +21,6 @@ end
 
 user "Delete user #{dynatrace_owner}" do
   username dynatrace_owner
-  supports :manage_home => true
   action   :remove
 end
 

@@ -14,7 +14,7 @@ raise 'Unsupported platform family.' unless platform_family?('debian', 'fedora',
 
 arch = node['dynatrace']['apache_wsagent']['arch']
 agent_path = node['dynatrace']['apache_wsagent']['linux'][arch]['agent_path']
-node.set['dynatrace']['apache_wsagent']['agent_path'] = agent_path
+node.normal['dynatrace']['apache_wsagent']['agent_path'] = agent_path
 
 ruby_block "Remove the #{name} from Apache HTTPD's config file #{apache_config_file_path}" do
   block do

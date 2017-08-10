@@ -23,7 +23,7 @@ users_file_path = node['dynatrace']['server']['user_config']['saved_users_file_p
 
 ruby_block "Load users from file '#{users_file_path}'" do
   block do
-    node.set['dynatrace']['server']['user_config']['users'] = JSON.parse(File.read(users_file_path))
+    node.normal['dynatrace']['server']['user_config']['users'] = JSON.parse(File.read(users_file_path))
   end
   only_if { ::File.exist?(users_file_path) }
 end

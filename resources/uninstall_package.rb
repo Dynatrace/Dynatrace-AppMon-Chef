@@ -5,7 +5,6 @@
 # Copyright:: Copyright 2016, Dynatrace
 #
 
-actions :run
 default_action :run
 
 property :name, String, :name_property => true

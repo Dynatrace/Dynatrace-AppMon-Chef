@@ -43,7 +43,7 @@ end
 
 ruby_block name.to_s do
   block do
-    node.set['dynatrace']['memory_analysis_server']['installation']['is_required'] = Dynatrace::PackageHelpers.requires_installation?(installer_prefix_dir, installer_path, 'dtanalysisserver', type = :jar)
+    node.normal['dynatrace']['memory_analysis_server']['installation']['is_required'] = Dynatrace::PackageHelpers.requires_installation?(installer_prefix_dir, installer_path, 'dtanalysisserver', type = :jar)
   end
 end
 
