@@ -24,7 +24,7 @@ owner = node['dynatrace']['owner']
 group = node['dynatrace']['group']
 
 template env_var_file_name do
-  source  'java_agent/javaopts.sh.erb'
+  source 'java_agent/javaopts.sh.erb'
   cookbook 'dynatrace'
   mode    '0755'
   owner   owner

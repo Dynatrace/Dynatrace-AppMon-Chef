@@ -87,5 +87,4 @@ action :create do
   end
 
   Chef::Log.info "#{target} up to date" unless updated
-
 end
