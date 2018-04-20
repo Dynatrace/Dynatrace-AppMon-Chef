@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #
 # Cookbook Name:: dynatrace
 # Recipes:: memory_analysis_server
@@ -95,7 +97,7 @@ service name.to_s do
   service_name service
   # For Debian and Ubuntu distros - to correctly stop our service we need the status support which is disabled by default
   supports     :status => true
-  action       [:start, :enable]
+  action       %i[start enable]
 end
 
 ruby_block "Waiting for port #{server_port} to become available" do

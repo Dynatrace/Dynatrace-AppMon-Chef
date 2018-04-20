@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #
 # Cookbook Name:: dynatrace
 # Recipes:: server
@@ -119,7 +121,7 @@ service name.to_s do
   service_name service
   # For Debian and Ubuntu distros - to correctly stop our service we need the status support which is disabled by default
   supports     :status => true
-  action       [:start, :enable]
+  action       %i[start enable]
 end
 
 max_boot_time = node['dynatrace']['server']['max_boot_time']

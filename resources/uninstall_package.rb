@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #
 # Cookbook Name:: dynatrace
 # Resource:: uninstall_package
@@ -22,7 +24,7 @@ action :run do
     service service_name do
       # For Debian and Ubuntu distros - to correctly stop our service we need the status support which is disabled by default
       supports :status => true
-      action [:stop, :disable]
+      action %i[stop disable]
     end
   end
 

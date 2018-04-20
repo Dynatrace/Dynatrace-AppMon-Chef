@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #
 # Cookbook Name:: dynatrace
 # Recipes:: dynatrace_user

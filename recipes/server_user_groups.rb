@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #
 # Cookbook Name:: dynatrace
 # Recipes:: server_user_groups
@@ -49,7 +51,7 @@ ruby_block 'Configuring groups' do
                                                      rest_user,
                                                      rest_pass,
                                                      JSON.dump(group_descr),
-                                                     :success_codes => %w(201 204 403))
+                                                     :success_codes => %w[201 204 403])
 
       # Pass over erroneous attempts to modify a group (error 403) - it is normal for some predefined groups
       # e.g. 'Personal System Profile Access' group

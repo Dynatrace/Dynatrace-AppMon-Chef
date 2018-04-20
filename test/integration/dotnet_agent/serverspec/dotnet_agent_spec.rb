@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe windows_registry_key('HKLM:\SOFTWARE\Wow6432Node\dynaTrace\Agent\Whitelist\1') do

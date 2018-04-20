@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #
 # Cookbook Name:: dynatrace
 # Recipes:: host_agent
@@ -115,5 +117,5 @@ service name do
   service_name service_name
   # For Debian and Ubuntu distros - to correctly stop our service we need the status support which is disabled by default
   supports     :status => true
-  action [:enable, :start]
+  action %i[enable start]
 end
