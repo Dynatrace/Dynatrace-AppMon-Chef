@@ -26,7 +26,7 @@
 # - DT_RUNASUSER  the user to run the Dynatrace process
 
 DT_HOME=<%= @installer_prefix_dir %>/dynatrace
-DT_OPTARGS="-listen <%= @agent_port %> -server <%= @server_hostname %>:<%= @server_port %><%= " -Xms#{@jvm_xms}" if @jvm_xms %><%= " -Xmx#{@jvm_xmx}" if @jvm_xmx %><%= " -XX:PermSize=#{@jvm_perm_size}" if @jvm_perm_size %><%= " -XX:MaxPermSize=#{@jvm_max_perm_size}" if @jvm_max_perm_size %>"
+DT_OPTARGS="-listenHttp <%= @appmon_agent_port %> -listen <%= @agent_port %> -server <%= @server_hostname %>:<%= @server_port %><%= " -Xms#{@jvm_xms}" if @jvm_xms %><%= " -Xmx#{@jvm_xmx}" if @jvm_xmx %><%= " -XX:PermSize=#{@jvm_perm_size}" if @jvm_perm_size %><%= " -XX:MaxPermSize=#{@jvm_max_perm_size}" if @jvm_max_perm_size %>"
 
 DT_INSTANCE=
 

@@ -14,6 +14,7 @@ name = 'Dynatrace Collector'
 installer_bitsize = node['dynatrace']['collector']['installer']['bitsize']
 
 agent_port = node['dynatrace']['collector']['agent']['port']
+appmon_agent_port = node['dynatrace']['collector']['appmon_agent']['port']
 
 server_hostname = node['dynatrace']['collector']['server']['hostname']
 server_port     = node['dynatrace']['collector']['server']['port']
@@ -90,6 +91,7 @@ dynatrace_appmon_configure_init_scripts name.to_s do
   dynatrace_owner      dynatrace_owner
   dynatrace_group      dynatrace_group
   variables(:agent_port => agent_port,
+	    :appmon_agent_port => appmon_agent_port,
             :server_hostname => server_hostname,
             :server_port => server_port,
             :jvm_xmx => collector_jvm_xmx,

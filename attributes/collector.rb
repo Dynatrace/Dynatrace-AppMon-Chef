@@ -24,6 +24,9 @@ default['dynatrace']['collector']['linux']['installer']['file_url'] = 'http://fi
 # The port where the Dynatrace Collector shall listen for Agents.
 default['dynatrace']['collector']['agent']['port'] = '9998'
 
+# The port where the Dynatrace Collector shall listen for Appmon Agents.
+default['dynatrace']['collector']['appmon_agent']['port'] = '8043'
+
 # The location of the Dynatrace Server the Collector shall connect to.
 default['dynatrace']['collector']['server']['hostname'] = 'localhost'
 
