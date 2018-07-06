@@ -35,7 +35,7 @@ ruby_block name.to_s do
 end
 
 fresh_installer_action = "#{name} installer changed"
-dynatrace_copy_or_download_file name.to_s do
+dynatrace_appmon_copy_or_download_file name.to_s do
   file_name       installer_file_name
   file_url        installer_file_url
   path            installer_path
@@ -60,7 +60,7 @@ directory "Create the installation directory #{installer_prefix_dir}" do
   action    :create
 end
 
-dynatrace_run_tar_installer name.to_s do
+dynatrace_appmon_run_tar_installer name.to_s do
   installer_path       installer_path
   installer_prefix_dir installer_prefix_dir
   dynatrace_owner      dynatrace_owner
@@ -89,7 +89,7 @@ lines_to_patch.each do |patch_params|
 end
 
 init_scripts = [service_name]
-dynatrace_configure_init_scripts name.to_s do
+dynatrace_appmon_configure_init_scripts name.to_s do
   installer_prefix_dir installer_prefix_dir
   scripts              init_scripts
   dynatrace_owner      dynatrace_owner

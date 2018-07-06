@@ -44,7 +44,7 @@ directory 'Create the installer cache directory' do
   action :create
 end
 
-dynatrace_copy_or_download_file name.to_s do
+dynatrace_appmon_copy_or_download_file name.to_s do
   file_name       installer_file_name
   file_url        installer_file_url
   path            installer_path
@@ -69,7 +69,7 @@ if platform_family?('debian', 'fedora', 'rhel')
     end
   end
 
-  dynatrace_run_tar_installer name.to_s do
+  dynatrace_appmon_run_tar_installer name.to_s do
     installer_path       installer_path
     installer_prefix_dir installer_prefix_dir
     dynatrace_owner      dynatrace_owner
@@ -77,7 +77,7 @@ if platform_family?('debian', 'fedora', 'rhel')
     only_if { node['dynatrace']['wsagent_package']['installation']['is_required'] }
   end
 
-  dynatrace_configure_init_scripts name.to_s do
+  dynatrace_appmon_configure_init_scripts name.to_s do
     installer_prefix_dir installer_prefix_dir
     scripts              init_scripts
     dynatrace_owner      dynatrace_owner

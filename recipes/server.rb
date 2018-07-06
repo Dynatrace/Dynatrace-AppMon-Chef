@@ -49,7 +49,7 @@ ruby_block "Check if #{name} already installed" do
 end
 
 fresh_installer_action = "#{name} installer changed"
-dynatrace_copy_or_download_file name.to_s do
+dynatrace_appmon_copy_or_download_file name.to_s do
   file_name       installer_file_name
   file_url        installer_file_url
   path            installer_path
@@ -74,7 +74,7 @@ directory "Create the installation directory #{installer_prefix_dir}" do
   action    :create
 end
 
-dynatrace_run_jar_installer name.to_s do
+dynatrace_appmon_run_jar_installer name.to_s do
   installer_path       installer_path
   installer_prefix_dir installer_prefix_dir
   jar_input_sequence   "#{installer_bitsize}\\nY\\nY\\nY"
@@ -84,7 +84,7 @@ dynatrace_run_jar_installer name.to_s do
 end
 
 config_changed_action = "#{name} config changed"
-dynatrace_configure_init_scripts name.to_s do
+dynatrace_appmon_configure_init_scripts name.to_s do
   installer_prefix_dir installer_prefix_dir
   scripts              init_scripts
   dynatrace_owner      dynatrace_owner
@@ -92,7 +92,7 @@ dynatrace_configure_init_scripts name.to_s do
   notifies :run, "ruby_block[#{config_changed_action}]", :immediately
 end
 
-dynatrace_configure_ini_files "#{name} sizing=#{sizing}" do
+dynatrace_appmon_configure_ini_files "#{name} sizing=#{sizing}" do
   installer_prefix_dir installer_prefix_dir
   ini_files            ini_files
   dynatrace_owner      dynatrace_owner

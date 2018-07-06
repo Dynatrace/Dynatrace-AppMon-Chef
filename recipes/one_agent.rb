@@ -42,7 +42,7 @@ dynatrace_owner = node['dynatrace']['owner']
 dynatrace_group = node['dynatrace']['group']
 fresh_installer_action = "#{name} installer changed"
 
-dynatrace_copy_or_download_file "Downloading One Agent installer: #{installer_file_url}" do
+dynatrace_appmon_copy_or_download_file "Downloading One Agent installer: #{installer_file_url}" do
   file_name       installer_file_name
   file_url        installer_file_url
   path            installer_file_path
@@ -71,7 +71,7 @@ if platform_family?('debian', 'fedora', 'rhel')
 
   symlink_name = node['dynatrace']['one_agent']['linux']['installer']['symlink_name']
 
-  dynatrace_run_tar_installer name.to_s do
+  dynatrace_appmon_run_tar_installer name.to_s do
     installer_path       installer_file_path
     installer_prefix_dir installer_prefix_dir
     symlink_name         symlink_name
