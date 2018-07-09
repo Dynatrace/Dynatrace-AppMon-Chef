@@ -19,7 +19,7 @@ default['dynatrace']['server']['linux']['installer']['file_name'] = 'dynatrace-s
 
 # A HTTP, HTTPS or FTP URL to the Dynatrace installer in the form (http|https|ftp)://[user[:pass]]@host.domain[:port]/path.
 # Additionally it is possible to refer to objects stored in S3 e.g. 's3://bucket_name/path/to/filename'.
-default['dynatrace']['server']['linux']['installer']['file_url'] = 'http://files.dynatrace.com/downloads/OnPrem/dynaTrace/7.0/7.0.0.2469/dynatrace-server-7.0.0.2469-linux-x86.jar'
+default['dynatrace']['server']['linux']['installer']['file_url'] = 'http://files.dynatrace.com/downloads/OnPrem/dynaTrace/7.1/7.1.0.1803/dynatrace-server-7.1.0.1803-linux-x86.jar'
 
 # The file name of the Dynatrace License in the cookbook's files directory.
 default['dynatrace']['server']['license']['file_name'] = nil
