@@ -14,6 +14,7 @@ name = 'Dynatrace Collector'
 installer_bitsize = node['dynatrace']['collector']['installer']['bitsize']
 
 agent_port = node['dynatrace']['collector']['agent']['port']
+appmon_agent_port = node['dynatrace']['collector']['appmon_agent']['port']
 
 server_hostname = node['dynatrace']['collector']['server']['hostname']
 server_port     = node['dynatrace']['collector']['server']['port']
@@ -50,7 +51,7 @@ ruby_block "Check if #{name} already installed" do
 end
 
 fresh_installer_action = "#{name} installer changed"
-dynatrace_copy_or_download_file name.to_s do
+dynatrace_appmon_copy_or_download_file name.to_s do
   file_name       installer_file_name
   file_url        installer_file_url
   path            installer_path
@@ -75,7 +76,7 @@ directory "Create the installation directory #{installer_prefix_dir}" do
   action    :create
 end
 
-dynatrace_run_jar_installer name.to_s do
+dynatrace_appmon_run_jar_installer name.to_s do
   installer_path       installer_path
   installer_prefix_dir installer_prefix_dir
   jar_input_sequence   "#{installer_bitsize}\\nY\\nY\\nY"
@@ -84,12 +85,13 @@ dynatrace_run_jar_installer name.to_s do
   only_if { node['dynatrace']['collector']['installation']['is_required'] }
 end
 
-dynatrace_configure_init_scripts name.to_s do
+dynatrace_appmon_configure_init_scripts name.to_s do
   installer_prefix_dir installer_prefix_dir
   scripts              init_scripts
   dynatrace_owner      dynatrace_owner
   dynatrace_group      dynatrace_group
   variables(:agent_port => agent_port,
+	    :appmon_agent_port => appmon_agent_port,
             :server_hostname => server_hostname,
             :server_port => server_port,
             :jvm_xmx => collector_jvm_xmx,

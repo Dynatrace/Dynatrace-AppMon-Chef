@@ -19,10 +19,13 @@ default['dynatrace']['collector']['linux']['installer']['file_name'] = 'dynatrac
 
 # A HTTP, HTTPS or FTP URL to the Dynatrace Collector installer in the form (http|https|ftp)://[user[:pass]]@host.domain[:port]/path.
 # Additionally it is possible to refer to objects stored in S3 e.g. 's3://bucket_name/path/to/filename'.
-default['dynatrace']['collector']['linux']['installer']['file_url'] = 'http://files.dynatrace.com/downloads/OnPrem/dynaTrace/7.0/7.0.0.2469/dynatrace-collector-7.0.0.2469-linux-x86.jar'
+default['dynatrace']['collector']['linux']['installer']['file_url'] = 'http://files.dynatrace.com/downloads/OnPrem/dynaTrace/7.1/7.1.0.1803/dynatrace-collector-7.1.0.1803-linux-x86.jar'
 
 # The port where the Dynatrace Collector shall listen for Agents.
 default['dynatrace']['collector']['agent']['port'] = '9998'
+
+# The port where the Dynatrace Collector shall listen for Appmon Agents.
+default['dynatrace']['collector']['appmon_agent']['port'] = '8043'
 
 # The location of the Dynatrace Server the Collector shall connect to.
 default['dynatrace']['collector']['server']['hostname'] = 'localhost'

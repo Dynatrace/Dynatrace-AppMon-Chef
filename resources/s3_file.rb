@@ -19,7 +19,7 @@ property :owner, String
 property :group, String
 property :mode, String
 
-use_inline_resources
+use_inline_resources if defined?(use_inline_resources)
 
 action :create do
   require 'aws-sdk'

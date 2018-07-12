@@ -25,7 +25,7 @@ end
 update_file_url = node['dynatrace']['server']['linux']['update']['update_file_url']
 update_file_zip_path = "#{cache_dir}/server_update.zip"
 update_file_path = "#{cache_dir}/server_update.dtf"
-dynatrace_copy_or_download_file "Downloading update file: #{update_file_url}" do
+dynatrace_appmon_copy_or_download_file "Downloading update file: #{update_file_url}" do
   file_url        update_file_url
   path            update_file_zip_path
   dynatrace_owner node['dynatrace']['owner']

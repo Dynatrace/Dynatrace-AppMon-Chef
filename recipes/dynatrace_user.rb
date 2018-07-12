@@ -9,7 +9,7 @@ dynatrace_owner = node['dynatrace']['owner']
 dynatrace_group = node['dynatrace']['group']
 
 user "Create system user #{dynatrace_owner}" do
-  username [dynatrace_owner]
+  username dynatrace_owner
   action   :create
 end
 

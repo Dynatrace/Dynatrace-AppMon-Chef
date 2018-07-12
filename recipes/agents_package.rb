@@ -47,7 +47,7 @@ ruby_block name.to_s do
 end
 
 fresh_installer_action = "#{name} installer changed"
-dynatrace_copy_or_download_file name.to_s do
+dynatrace_appmon_copy_or_download_file name.to_s do
   file_name       installer_file_name
   file_url        installer_file_url
   path            installer_path
@@ -74,7 +74,7 @@ if platform_family?('debian', 'fedora', 'rhel')
     action    :create
   end
 
-  dynatrace_run_jar_installer name.to_s do
+  dynatrace_appmon_run_jar_installer name.to_s do
     installer_path       installer_path
     installer_prefix_dir installer_prefix_dir
     dynatrace_owner      dynatrace_owner
