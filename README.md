@@ -1,6 +1,6 @@
 # dynatrace Cookbook
 
-This Chef cookbook installs and configures the Dynatrace Application Monitoring 7.1 solution.
+This Chef cookbook installs and configures the Dynatrace Application Monitoring 7.2 solution.
 
 [![Build Status](https://jenkins-01.eastus.cloudapp.azure.com/job/dynatrace-cookbook/badge/icon)](https://jenkins-01.eastus.cloudapp.azure.com/job/dynatrace-cookbook/)
 

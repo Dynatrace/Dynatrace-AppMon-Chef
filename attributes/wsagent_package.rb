@@ -25,7 +25,7 @@ default['dynatrace']['wsagent_package']['linux']['installer']['file_name'] = 'dy
 
 # A HTTP, HTTPS or FTP URL to the Dynatrace Web Server Agent installer in the form (http|https|ftp)://[user[:pass]]@host.domain[:port]/path.
 # Additionally it is possible to refer to objects stored in S3 e.g. 's3://bucket_name/path/to/filename'.
-default['dynatrace']['wsagent_package']['linux']['installer']['file_url'] = 'http://files.dynatrace.com/downloads/OnPrem/dynaTrace/7.1/7.1.0.1803/dynatrace-wsagent-7.1.0.1803-linux-x86-64.tar'
+default['dynatrace']['wsagent_package']['linux']['installer']['file_url'] = 'http://files.dynatrace.com/downloads/OnPrem/dynaTrace/7.2/7.2.0.1697/dynatrace-wsagent-7.2.0.1697-linux-x86-64.tar'
 
 # The Dynatrace WebServer Agent will be installed into this directory.
 default['dynatrace']['wsagent_package']['windows']['installer']['install_dir'] = 'C:\Program Files (x86)\Dynatrace'
@@ -35,4 +35,4 @@ default['dynatrace']['wsagent_package']['windows']['installer']['file_name'] = '
 
 # A HTTP, HTTPS or FTP URL to the Dynatrace WebServer Agent installer in the form (http|https|ftp)://[user[:pass]]@host.domain[:port]/path.
 # Additionally it is possible to refer to objects stored in S3 e.g. 's3://bucket_name/path/to/filename'.
-default['dynatrace']['wsagent_package']['windows']['installer']['file_url'] = 'http://files.dynatrace.com/downloads/OnPrem/dynaTrace/7.1/7.1.0.1803/dynatrace-agent-7.1.0.1803-x86.msi'
+default['dynatrace']['wsagent_package']['windows']['installer']['file_url'] = 'http://files.dynatrace.com/downloads/OnPrem/dynaTrace/7.2/7.2.0.1697/dynatrace-agent-7.2.0.1697-x86.msi'
