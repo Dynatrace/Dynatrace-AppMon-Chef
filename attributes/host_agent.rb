@@ -23,4 +23,4 @@ default['dynatrace']['host_agent']['linux']['installer']['file_name'] = 'dynatra
 
 # A HTTP, HTTPS or FTP URL to the Dynatrace Host Agent installer in the form (http|https|ftp)://[user[:pass]]@host.domain[:port]/path.
 # Additionally it is possible to refer to objects stored in S3 e.g. 's3://bucket_name/path/to/filename'.
-default['dynatrace']['host_agent']['linux']['installer']['file_url'] = 'http://files.dynatrace.com/downloads/OnPrem/dynaTrace/7.1/7.1.0.1803/dynatrace-hostagent-7.1.0.1803-linux-x86-64.tar'
+default['dynatrace']['host_agent']['linux']['installer']['file_url'] = 'http://files.dynatrace.com/downloads/OnPrem/dynaTrace/7.2/7.2.0.1697/dynatrace-hostagent-7.2.0.1697-linux-x86-64.tar'
