@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 name 'dynatrace-appmon'
 maintainer 'Martin Etmajer'
 maintainer_email 'martin.etmajer@dynatrace.com'
@@ -9,7 +11,7 @@ source_url 'https://github.com/Dynatrace/Dynatrace-AppMon-Chef'
 issues_url 'https://github.com/Dynatrace/Dynatrace-AppMon-Chef/issues'
 chef_version '>= 12.1'
 
-%w( debian ubuntu redhat centos fedora amazon windows ).each do |os|
+%w[debian ubuntu redhat centos fedora amazon windows].each do |os|
   supports os
 end
 

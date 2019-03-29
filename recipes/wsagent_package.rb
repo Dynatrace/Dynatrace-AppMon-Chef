@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #
 # Cookbook Name:: dynatrace
 # Recipes:: wsagent_package
@@ -103,7 +105,7 @@ if platform_family?('debian', 'fedora', 'rhel')
     service_name service
     # For Debian and Ubuntu distros - to correctly stop our service we need the status support which is disabled by default
     supports     :status => true
-    action       [:start, :enable]
+    action       %i[start enable]
   end
 elsif platform_family?('windows')
   dynatrace_powershell_scripts_project = "#{installer_cache_dir}\\Dynatrace-Powershell"

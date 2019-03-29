@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #
 # Cookbook Name:: dynatrace
 # Libraries:: endpoint_helpers
@@ -19,9 +21,9 @@ module Dynatrace
     # Exception used to inform that a connection endpoint (listening port, REST WS) is still not available
     class DynatraceNotReady < StandardError
       def initialize(endpoint, timeout)
-        super <<-EOH
-The Dynatrace Server at `#{endpoint}' did not become ready within #{timeout} seconds.
-Possibly, Dynatrace has failed to start. Please check your Dynatrace Server log files.
+        super <<~EOH
+          The Dynatrace Server at `#{endpoint}' did not become ready within #{timeout} seconds.
+          Possibly, Dynatrace has failed to start. Please check your Dynatrace Server log files.
 EOH
       end
     end
@@ -90,7 +92,7 @@ EOH
 
     def self.rest_get(endpoint, user, pass, options = {})
       options[:accept] = options.fetch(:accept, 'application/json')
-      options[:success_codes] = options.fetch(:success_codes, %w(200))
+      options[:success_codes] = options.fetch(:success_codes, %w[200])
 
       uri = URI(endpoint)
       http = Net::HTTP.new(uri.host, uri.port)
@@ -106,7 +108,7 @@ EOH
 
     def self.rest_put(endpoint, user, pass, body, options = {})
       options[:accept] = options.fetch(:accept, 'application/json')
-      options[:success_codes] = options.fetch(:success_codes, %w(200))
+      options[:success_codes] = options.fetch(:success_codes, %w[200])
 
       uri = URI(endpoint)
       http = Net::HTTP.new(uri.host, uri.port)

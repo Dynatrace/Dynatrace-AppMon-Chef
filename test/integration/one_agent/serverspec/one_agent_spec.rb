@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
-if %w(debian redhat ubuntu).include? os[:family]
+if %w[debian redhat ubuntu].include? os[:family]
   describe user('dynatrace') do
     it { should exist }
     it { should belong_to_group 'dynatrace' }

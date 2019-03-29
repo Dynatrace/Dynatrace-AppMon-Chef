@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #
 # Cookbook Name:: dynatrace
 # Libraries:: process_helpers
@@ -53,7 +55,7 @@ module Dynatrace
     # private_class_method
     def self.find_pids(pattern, user, platform_family)
       pids = []
-      raise 'ERROR: Unsupported platform' unless %w(debian fedora rhel).include? platform_family
+      raise 'ERROR: Unsupported platform' unless %w[debian fedora rhel].include? platform_family
 
       pgrep_pattern_opt = !pattern.nil? ? "-f \"#{pattern}\"" : ''
       pgrep_user_opt = !user.nil? ? "-u #{user}" : ''

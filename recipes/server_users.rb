@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #
 # Cookbook Name:: dynatrace
 # Recipes:: server_users
@@ -44,7 +46,7 @@ ruby_block 'Configuring users' do
                                           rest_user,
                                           rest_pass,
                                           JSON.dump(user_descr),
-                                          :success_codes => %w(201 204))
+                                          :success_codes => %w[201 204])
     end
   end
   only_if { node['dynatrace']['server']['user_config']['users'] }

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #
 # Cookbook Name:: dynatrace
 # Attributes:: server
@@ -50,7 +52,7 @@ default['dynatrace']['server']['pwh_connection']['username'] = 'dynatrace'
 default['dynatrace']['server']['pwh_connection']['password'] = 'dynatrace'
 
 # Accepted HTTP return codes when setting PWH connection. Used mainly for integration tests
-default['dynatrace']['server']['pwh_connection']['success_codes'] = %w(200)
+default['dynatrace']['server']['pwh_connection']['success_codes'] = %w[200]
 
 # Set a longer boot timeout due to the time to open the collector port
 # (see log "[SelfMonitoringLauncher] Waiting for self-monitoring Collector startup (max: 90 seconds)")

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # The Dynatrace One Agent package will be installed into the directory
 # node['dynatrace']['agents_package']['linux']['installer']['prefix_dir']/dynatrace-$major-$minor-$rev,
 # where $major, $minor and $rev are given by the installer. A symbolic link to the actual installation directory will

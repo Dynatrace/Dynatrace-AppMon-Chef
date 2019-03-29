@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #
 # Cookbook Name:: dynatrace
 # Recipes:: server_ldap_config
@@ -46,6 +48,6 @@ ruby_block 'Configure LDAP' do
                                         rest_user,
                                         rest_pass,
                                         body,
-                                        :success_codes => %w(204))
+                                        :success_codes => %w[204])
   end
 end
