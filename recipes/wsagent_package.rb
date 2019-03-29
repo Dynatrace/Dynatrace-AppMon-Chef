@@ -87,7 +87,7 @@ if platform_family?('debian', 'fedora', 'rhel')
 
   template "Configure and copy the #{name}'s 'dtwsagent.ini' file" do
     source 'wsagent_package/dtwsagent.ini.erb'
-    cookbook 'dynatrace'
+    cookbook 'dynatrace-appmon'
     path   "#{installer_prefix_dir}/dynatrace/agent/conf/dtwsagent.ini"
     owner  dynatrace_owner
     group  dynatrace_group
@@ -99,11 +99,21 @@ if platform_family?('debian', 'fedora', 'rhel')
     notifies :restart, "service[#{name}]", :immediately
   end
 
+  the_provider = nil
+  case node['dynatrace']['service']['provider']
+  when 'Init'
+    the_provider = Chef::Provider::Service::Init
+    the_action = [:start]
+  else
+    the_action = [:start, :enable]
+  end
+
   service name.to_s do
+    provider the_provider
     service_name service
     # For Debian and Ubuntu distros - to correctly stop our service we need the status support which is disabled by default
     supports     :status => true
-    action       [:start, :enable]
+    action       the_action
   end
 elsif platform_family?('windows')
   dynatrace_powershell_scripts_project = "#{installer_cache_dir}\\Dynatrace-Powershell"

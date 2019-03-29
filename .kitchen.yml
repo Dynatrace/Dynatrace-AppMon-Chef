@@ -3,6 +3,8 @@ provisioner:
   name: chef_zero
   require_chef_omnibus: 12.19.36
 
+# Need this to work with '12.x' and '14.3.37'
+
 driver:
   name: docker
   # In case of error "Message: You must first install the Docker CLI tool" try uncommenting following line
@@ -67,7 +69,7 @@ suites:
   - name: apache_wsagent
     run_list:
       - recipe[apache2]
-      - recipe[dynatrace::apache_wsagent]
+      - recipe[dynatrace-appmon::apache_wsagent]
     attributes:
       dynatrace:
         apache_wsagent:
@@ -84,8 +86,8 @@ suites:
   - name: apache_wsagent_uninstall
     run_list:
       - recipe[apache2]
-      - recipe[dynatrace::apache_wsagent]
-      - recipe[dynatrace::apache_wsagent_uninstall]
+      - recipe[dynatrace-appmon::apache_wsagent]
+      - recipe[dynatrace-appmon::apache_wsagent_uninstall]
     attributes:
       dynatrace:
         apache_wsagent:
@@ -101,7 +103,7 @@ suites:
 
   - name: agents_package
     run_list:
-      - recipe[dynatrace::agents_package]
+      - recipe[dynatrace-appmon::agents_package]
 #    attributes:
 #      dynatrace:
 #        agents_package:
@@ -111,8 +113,8 @@ suites:
 
   - name: agents_package_uninstall
     run_list:
-      - recipe[dynatrace::agents_package]
-      - recipe[dynatrace::agents_package_uninstall]
+      - recipe[dynatrace-appmon::agents_package]
+      - recipe[dynatrace-appmon::agents_package_uninstall]
 #    attributes:
 #      dynatrace:
 #        agents_package:
@@ -122,7 +124,7 @@ suites:
 
   - name: collector
     run_list:
-      - recipe[dynatrace::collector]
+      - recipe[dynatrace-appmon::collector]
     attributes:
       dynatrace:
         collector:
@@ -137,8 +139,8 @@ suites:
 
   - name: collector_uninstall
     run_list:
-      - recipe[dynatrace::collector]
-      - recipe[dynatrace::collector_uninstall]
+      - recipe[dynatrace-appmon::collector]
+      - recipe[dynatrace-appmon::collector_uninstall]
 #    attributes:
 #      dynatrace:
 #        collector:
@@ -148,7 +150,7 @@ suites:
 
   - name: agents_package
     run_list:
-      - recipe[dynatrace::agents_package]
+      - recipe[dynatrace-appmon::agents_package]
 #    attributes:
 #      dynatrace:
 #        agents_package:
@@ -158,16 +160,16 @@ suites:
 
   - name: dynatrace_user
     run_list:
-      - recipe[dynatrace::dynatrace_user]
+      - recipe[dynatrace-appmon::dynatrace_user]
 
   - name: dynatrace_user_uninstall
     run_list:
-      - recipe[dynatrace::dynatrace_user]
-      - recipe[dynatrace::dynatrace_user_uninstall]
+      - recipe[dynatrace-appmon::dynatrace_user]
+      - recipe[dynatrace-appmon::dynatrace_user_uninstall]
 
   - name: host_agent
     run_list:
-      - recipe[dynatrace::host_agent]
+      - recipe[dynatrace-appmon::host_agent]
     attributes:
       dynatrace:
         host_agent:
@@ -180,8 +182,8 @@ suites:
 
   - name: host_agent_uninstall
     run_list:
-      - recipe[dynatrace::host_agent]
-      - recipe[dynatrace::host_agent_uninstall]
+      - recipe[dynatrace-appmon::host_agent]
+      - recipe[dynatrace-appmon::host_agent_uninstall]
 #    attributes:
 #      dynatrace:
 #        host_agent:
@@ -190,7 +192,7 @@ suites:
 
   - name: java_agent
     run_list:
-      - recipe[dynatrace::java_agent]
+      - recipe[dynatrace-appmon::java_agent]
     attributes:
       dynatrace:
         java_agent:
@@ -203,7 +205,7 @@ suites:
 
   - name: memory_analysis_server
     run_list:
-      - recipe[dynatrace::memory_analysis_server]
+      - recipe[dynatrace-appmon::memory_analysis_server]
     attributes:
       dynatrace:
         memory_analysis_server:
@@ -218,7 +220,7 @@ suites:
 
   - name: one_agent
     run_list:
-      - recipe[dynatrace::one_agent]
+      - recipe[dynatrace-appmon::one_agent]
 #    attributes:
 #      dynatrace:
 #        one_agent:
@@ -232,11 +234,11 @@ suites:
 
   - name: server
     run_list:
-      - recipe[dynatrace::server]
-      - recipe[dynatrace::server_pwh_connection]
-      - recipe[dynatrace::server_ldap_config]
-      - recipe[dynatrace::server_user_groups]
-      - recipe[dynatrace::server_users]
+      - recipe[dynatrace-appmon::server]
+      - recipe[dynatrace-appmon::server_pwh_connection]
+      - recipe[dynatrace-appmon::server_ldap_config]
+      - recipe[dynatrace-appmon::server_user_groups]
+      - recipe[dynatrace-appmon::server_users]
     attributes:
       dynatrace:
         server:
@@ -271,8 +273,8 @@ suites:
 
   - name: server_uninstall
     run_list:
-      - recipe[dynatrace::server]
-      - recipe[dynatrace::server_uninstall]
+      - recipe[dynatrace-appmon::server]
+      - recipe[dynatrace-appmon::server_uninstall]
 #    attributes:
 #      dynatrace:
 #        server:
@@ -282,8 +284,8 @@ suites:
 
   - name: server_update
     run_list:
-      - recipe[dynatrace::server]
-      - recipe[dynatrace::server_update]
+      - recipe[dynatrace-appmon::server]
+      - recipe[dynatrace-appmon::server_update]
     attributes:
       dynatrace:
         server:
@@ -301,7 +303,7 @@ suites:
 
   - name: wsagent_package
     run_list:
-      - recipe[dynatrace::wsagent_package]
+      - recipe[dynatrace-appmon::wsagent_package]
 #    attributes:
 #      dynatrace:
 #        wsagent_package:
@@ -328,8 +330,8 @@ suites:
 
   - name: wsagent_package_uninstall
     run_list:
-      - recipe[dynatrace::wsagent_package]
-      - recipe[dynatrace::wsagent_package_uninstall]
+      - recipe[dynatrace-appmon::wsagent_package]
+      - recipe[dynatrace-appmon::wsagent_package_uninstall]
 #    attributes:
 #      dynatrace:
 #        wsagent_package:

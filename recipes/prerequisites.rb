@@ -13,6 +13,8 @@ if platform_family?('debian', 'fedora', 'rhel')
 end
 
 # needed by dynatrace_appmon_copy_or_download_file to download from S3
-chef_gem 'aws-sdk' do
-  compile_time false
+if node['dynatrace']['s3']['access_key_id']
+  chef_gem 'aws-sdk' do
+    compile_time false
+  end
 end

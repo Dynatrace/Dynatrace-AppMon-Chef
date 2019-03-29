@@ -16,9 +16,13 @@ action :run do
     linux_service_stop_runlevels = '0 1 2 6'
   end
 
+  template_path = if node['dynatrace']['version']
+                    "#{node['dynatrace']['version']}/"
+                  end
+
   new_resource.scripts.each do |script|
     template "Configure and copy the #{new_resource.name}'s '#{script}' init script" do
-      source "init.d/#{script}.erb"
+      source "#{template_path}init.d/#{script}.erb"
       path   "#{new_resource.installer_prefix_dir}/dynatrace/init.d/#{script}"
       owner  new_resource.dynatrace_owner
       group  new_resource.dynatrace_group
