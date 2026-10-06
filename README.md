@@ -1,3 +1,13 @@
+> [!IMPORTANT]
+> **This repository is archived and no longer maintained or supported.**
+>
+> - **Archived:** 2026-10-06
+> - **Reason:** <AppMon product EOL / replaced / merged elsewhere — include a useful explanation>
+> - **Replacement:** <supported successor and migration guidance, or "None">
+>
+> Preserved for historical and migration reference only. No updates, including security updates, will be provided.
+> See the [Dynatrace Archive organization README](https://github.com/Dynatrace-Archive) for usage and security guidance.
+
 # dynatrace Cookbook
 
 This Chef cookbook installs and configures the Dynatrace Application Monitoring 7.2 solution.
